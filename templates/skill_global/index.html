@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            color: #ddd;
+        }
+
+        .navbar .brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-right: auto;
+        }
+
+        .navbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar .icon-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .navbar .icon-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar .register-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .navbar .register-button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="brand">E-Learning</div>
+        <a href="/">Home</a>
+        <a href="#about">About</a>
+        <a href="#courses">Courses</a>
+        <a href="#liveclasses">Live Classes</a>
+        <a href="#articles">Articles</a>
+        <div class="actions">
+            <a href="#search" class="icon-link" title="Search">🔍</a>
+            <a href="#signin" class="icon-link" title="Sign In">👤</a>
+            <a href="{% url 'register' %}" class="register-button">Register</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Welcome to E-Learning</h1>
+        <p><a href="{% url 'register' %}">Register</a></p>
+    </div>
+</body>
+
+</html>
