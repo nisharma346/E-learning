@@ -1,0 +1,113 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-xl navbar-light bg-white sticky-top" id="skillglobal-navbar">
+    <div class="container-fluid navbar-container px-3 px-lg-5">
+        <div class="navbar-left d-flex align-items-center">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="/">
+                <img src="{% static 'images/skill_global logo.png' %}" alt="Skill Global" class="navbar-logo">
+                <div class="brand-text d-flex flex-column justify-content-center">
+                    <span class="brand-name">Skill Global</span>
+                    <span class="brand-tag d-none d-xl-inline">Integrating talent, thought and action.</span>
+                </div>
+            </a>
+        </div>
+
+        <button class="navbar-toggler border-0 d-xl-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-center d-none d-xl-flex justify-content-center align-items-center">
+            <ul class="navbar-nav menu-section mb-0 align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#courses" id="coursesDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Courses
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="coursesDropdown">
+                        <li><a class="dropdown-item" href="#courses">All Courses</a></li>
+                        <li><a class="dropdown-item" href="#popular">Popular</a></li>
+                        <li><a class="dropdown-item" href="#new">New Launches</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#liveclasses">Live Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#articles">Articles</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="navbar-right d-none d-xl-flex align-items-center justify-content-end gap-3">
+            <form class="search-form d-flex align-items-center">
+                <button class="btn btn-link p-0 text-secondary search-icon" type="submit" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </button>
+                <input class="form-control" type="search" placeholder="Search for courses, articles, skills..."
+                    aria-label="Search">
+            </form>
+            <a href="#signin" class="nav-login text-secondary">Sign In</a>
+            <a href="#profile" class="btn btn-light btn-icon rounded-circle" aria-label="User profile">
+                <i class="bi bi-person-circle fs-5"></i>
+            </a>
+            <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+        </div>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="navbarOffcanvasLabel">Skill Global</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav mb-3">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#about">About</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#courses" id="mobileCoursesDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Courses
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="mobileCoursesDropdown">
+                    <li><a class="dropdown-item" href="#courses">All Courses</a></li>
+                    <li><a class="dropdown-item" href="#popular">Popular</a></li>
+                    <li><a class="dropdown-item" href="#new">New Launches</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#liveclasses">Live Classes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#articles">Articles</a>
+            </li>
+        </ul>
+
+        <form class="search-form d-flex align-items-center mb-3">
+            <button class="btn btn-link p-0 text-secondary search-icon" type="submit" aria-label="Search">
+                <i class="bi bi-search"></i>
+            </button>
+            <input class="form-control" type="search" placeholder="Search for courses, articles, skills..."
+                aria-label="Search">
+        </form>
+
+        <div class="d-flex flex-column gap-3">
+            <a href="#signin" class="btn btn-outline-secondary rounded-pill">Sign In</a>
+            <a href="#profile" class="btn btn-light btn-icon rounded-circle w-100" aria-label="User profile">
+                <i class="bi bi-person-circle fs-5"></i>
+            </a>
+            <a href="{% url 'register' %}" class="btn btn-register rounded-pill w-100 text-center">Register</a>
+        </div>
+    </div>
+</div>
