@@ -21,31 +21,39 @@
 <body>
     {% include 'skill_global/navbar.html' %}
 
+    {% load static %}
+
     <section class="hero-section">
+
+        <!-- Background Video -->
         <video class="hero-video" autoplay muted loop playsinline>
-            <source src="https://cdn.coverr.co/videos/coverr-working-on-a-laptop-1561257276100/1080p.mp4"
-                type="video/mp4">
+            <source src="{% static 'vedios/A_professional_Indian_mentor_i.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
+
+        <!-- Dark Overlay -->
         <div class="hero-overlay"></div>
 
-        <div class="hero-content-wrapper container">
-            <div class="hero-content">
-                <div class="hero-kicker hero-animate">Empowering Your Future Through Learning</div>
-                <h1 class="hero-title hero-animate delay-1">Learn Without Limits with Skill Global</h1>
-                <p class="hero-description hero-animate delay-2">
-                    Access industry-ready courses, live classes, expert mentors, certifications, and practical learning
-                    experiences to build your career.
-                </p>
-                <div class="hero-actions d-flex justify-content-center gap-3 flex-wrap hero-animate delay-3">
-                    <a href="#courses" class="btn hero-btn-primary">Explore Courses</a>
-                    <a href="{% url 'register' %}" class="btn hero-btn-secondary">Get Started</a>
-                </div>
+        <!-- Hero Content -->
+        <div class="container hero-content">
+            <p class="hero-tag">EMPOWERING YOUR FUTURE THROUGH LEARNING</p>
+
+            <h1>
+                Learn Without Limits <br>
+                with Skill Global
+            </h1>
+
+            <p>
+                Access industry-ready courses, live classes, expert mentors,
+                certifications, and practical learning experiences.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Explore Courses</a>
+                <a href="#" class="btn btn-outline-light">Get Started</a>
             </div>
         </div>
 
-        <a href="#about" class="hero-scroll-indicator" aria-label="Scroll down">
-            <i class="bi bi-chevron-down"></i>
-        </a>
     </section>
 
     <!-- Bootstrap JS bundle -->

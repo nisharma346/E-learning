@@ -8,29 +8,29 @@
 
 .hero-section {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 100vh;
     overflow: hidden;
-    background: #06131f;
-    isolation: isolate;
 }
 
 .hero-video {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+
     width: 100%;
     height: 100%;
+
     object-fit: cover;
-    z-index: -3;
+
+    z-index: 1;
 }
+
 
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: -2;
+    background: rgba(0, 0, 0, .55);
+    z-index: 2;
 }
 
 .hero-section::after {
@@ -47,10 +47,18 @@
 }
 
 .hero-content {
-    max-width: 860px;
-    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
     text-align: center;
-    padding: 3rem 1rem;
+    color: white;
 }
 
 .hero-kicker {
