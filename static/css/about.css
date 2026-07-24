@@ -1,0 +1,257 @@
+:root {
+    --about-primary: #0d6efd;
+    --about-dark: #0f172a;
+    --about-muted: #6b7280;
+    --about-gold: #c49b3d;
+}
+
+.recognition-announcement-section {
+    padding: 35px 0 0;
+    background: #ffffff;
+}
+
+.recognition-announcement-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 70px;
+    padding: 0 25px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.recognition-announcement-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+}
+
+.recognition-announcement-left,
+.recognition-announcement-right {
+    flex: 0 0 auto;
+}
+
+.recognition-announcement-center {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.recognition-announcement-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+.recognition-announcement-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #c49b3d;
+    font-size: 16px;
+}
+
+.recognition-announcement-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.recognition-announcement-link {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.recognition-announcement-link span {
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+
+.recognition-announcement-link:hover,
+.recognition-announcement-link:focus {
+    color: #0b5ed7;
+    text-decoration: underline;
+}
+
+.recognition-announcement-link:hover span,
+.recognition-announcement-link:focus span {
+    transform: translateX(5px);
+}
+
+.about-skill-global-section {
+    padding: 100px 0;
+    background: #ffffff;
+}
+
+.about-skill-global-inner {
+    max-width: 1050px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-skill-global-label {
+    margin-bottom: 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--about-gold);
+}
+
+.about-skill-global-title {
+    margin: 0 0 50px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--about-dark);
+}
+
+.about-skill-global-copy {
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-skill-global-copy p {
+    margin-bottom: 1.6rem;
+    font-size: 22px;
+    line-height: 2;
+    color: var(--about-muted);
+}
+
+.about-skill-global-copy strong {
+    color: var(--about-primary);
+    font-weight: 700;
+}
+
+.about-skill-global-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding: 14px 34px;
+    border-radius: 999px;
+    background: var(--about-primary);
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.about-skill-global-btn:hover,
+.about-skill-global-btn:focus {
+    background: #0b5ed7;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.18);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal .about-skill-global-title {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
+}
+
+.reveal.is-visible .about-skill-global-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal .about-skill-global-copy,
+.reveal .about-skill-global-btn {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.8s ease 0.25s, transform 0.8s ease 0.25s;
+}
+
+.reveal.is-visible .about-skill-global-copy,
+.reveal.is-visible .about-skill-global-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 991.98px) {
+    .about-skill-global-section {
+        padding: 80px 0;
+    }
+
+    .about-skill-global-title {
+        font-size: 48px;
+    }
+
+    .about-skill-global-copy p {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .recognition-announcement-card {
+        padding: 0 20px;
+        gap: 14px;
+    }
+
+    .recognition-announcement-text {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .recognition-announcement-section {
+        padding: 25px 0 0;
+    }
+
+    .recognition-announcement-card {
+        flex-direction: column;
+        align-items: flex-start;
+        min-height: auto;
+        padding: 18px 20px;
+    }
+
+    .recognition-announcement-center {
+        justify-content: flex-start;
+        text-align: left;
+        width: 100%;
+    }
+
+    .recognition-announcement-text {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .about-skill-global-section {
+        padding: 70px 0;
+    }
+
+    .about-skill-global-title {
+        font-size: 38px;
+        margin-bottom: 32px;
+    }
+
+    .about-skill-global-copy p {
+        font-size: 18px;
+        line-height: 1.9;
+    }
+}

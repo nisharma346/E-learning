@@ -1,0 +1,209 @@
+:root {
+    --rec-bg: #151515;
+    --rec-card: #1d1d1d;
+    --rec-gold: #d4af37;
+    --rec-text: #f7f7f2;
+    --rec-muted: #c7c2b7;
+    --rec-border: rgba(212, 175, 55, 0.24);
+}
+
+.recognition-section {
+    padding: 3.5rem 0;
+    background: linear-gradient(135deg, #171717 0%, #1f1f1f 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.recognition-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.16;
+    pointer-events: none;
+}
+
+.recognition-banner {
+    position: relative;
+    z-index: 1;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 3rem 3.25rem;
+    border-radius: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    background: rgba(255, 255, 255, 0.02);
+    display: grid;
+    grid-template-columns: 0.9fr 1.5fr 0.7fr;
+    gap: 2rem;
+    align-items: center;
+    animation: fadeUp 0.8s ease both;
+}
+
+.recognition-left,
+.recognition-center,
+.recognition-right {
+    min-width: 0;
+}
+
+.recognition-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.14);
+    color: var(--rec-gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.recognition-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: #ffffff;
+    color: var(--rec-bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+}
+
+.recognition-stars {
+    color: var(--rec-gold);
+    letter-spacing: 0.2em;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+
+.recognition-small-text {
+    color: var(--rec-muted);
+    font-size: 0.95rem;
+}
+
+.recognition-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rec-gold);
+    margin-bottom: 0.85rem;
+}
+
+.recognition-quote {
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    line-height: 1.7;
+    color: var(--rec-text);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.recognition-subtext {
+    color: var(--rec-muted);
+    line-height: 1.75;
+    margin-bottom: 0.8rem;
+}
+
+.recognition-founder {
+    color: var(--rec-gold);
+    font-weight: 600;
+}
+
+.recognition-right {
+    display: flex;
+    justify-content: center;
+}
+
+.recognition-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid var(--rec-gold);
+    color: var(--rec-gold);
+    background: transparent;
+    border-radius: 999px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.recognition-btn:hover {
+    background: var(--rec-gold);
+    color: #111;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(212, 175, 55, 0.2);
+}
+
+.stats-section {
+    padding: 2.2rem 0 3rem;
+    background: #ffffff;
+}
+
+.stat-item {
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    padding: 1.3rem 1rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(17, 24, 39, 0.07);
+}
+
+.stat-icon {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.08);
+    color: #0d6efd;
+    font-size: 1.1rem;
+}
+
+.stat-number {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.stat-label {
+    margin-top: 0.25rem;
+    color: #6b7280;
+    font-size: 0.92rem;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .recognition-card {
+        padding: 1.8rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .recognition-section {
+        padding: 4rem 0;
+    }
+}

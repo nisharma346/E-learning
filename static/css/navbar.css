@@ -13,10 +13,11 @@
 }
 
 #skillglobal-navbar {
-    min-height: var(--navbar-height);
+    min-height: 60px;
     background: var(--navbar-bg);
     transition: box-shadow 0.2s ease;
     box-shadow: var(--shadow);
+    z-index: 1030;
 }
 
 #skillglobal-navbar.scrolled {
@@ -26,12 +27,12 @@
 .navbar-container {
     max-width: 1320px;
     width: 100%;
-    min-height: 72px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding: 0.5rem 1rem;
+    gap: 1rem;
+    padding: 0.25rem 1rem;
 }
 
 .navbar-left,
@@ -50,7 +51,7 @@
 }
 
 .navbar-logo {
-    height: 64px;
+    height: 52px;
     width: auto;
 }
 
