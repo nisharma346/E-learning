@@ -32,3 +32,5 @@ def register(request):
             context['success'] = 'Registration successful. You can now log in.'
 
     return render(request, 'skill_global/register.html', context)
+def about(request):
+    return render(request, 'about.html')
