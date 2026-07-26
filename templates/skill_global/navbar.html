@@ -26,18 +26,18 @@
                     <a class="nav-link" href="{% url 'about' %}">About</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#courses" id="coursesDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="{% url 'courses' %}" id="coursesDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Courses
                     </a>
                     <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="coursesDropdown">
-                        <li><a class="dropdown-item" href="#courses">All Courses</a></li>
+                        <li><a class="dropdown-item" href="{% url 'courses' %}">All Courses</a></li>
                         <li><a class="dropdown-item" href="#popular">Popular</a></li>
                         <li><a class="dropdown-item" href="#new">New Launches</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#liveclasses">Live Classes</a>
+                    <a class="nav-link" href="{% url 'live_classes' %}">Live Classes</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#articles">Articles</a>
@@ -78,18 +78,18 @@
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#courses" id="mobileCoursesDropdown" role="button"
+                <a class="nav-link dropdown-toggle" href="{% url 'courses' %}" id="mobileCoursesDropdown" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     Courses
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="mobileCoursesDropdown">
-                    <li><a class="dropdown-item" href="#courses">All Courses</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">All Courses</a></li>
                     <li><a class="dropdown-item" href="#popular">Popular</a></li>
                     <li><a class="dropdown-item" href="#new">New Launches</a></li>
                 </ul>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#liveclasses">Live Classes</a>
+                <a class="nav-link" href="{% url 'live_classes' %}">Live Classes</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#articles">Articles</a>

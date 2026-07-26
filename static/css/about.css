@@ -1,257 +1,231 @@
-:root {
-    --about-primary: #0d6efd;
-    --about-dark: #0f172a;
-    --about-muted: #6b7280;
-    --about-gold: #c49b3d;
+﻿:root{
+    --primary:#0d6efd;
+    --dark:#0f172a;
+    --text:#5b6475;
+    --gold:#c89b3c;
+    --light:#f8f9fc;
+    --shadow:0 10px 35px rgba(0,0,0,.08);
 }
 
-.recognition-announcement-section {
-    padding: 35px 0 0;
-    background: #ffffff;
+/* ================= PAGE HEADER ================= */
+
+.page-header{
+    padding:90px 0 70px;
+    background:#fff;
+    text-align:center;
 }
 
-.recognition-announcement-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    min-height: 70px;
-    padding: 0 25px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+.page-subtitle{
+    text-transform:uppercase;
+    letter-spacing:6px;
+    color:var(--gold);
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:12px;
 }
 
-.recognition-announcement-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+.page-title{
+    font-size:52px;
+    font-weight:700;
+    color:var(--dark);
+    margin-bottom:20px;
 }
 
-.recognition-announcement-left,
-.recognition-announcement-right {
-    flex: 0 0 auto;
+.page-description{
+    max-width:720px;
+    margin:auto;
+    color:var(--text);
+    font-size:18px;
+    line-height:1.8;
 }
 
-.recognition-announcement-center {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-align: center;
+/* ================= COMMON ================= */
+
+.section-tag{
+    color:var(--gold);
+    letter-spacing:4px;
+    text-transform:uppercase;
+    font-size:13px;
+    font-weight:700;
 }
 
-.recognition-announcement-label {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #6b7280;
+.section-title{
+    font-size:42px;
+    font-weight:700;
+    color:var(--dark);
+    margin:12px 0 24px;
 }
 
-.recognition-announcement-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #c49b3d;
-    font-size: 16px;
+.about-section p,
+.mission-card p,
+.value-card p,
+.cta-section p{
+    color:var(--text);
+    line-height:1.9;
+    font-size:17px;
 }
 
-.recognition-announcement-text {
-    font-size: 18px;
-    font-weight: 600;
-    color: #111827;
+/* ================= ABOUT ================= */
+
+.about-section{
+    padding:90px 0;
+    background:#fff;
 }
 
-.recognition-announcement-link {
-    font-size: 15px;
-    font-weight: 600;
-    color: #0d6efd;
-    text-decoration: none;
-    transition: color 0.2s ease;
+.about-section img{
+    border-radius:18px;
+    box-shadow:var(--shadow);
 }
 
-.recognition-announcement-link span {
-    display: inline-block;
-    transition: transform 0.25s ease;
+/* ================= BUTTON ================= */
+
+.btn-primary{
+    padding:13px 34px;
+    border-radius:50px;
+    font-weight:600;
 }
 
-.recognition-announcement-link:hover,
-.recognition-announcement-link:focus {
-    color: #0b5ed7;
-    text-decoration: underline;
+/* ================= MISSION ================= */
+
+.mission-section{
+    background:#f7f9fc;
+    padding:90px 0;
 }
 
-.recognition-announcement-link:hover span,
-.recognition-announcement-link:focus span {
-    transform: translateX(5px);
+.mission-card{
+    background:#fff;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    height:100%;
+    transition:.3s;
 }
 
-.about-skill-global-section {
-    padding: 100px 0;
-    background: #ffffff;
+.mission-card:hover{
+    transform:translateY(-8px);
 }
 
-.about-skill-global-inner {
-    max-width: 1050px;
-    margin: 0 auto;
-    text-align: center;
+.mission-card h3{
+    color:var(--dark);
+    font-size:28px;
+    margin-bottom:18px;
 }
 
-.about-skill-global-label {
-    margin-bottom: 1rem;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 8px;
-    text-transform: uppercase;
-    color: var(--about-gold);
+/* ================= VALUES ================= */
+
+.values-section{
+    padding:90px 0;
+    background:#fff;
 }
 
-.about-skill-global-title {
-    margin: 0 0 50px;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 56px;
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--about-dark);
+.value-card{
+    background:#fff;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:35px;
+    transition:.3s;
+    text-align:center;
+    height:100%;
 }
 
-.about-skill-global-copy {
-    max-width: 850px;
-    margin: 0 auto;
-    text-align: center;
+.value-card:hover{
+    transform:translateY(-8px);
 }
 
-.about-skill-global-copy p {
-    margin-bottom: 1.6rem;
-    font-size: 22px;
-    line-height: 2;
-    color: var(--about-muted);
+.value-card h4{
+    font-size:24px;
+    color:var(--dark);
+    margin-bottom:15px;
 }
 
-.about-skill-global-copy strong {
-    color: var(--about-primary);
-    font-weight: 700;
+/* ================= CTA ================= */
+
+.cta-section{
+    background:linear-gradient(135deg,#0d6efd,#084298);
+    color:#fff;
+    text-align:center;
+    padding:90px 20px;
 }
 
-.about-skill-global-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1.5rem;
-    padding: 14px 34px;
-    border-radius: 999px;
-    background: var(--about-primary);
-    color: #ffffff;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+.cta-section h2{
+    font-size:44px;
+    margin-bottom:20px;
+    font-weight:700;
 }
 
-.about-skill-global-btn:hover,
-.about-skill-global-btn:focus {
-    background: #0b5ed7;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.18);
+.cta-section p{
+    color:rgba(255,255,255,.9);
+    max-width:700px;
+    margin:auto auto 35px;
 }
 
-.reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+.cta-section .btn{
+    background:#fff;
+    color:#0d6efd;
+    border:none;
+    padding:14px 36px;
+    border-radius:50px;
+    font-weight:700;
 }
 
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+.cta-section .btn:hover{
+    background:#f5f5f5;
 }
 
-.reveal .about-skill-global-title {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:992px){
+
+.page-title{
+    font-size:40px;
 }
 
-.reveal.is-visible .about-skill-global-title {
-    opacity: 1;
-    transform: translateY(0);
+.section-title{
+    font-size:34px;
 }
 
-.reveal .about-skill-global-copy,
-.reveal .about-skill-global-btn {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.8s ease 0.25s, transform 0.8s ease 0.25s;
+.about-section{
+    text-align:center;
 }
 
-.reveal.is-visible .about-skill-global-copy,
-.reveal.is-visible .about-skill-global-btn {
-    opacity: 1;
-    transform: translateY(0);
+.about-section img{
+    margin-top:40px;
 }
 
-@media (max-width: 991.98px) {
-    .about-skill-global-section {
-        padding: 80px 0;
-    }
-
-    .about-skill-global-title {
-        font-size: 48px;
-    }
-
-    .about-skill-global-copy p {
-        font-size: 20px;
-    }
 }
 
-@media (max-width: 991.98px) {
-    .recognition-announcement-card {
-        padding: 0 20px;
-        gap: 14px;
-    }
+@media(max-width:768px){
 
-    .recognition-announcement-text {
-        font-size: 16px;
-    }
+.page-header{
+    padding:70px 0 50px;
 }
 
-@media (max-width: 767.98px) {
-    .recognition-announcement-section {
-        padding: 25px 0 0;
-    }
+.page-title{
+    font-size:34px;
+}
 
-    .recognition-announcement-card {
-        flex-direction: column;
-        align-items: flex-start;
-        min-height: auto;
-        padding: 18px 20px;
-    }
+.page-description{
+    font-size:16px;
+}
 
-    .recognition-announcement-center {
-        justify-content: flex-start;
-        text-align: left;
-        width: 100%;
-    }
+.section-title{
+    font-size:30px;
+}
 
-    .recognition-announcement-text {
-        font-size: 15px;
-        line-height: 1.5;
-    }
+.about-section,
+.values-section,
+.mission-section,
+.cta-section{
+    padding:70px 0;
+}
 
-    .about-skill-global-section {
-        padding: 70px 0;
-    }
+.mission-card,
+.value-card{
+    padding:28px;
+}
 
-    .about-skill-global-title {
-        font-size: 38px;
-        margin-bottom: 32px;
-    }
+.cta-section h2{
+    font-size:30px;
+}
 
-    .about-skill-global-copy p {
-        font-size: 18px;
-        line-height: 1.9;
-    }
 }

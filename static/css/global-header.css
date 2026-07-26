@@ -1,0 +1,144 @@
+.global-header-banner {
+    position: relative;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    background: #0f2340;
+    color: #fff;
+    padding: 3rem 0;
+    margin: 1.2rem 0 2rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    box-shadow: 0 20px 45px rgba(4, 15, 35, 0.18);
+    z-index: 1;
+}
+
+.global-header-banner::before,
+.global-header-banner::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    inset: 0;
+}
+
+.global-header-banner::before {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+    z-index: 0;
+}
+
+.global-header-banner::after {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.35;
+    z-index: 0;
+}
+
+.global-header-backdrop {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 0;
+}
+
+.global-header-banner .container {
+    position: relative;
+    z-index: 2;
+}
+
+.global-header-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.28rem;
+    text-transform: uppercase;
+    color: #f9c74f;
+    margin-bottom: 1rem;
+    animation: globalHeaderFade 0.9s ease both;
+}
+
+.global-header-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.12;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    animation: globalHeaderFade 1.1s ease both;
+}
+
+.global-header-description {
+    max-width: 700px;
+    margin: 0 auto 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+    animation: globalHeaderFade 1.25s ease both;
+}
+
+.global-header-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    animation: globalHeaderFade 1.35s ease both;
+}
+
+.global-header-breadcrumb a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.global-header-breadcrumb a:hover {
+    color: #f9c74f;
+}
+
+.breadcrumb-divider {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+@keyframes globalHeaderFade {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991px) {
+    .global-header-banner {
+        min-height: 260px;
+        padding: 2.6rem 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .global-header-banner {
+        min-height: 220px;
+        padding: 2rem 0;
+        border-bottom-left-radius: 1.5rem;
+        border-bottom-right-radius: 1.5rem;
+    }
+
+    .global-header-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.2rem;
+    }
+
+    .global-header-description {
+        font-size: 0.95rem;
+    }
+
+    .global-header-breadcrumb {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.85rem;
+    }
+}

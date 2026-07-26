@@ -12,14 +12,20 @@
     <link href="{% static 'css/navbar.css' %}" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}" rel="stylesheet">
     <link href="{% static 'css/about.css' %}" rel="stylesheet">
+    <link href="{% static 'css/global-header.css' %}" rel="stylesheet">
     <link href="{% static 'css/recognition.css' %}" rel="stylesheet">
     <link href="{% static 'css/courses.css' %}" rel="stylesheet">
-    <link href="{% static 'css/homepage-sections.css' %}" rel="stylesheet">
+    <link href="{% static 'css/footer.css' %}" rel="stylesheet">
+
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
     {% include 'skill_global/navbar.html' %}
+
+    {% if page_title and request.path != '/' %}
+    {% include 'includes/global_header.html' %}
+    {% endif %}
 
     {% block content %}{% endblock %}
 

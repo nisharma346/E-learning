@@ -15,6 +15,7 @@
 
     <!-- Custom navbar styles -->
     <link href="{% static 'css/navbar.css' %}" rel="stylesheet">
+    <link href="{% static 'css/global-header.css' %}" rel="stylesheet">
 
     <style>
         body {
@@ -40,6 +41,8 @@
 
 <body>
     {% include 'skill_global/navbar.html' %}
+
+    {% include 'includes/global_header.html' %}
 
     <main class="container register-form">
         <div class="panel">

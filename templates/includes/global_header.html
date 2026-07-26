@@ -1,0 +1,19 @@
+<section class="global-header-banner" aria-label="Page banner">
+    <div class="global-header-backdrop"></div>
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12 text-center">
+                <p class="global-header-label">WELCOME TO SKILL GLOBAL</p>
+                <h1 class="global-header-title">{{ page_title|default:"Skill Global" }}</h1>
+                <p class="global-header-description">
+                    {{ page_description|default:"Premium education designed for modern learners and professionals." }}
+                </p>
+                <nav class="global-header-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a>
+                    <span class="breadcrumb-divider">/</span>
+                    <span>{{ page_title|default:"Page" }}</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>

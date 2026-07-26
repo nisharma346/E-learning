@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About | Skill Global{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= ABOUT ================= -->
+
+<section class="about-section py-5">
+    <div class="container">
+
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-6">
+
+                <span class="section-tag">ABOUT US</span>
+
+                <h2 class="section-title">
+                    About Skill Global
+                </h2>
+
+                <p>
+                    Skill Global is an industry-focused learning platform dedicated to
+                    helping students and professionals build practical skills through
+                    expert-led training programs.
+                </p>
+
+                <p>
+                    Our courses combine real-world projects, mentorship,
+                    certification, and career guidance to prepare learners for today's
+                    competitive job market.
+                </p>
+
+                <a href="#" class="btn btn-primary mt-3">
+                    Explore Courses
+                </a>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <img src="{% static 'images/about.jpg' %}" class="img-fluid rounded-4 shadow" alt="About Skill Global">
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= MISSION & VISION ================= -->
+
+<section class="mission-section py-5">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+
+                <div class="mission-card">
+
+                    <h3>Our Mission</h3>
+
+                    <p>
+                        To bridge the gap between education and industry by providing
+                        high-quality practical learning experiences.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="mission-card">
+
+                    <h3>Our Vision</h3>
+
+                    <p>
+                        To become one of India's most trusted professional learning
+                        platforms helping millions achieve career success.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CORE VALUES ================= -->
+
+<section class="values-section py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <span class="section-tag">OUR VALUES</span>
+
+            <h2 class="section-title">What We Believe</h2>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <h4>Integrity</h4>
+                    <p>We build trust through honesty and transparency.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <h4>Innovation</h4>
+                    <p>Continuous learning through modern technology.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <h4>Excellence</h4>
+                    <p>Delivering the highest quality education.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CTA ================= -->
+
+<section class="cta-section">
+
+    <div class="container text-center">
+
+        <h2>Start Learning With Skill Global Today</h2>
+
+        <p>
+            Build practical skills and advance your career with industry-focused
+            training programs.
+        </p>
+
+        <a href="#" class="btn btn-primary">
+            Explore Courses
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

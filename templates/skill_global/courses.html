@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Courses | Skill Global{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/courses.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-uppercase text-primary fw-semibold">Top courses</span>
+            <h2 class="mt-3">Explore skills that move your career forward.</h2>
+            <p class="text-muted mx-auto mt-3" style="max-width: 700px;">
+                Discover our premium course catalog featuring practical training, expert mentorship, and career-ready
+                learning paths.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-3">Data</span>
+                        <h5 class="card-title">Machine Learning</h5>
+                        <p class="card-text text-muted">Practical AI training, hands-on projects, and mentorship from
+                            industry experts.</p>
+                        <a href="#" class="stretched-link text-decoration-none">View course</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-3">Design</span>
+                        <h5 class="card-title">UI/UX Design</h5>
+                        <p class="card-text text-muted">Build user-first digital products with modern design systems and
+                            portfolio-ready work.</p>
+                        <a href="#" class="stretched-link text-decoration-none">View course</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-3">Marketing</span>
+                        <h5 class="card-title">Digital Marketing</h5>
+                        <p class="card-text text-muted">Learn growth strategies, analytics, and content systems that
+                            scale outcomes.</p>
+                        <a href="#" class="stretched-link text-decoration-none">View course</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
