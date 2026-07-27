@@ -72,3 +72,21 @@ class LiveClass(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=150, blank=True)
+    summary = models.CharField(max_length=255, blank=True)
+    content = models.TextField()
+    image = models.ImageField(upload_to='articles/', blank=True, null=True)
+    published_at = models.DateTimeField(auto_now_add=True)
+    is_published = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Article'
+        verbose_name_plural = 'Articles'
+        ordering = ['-published_at']
+
+    def __str__(self):
+        return self.title

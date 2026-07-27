@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import CustomUser, LiveClass
+from .models import CustomUser, LiveClass, Article
 
 # Create your views here.
 
@@ -25,6 +25,24 @@ def live_classes(request):
         'classes': classes,
     }
     return render(request, 'skill_global/live_classes.html', context)
+
+
+def articles(request):
+    articles = Article.objects.filter(is_published=True).order_by('-published_at')
+    context = {
+        'page_title': 'Articles',
+        'page_description': 'Read expert-written articles on career growth, industry skills, and learning best practices.',
+        'articles': articles,
+    }
+    return render(request, 'skill_global/articles.html', context)
+
+
+def contact(request):
+    context = {
+        'page_title': 'Contact',
+        'page_description': 'Get in touch with Skill Global for questions about courses, partnerships, and learning support.',
+    }
+    return render(request, 'skill_global/contact.html', context)
 
 
 def register(request):
