@@ -5,10 +5,10 @@
     align-items: center;
     background: #0f2340;
     color: #fff;
-    padding: 3rem 0;
-    margin: 1.2rem 0 2rem;
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
+    padding: calc(3rem + var(--navbar-height, 78px)) 0 3rem;
+    margin: 0 0 2rem;
+    width: 100%;
+    border-radius: 0;
     box-shadow: 0 20px 45px rgba(4, 15, 35, 0.18);
     z-index: 1;
 }
@@ -124,8 +124,7 @@
     .global-header-banner {
         min-height: 220px;
         padding: 2rem 0;
-        border-bottom-left-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
+        border-radius: 0;
     }
 
     .global-header-label {
