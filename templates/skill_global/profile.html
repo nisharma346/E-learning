@@ -3,35 +3,202 @@
 
 {% block title %}Profile | Skill Global{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<section class="py-5 bg-light">
+<section class="profile-page py-4">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-5">
-                        <h2 class="mb-4">My Profile</h2>
-                        {% if user.is_authenticated %}
-                        <div class="mb-4">
-                            <h5>Account details</h5>
-                            <p><strong>Name:</strong> {{ user.get_full_name|default:user.username|default:user.email }}
-                            </p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
+        {% if user.is_authenticated %}
+        {% if messages %}
+        <div class="alert alert-success rounded-4 mb-4 py-3 px-4">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="card profile-card mx-auto mb-4">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+                    <div>
+                        <h5 class="profile-title mb-1">Account Overview</h5>
+                        <p class="text-muted mb-0">Your premium Skill Global dashboard for learner progress.</p>
+                    </div>
+                    <div class="d-flex gap-2 w-100 w-md-auto">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-profile flex-fill flex-md-auto">
+                            <i class="bi bi-pencil-fill me-1"></i> Edit Profile
+                        </a>
+                        <a href="{% url 'edit_profile' %}#password"
+                            class="btn btn-outline-primary btn-profile flex-fill flex-md-auto">
+                            <i class="bi bi-lock-fill me-1"></i> Change Password
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row gx-4 gy-4 align-items-start">
+                    <div class="col-xl-3">
+                        <div class="profile-summary p-4 rounded-4 bg-light">
+                            {% if profile and profile.image %}
+                            <img src="{{ profile.image.url }}" alt="Profile Image" class="profile-avatar mb-3">
+                            {% else %}
+                            <img src="{% static 'images/default-profile.svg' %}" alt="Profile Image"
+                                class="profile-avatar mb-3">
+                            {% endif %}
+                            <h5 class="mb-1">{{ user.get_full_name|default:user.username|default:user.email }}</h5>
+                            <p class="text-muted small mb-1">{{ user.email|default:'-' }}</p>
+                            <p class="text-muted small mb-1">{{ profile.phone|default:'No phone number' }}</p>
+                            <p class="text-muted small mb-3">Member Since {{ user.date_joined|date:'F Y' }}</p>
+                            <span class="status-badge mb-3">Online</span>
+                            <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary btn-sm upload-btn">
+                                Upload Photo
+                            </a>
                         </div>
-                        <div>
-                            <h5>About this account</h5>
-                            <p class="text-muted">You can update your profile information here once edit support is
-                                available.</p>
+                    </div>
+
+                    <div class="col-xl-9">
+                        <div class="row g-3 info-grid">
+                            <div class="col-sm-6">
+                                <div class="info-card">
+                                    <strong>Full Name</strong>
+                                    <span>{{ user.get_full_name|default:user.username|default:'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="info-card">
+                                    <strong>Email</strong>
+                                    <span>{{ user.email|default:'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="info-card">
+                                    <strong>Phone</strong>
+                                    <span>{{ profile.phone|default:'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="info-card">
+                                    <strong>Password</strong>
+                                    <span>********</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="info-card info-card-bio">
+                                    <strong>Bio</strong>
+                                    {% if profile and profile.bio %}
+                                    <span>{{ profile.bio }}</span>
+                                    {% else %}
+                                    <span class="text-muted">Add a short bio to share more about yourself.</span>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                        {% else %}
-                        <div class="alert alert-warning">
-                            You are not signed in yet. Please sign in or register to view your profile.
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="row g-3 mb-4 stats-row">
+            <div class="col-sm-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-light-primary text-primary mb-3">
+                            <i class="bi bi-journal-bookmark"></i>
+                        </div>
+                        <div class="stat-value">{{ stats.courses|default:0 }}</div>
+                        <div class="stat-label">Courses Enrolled</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-light-primary text-primary mb-3">
+                            <i class="bi bi-camera-video"></i>
+                        </div>
+                        <div class="stat-value">{{ stats.live_classes|default:0 }}</div>
+                        <div class="stat-label">Live Classes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-light-primary text-primary mb-3">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="stat-value">{{ stats.articles|default:0 }}</div>
+                        <div class="stat-label">Articles Read</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-light-primary text-primary mb-3">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div class="stat-value">{{ stats.certificates|default:0 }}</div>
+                        <div class="stat-label">Certificates</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-activity mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-column flex-sm-row gap-2">
+                <div>
+                    <h5 class="mb-1">Recent Activity</h5>
+                    <p class="text-muted mb-0">Latest platform updates from your learning journey.</p>
+                </div>
+            </div>
+
+            <div class="timeline-card card">
+                <div class="card-body">
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-primary">
+                            <i class="bi bi-bookmark-check"></i>
+                        </div>
+                        <div class="timeline-details">
+                            <h6>Joined Machine Learning Course</h6>
+                            <p class="mb-0 text-muted">Your learning journey just got smarter.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-card card">
+                <div class="card-body">
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-primary">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="timeline-details">
+                            <h6>Read Leadership Article</h6>
+                            <p class="mb-0 text-muted">New insights added to your study plan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-card card">
+                <div class="card-body">
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-primary">
+                            <i class="bi bi-camera-reels"></i>
+                        </div>
+                        <div class="timeline-details">
+                            <h6>Attended Live Class</h6>
+                            <p class="mb-0 text-muted">Your live session attendance was recorded.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            You are not signed in yet. Please sign in or register to view your profile.
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

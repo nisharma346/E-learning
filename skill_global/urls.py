@@ -9,5 +9,6 @@ urlpatterns = [
     path('live-classes/', views.live_classes, name='live_classes'),
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('about/', views.about, name='about'),
 ]

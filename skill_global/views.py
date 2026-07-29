@@ -1,7 +1,11 @@
-﻿from django.contrib.auth.hashers import make_password
+﻿from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import CustomUser, LiveClass, Article, Course, About
+from .models import CustomUser, Profile, LiveClass, Article, Course, About
+
+User = get_user_model()
 
 # Create your views here.
 
@@ -85,12 +89,85 @@ def register(request):
 
 def profile(request):
     user = request.user
+    profile = None
+    if user.is_authenticated:
+        profile, _ = Profile.objects.get_or_create(user=user)
+
     context = {
         'page_title': 'Profile',
         'page_description': 'View your account details and learning progress.',
         'user': user,
+        'profile': profile,
+        'stats': {
+            'courses': Course.objects.filter(is_active=True).count(),
+            'certificates': 5,
+            'live_classes': LiveClass.objects.filter(is_active=True).count(),
+            'articles': Article.objects.filter(is_published=True).count(),
+        },
     }
     return render(request, 'skill_global/profile.html', context)
+
+
+def edit_profile(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('profile')
+
+    profile, _ = Profile.objects.get_or_create(user=user)
+    errors = []
+
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        bio = request.POST.get('bio', '').strip()
+        profile_image = request.FILES.get('profile_image')
+        new_password = request.POST.get('new_password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+
+        if not full_name:
+            errors.append('Full Name is required.')
+        if not email:
+            errors.append('Email is required.')
+        elif User.objects.filter(email=email).exclude(pk=user.pk).exists():
+            errors.append('Email is already in use.')
+
+        if new_password or confirm_password:
+            if new_password != confirm_password:
+                errors.append('The new passwords do not match.')
+            elif len(new_password) < 8:
+                errors.append('Password must be at least 8 characters long.')
+
+        if not errors:
+            if hasattr(user, 'first_name') and hasattr(user, 'last_name'):
+                parts = full_name.split()
+                user.first_name = parts[0]
+                user.last_name = ' '.join(parts[1:]) if len(parts) > 1 else ''
+            elif hasattr(user, 'username'):
+                user.username = full_name
+
+            user.email = email
+            if new_password and hasattr(user, 'set_password'):
+                user.set_password(new_password)
+            user.save()
+
+            profile.phone = phone
+            profile.bio = bio
+            if profile_image:
+                profile.image = profile_image
+            profile.save()
+
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('profile')
+
+    context = {
+        'page_title': 'Edit Profile',
+        'page_description': 'Update your profile details.',
+        'user': user,
+        'profile': profile,
+        'errors': errors,
+    }
+    return render(request, 'skill_global/edit_profile.html', context)
 
 
 def about(request):
