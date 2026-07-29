@@ -1,20 +1,30 @@
-from django.contrib.auth.hashers import make_password
+﻿from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import CustomUser, LiveClass, Article
+from .models import CustomUser, LiveClass, Article, Course, About
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'skill_global/index.html')
+    courses = Course.objects.filter(is_active=True).order_by('title')[:3]
+    about = About.objects.first()
+    context = {
+        'page_title': 'Home',
+        'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
+        'courses': courses,
+        'about': about,
+    }
+    return render(request, 'skill_global/index.html', context)
 
 
 def courses(request):
+    courses = Course.objects.filter(is_active=True).order_by('title')
     context = {
         'page_title': 'Courses',
         'page_description': 'Browse premium courses designed to help you build career-ready skills.',
+        'courses': courses,
     }
-    return render(request, "skill_global/courses.html", context)
+    return render(request, 'skill_global/courses.html', context)
 
 
 def live_classes(request):
@@ -71,9 +81,23 @@ def register(request):
             context['success'] = 'Registration successful. You can now log in.'
 
     return render(request, 'skill_global/register.html', context)
+
+
+def profile(request):
+    user = request.user
+    context = {
+        'page_title': 'Profile',
+        'page_description': 'View your account details and learning progress.',
+        'user': user,
+    }
+    return render(request, 'skill_global/profile.html', context)
+
+
 def about(request):
+    about = About.objects.first()
     context = {
         'page_title': 'About Us',
-        'page_description': 'Learn. Practice. Grow. Build an industry-ready career with Skill Global.'
+        'page_description': 'Learn. Practice. Grow. Build an industry-ready career with Skill Global.',
+        'about': about,
     }
     return render(request, 'skill_global/about.html', context)

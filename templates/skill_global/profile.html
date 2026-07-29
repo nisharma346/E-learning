@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile | Skill Global{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="mb-4">My Profile</h2>
+                        {% if user.is_authenticated %}
+                        <div class="mb-4">
+                            <h5>Account details</h5>
+                            <p><strong>Name:</strong> {{ user.get_full_name|default:user.username|default:user.email }}
+                            </p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                        </div>
+                        <div>
+                            <h5>About this account</h5>
+                            <p class="text-muted">You can update your profile information here once edit support is
+                                available.</p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            You are not signed in yet. Please sign in or register to view your profile.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
