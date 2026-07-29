@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'skill_global' ##Second Changes App Name
 ]
 
+# Use the custom user model
+AUTH_USER_MODEL = 'skill_global.CustomUser'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

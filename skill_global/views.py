@@ -69,21 +69,25 @@ def register(request):
         phone = request.POST.get('phone', '').strip()
         password = request.POST.get('password', '').strip()
 
-        if not full_name or not email or not phone or not password:
+        if not full_name or not email or not password:
             context['error'] = 'Please fill in all fields.'
         elif User.objects.filter(email=email).exists():
             context['error'] = 'A user with that email already exists.'
         else:
-            first_name, *remaining = full_name.split()
-            last_name = ' '.join(remaining) if remaining else ''
+            # create user via custom manager using email as identifier
+            parts = full_name.split()
+            first_name = parts[0] if parts else ''
+            last_name = ' '.join(parts[1:]) if len(parts) > 1 else ''
             user = User.objects.create_user(
-                username=email,
                 email=email,
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
+                full_name=full_name,
+                phone=phone,
+                message='',
             )
-            profile = Profile.objects.get_or_create(user=user)[0]
+            profile, _ = Profile.objects.get_or_create(user=user)
             profile.phone = phone
             profile.save()
             auth_login(request, user)
@@ -126,14 +130,8 @@ def sign_in(request):
         email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '').strip()
 
+        # authenticate using the model's USERNAME_FIELD (email)
         user = authenticate(request, username=email, password=password)
-        if user is None:
-            try:
-                user_obj = User.objects.get(email=email)
-            except User.DoesNotExist:
-                user_obj = None
-            if user_obj is not None:
-                user = authenticate(request, username=user_obj.username, password=password)
 
         if user is not None:
             auth_login(request, user)
@@ -182,16 +180,11 @@ def edit_profile(request):
                 errors.append('Password must be at least 8 characters long.')
 
         if not errors:
-            if hasattr(user, 'first_name') and hasattr(user, 'last_name'):
-                parts = full_name.split()
-                user.first_name = parts[0]
-                user.last_name = ' '.join(parts[1:]) if len(parts) > 1 else ''
-            elif hasattr(user, 'username'):
-                user.username = full_name
-
+            parts = full_name.split()
+            user.first_name = parts[0] if parts else ''
+            user.last_name = ' '.join(parts[1:]) if len(parts) > 1 else ''
+            user.full_name = full_name
             user.email = email
-            if hasattr(user, 'username'):
-                user.username = email
             if new_password and hasattr(user, 'set_password'):
                 user.set_password(new_password)
             user.save()
