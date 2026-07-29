@@ -1,13 +1,7 @@
 from django.contrib import admin
-from .models import CustomUser, About, Course, LiveClass, Article
+from .models import About, Course, LiveClass, Article
 
 # Register your models here.
-
-@admin.register(CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone')
-    search_fields = ('name', 'email', 'phone')
-
 
 @admin.register(About)
 class AboutAdmin(admin.ModelAdmin):

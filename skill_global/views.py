@@ -1,9 +1,8 @@
 ﻿from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import CustomUser, Profile, LiveClass, Article, Course, About
+from .models import Profile, LiveClass, Article, Course, About
 
 User = get_user_model()
 
@@ -66,23 +65,29 @@ def register(request):
     }
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         phone = request.POST.get('phone', '').strip()
         password = request.POST.get('password', '').strip()
 
         if not full_name or not email or not phone or not password:
             context['error'] = 'Please fill in all fields.'
-        elif CustomUser.objects.filter(email=email).exists():
+        elif User.objects.filter(email=email).exists():
             context['error'] = 'A user with that email already exists.'
         else:
-            hashed_password = make_password(password)
-            CustomUser.objects.create(
-                name=full_name,
+            first_name, *remaining = full_name.split()
+            last_name = ' '.join(remaining) if remaining else ''
+            user = User.objects.create_user(
+                username=email,
                 email=email,
-                phone=phone,
-                password=hashed_password,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
             )
-            context['success'] = 'Registration successful. You can now log in.'
+            profile = Profile.objects.get_or_create(user=user)[0]
+            profile.phone = phone
+            profile.save()
+            auth_login(request, user)
+            return redirect('profile')
 
     return render(request, 'skill_global/register.html', context)
 
@@ -106,6 +111,44 @@ def profile(request):
         },
     }
     return render(request, 'skill_global/profile.html', context)
+
+
+def sign_in(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
+
+    context = {
+        'page_title': 'Sign In',
+        'page_description': 'Sign in to access your Skill Global account.'
+    }
+
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '').strip()
+
+        user = authenticate(request, username=email, password=password)
+        if user is None:
+            try:
+                user_obj = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user_obj = None
+            if user_obj is not None:
+                user = authenticate(request, username=user_obj.username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, 'Successfully signed in.')
+            return redirect('profile')
+
+        context['error'] = 'Invalid email or password.'
+
+    return render(request, 'skill_global/login.html', context)
+
+
+def sign_out(request):
+    auth_logout(request)
+    messages.success(request, 'You have been signed out.')
+    return redirect('home')
 
 
 def edit_profile(request):
@@ -147,6 +190,8 @@ def edit_profile(request):
                 user.username = full_name
 
             user.email = email
+            if hasattr(user, 'username'):
+                user.username = email
             if new_password and hasattr(user, 'set_password'):
                 user.set_password(new_password)
             user.save()

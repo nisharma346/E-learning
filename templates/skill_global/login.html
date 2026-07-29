@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In | Skill Global{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="profile-page py-4">
+    <div class="container">
+        <div class="card profile-card mx-auto mb-4" style="max-width: 520px;">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+                    <div>
+                        <h5 class="profile-title mb-1">Sign In</h5>
+                        <p class="text-muted mb-0">Access your Skill Global account to manage your profile.</p>
+                    </div>
+                    <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-profile flex-fill flex-md-auto">
+                        Register
+                    </a>
+                </div>
+
+                {% if error %}
+                <div class="alert alert-danger rounded-4 mb-4">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
