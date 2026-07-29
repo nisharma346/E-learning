@@ -21,21 +21,20 @@
             <ul class="navbar-nav menu-section mb-0 align-items-center">
                 <li class="nav-item">
                     <a href="{% url 'home' %}"
-                        class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" {% if
-                        request.resolver_match.url_name=='home' %}aria-current="page" {% endif %}>
+                        class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-                        href="{% url 'about' %}" {% if request.resolver_match.url_name=='about' %}aria-current="page" {%
-                        endif %}>About</a>
+                    <a href="{% url 'about' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                        About
+                    </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
-                        href="{% url 'courses' %}" id="coursesDropdown" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false" {% if request.resolver_match.url_name=='courses' %}aria-current="page" {%
-                        endif %}>
+                    <a href="{% url 'courses' %}"
+                        class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
+                        id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Courses
                     </a>
                     <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="coursesDropdown">
@@ -45,19 +44,22 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'live_classes' %}active{% endif %}"
-                        href="{% url 'live_classes' %}" {% if request.resolver_match.url_name=='live_classes'
-                        %}aria-current="page" {% endif %}>Live Classes</a>
+                    <a href="{% url 'live_classes' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'live_classes' %}active{% endif %}">
+                        Live Classes
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'articles' %}active{% endif %}"
-                        href="{% url 'articles' %}" {% if request.resolver_match.url_name=='articles'
-                        %}aria-current="page" {% endif %}>Articles</a>
+                    <a href="{% url 'articles' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'articles' %}active{% endif %}">
+                        Articles
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-                        href="{% url 'contact' %}" {% if request.resolver_match.url_name=='contact'
-                        %}aria-current="page" {% endif %}>Contact</a>
+                    <a href="{% url 'contact' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                        Contact
+                    </a>
                 </li>
             </ul>
         </div>
@@ -87,20 +89,21 @@
     <div class="offcanvas-body">
         <ul class="navbar-nav mb-3">
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                    href="{% url 'home' %}" {% if request.resolver_match.url_name=='home' %}aria-current="page" {% endif
-                    %}>Home</a>
+                <a href="{% url 'home' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    Home
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-                    href="{% url 'about' %}" {% if request.resolver_match.url_name=='about' %}aria-current="page" {%
-                    endif %}>About</a>
+                <a href="{% url 'about' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                    About
+                </a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
-                    href="{% url 'courses' %}" id="mobileCoursesDropdown" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false" {% if request.resolver_match.url_name=='courses' %}aria-current="page" {%
-                    endif %}>
+                <a href="{% url 'courses' %}"
+                    class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
+                    id="mobileCoursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Courses
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="mobileCoursesDropdown">
@@ -110,19 +113,22 @@
                 </ul>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'live_classes' %}active{% endif %}"
-                    href="{% url 'live_classes' %}" {% if request.resolver_match.url_name=='live_classes'
-                    %}aria-current="page" {% endif %}>Live Classes</a>
+                <a href="{% url 'live_classes' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'live_classes' %}active{% endif %}">
+                    Live Classes
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'articles' %}active{% endif %}"
-                    href="{% url 'articles' %}" {% if request.resolver_match.url_name=='articles' %}aria-current="page"
-                    {% endif %}>Articles</a>
+                <a href="{% url 'articles' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'articles' %}active{% endif %}">
+                    Articles
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-                    href="{% url 'contact' %}" {% if request.resolver_match.url_name=='contact' %}aria-current="page" {%
-                    endif %}>Contact</a>
+                <a href="{% url 'contact' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                    Contact
+                </a>
             </li>
         </ul>
 
