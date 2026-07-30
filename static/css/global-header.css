@@ -1,11 +1,14 @@
+body {
+    padding-top: var(--navbar-height, 78px);
+}
+
 .global-header-banner {
     position: relative;
-    min-height: 320px;
     display: flex;
     align-items: center;
     background: #0f2340;
     color: #fff;
-    padding: calc(3rem + var(--navbar-height, 78px)) 0 3rem;
+    padding: 42px 0;
     margin: 0 0 2rem;
     width: 100%;
     border-radius: 0;
@@ -47,28 +50,28 @@
 }
 
 .global-header-label {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 700;
-    letter-spacing: 0.28rem;
+    letter-spacing: 0.1875rem;
     text-transform: uppercase;
     color: #f9c74f;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
     animation: globalHeaderFade 0.9s ease both;
 }
 
 .global-header-title {
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    line-height: 1.12;
-    margin-bottom: 1rem;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.08;
+    margin-bottom: 12px;
     letter-spacing: -0.02em;
     animation: globalHeaderFade 1.1s ease both;
 }
 
 .global-header-description {
-    max-width: 700px;
-    margin: 0 auto 1.25rem;
-    font-size: 1.05rem;
+    max-width: 650px;
+    margin: 0 auto 20px;
+    font-size: 1.125rem;
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.9);
     animation: globalHeaderFade 1.25s ease both;
@@ -77,10 +80,10 @@
 .global-header-breadcrumb {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.7rem 1rem;
+    gap: 0.45rem;
+    padding: 10px 22px;
     border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
+    border-radius: 25px;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
@@ -90,6 +93,7 @@
 .global-header-breadcrumb a {
     color: #fff;
     text-decoration: none;
+    font-size: 0.9375rem;
     font-weight: 600;
 }
 
@@ -115,29 +119,35 @@
 
 @media (max-width: 991px) {
     .global-header-banner {
-        min-height: 260px;
-        padding: 2.6rem 0;
+        padding: 45px 0;
+    }
+
+    .global-header-title {
+        font-size: 2.5rem;
     }
 }
 
 @media (max-width: 767px) {
     .global-header-banner {
-        min-height: 220px;
-        padding: 2rem 0;
+        padding: 35px 0;
         border-radius: 0;
     }
 
     .global-header-label {
-        font-size: 0.72rem;
-        letter-spacing: 0.2rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.1875rem;
+    }
+
+    .global-header-title {
+        font-size: 1.875rem;
     }
 
     .global-header-description {
-        font-size: 0.95rem;
+        font-size: 0.9375rem;
     }
 
     .global-header-breadcrumb {
-        font-size: 0.9rem;
-        padding: 0.6rem 0.85rem;
+        font-size: 0.9375rem;
+        padding: 10px 22px;
     }
 }

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
-    --navbar-height: 78px;
+    --navbar-height: 60px;
     --navbar-bg: #ffffff;
     --primary-blue: #0D6EFD;
     --dark-text: #1F2937;
