@@ -31,17 +31,78 @@
                         About
                     </a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown courses-mega-dropdown">
                     <a href="{% url 'courses' %}"
                         class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
-                        id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        id="coursesDropdown" role="button" aria-expanded="false">
                         Courses
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="coursesDropdown">
-                        <li><a class="dropdown-item" href="{% url 'courses' %}">All Courses</a></li>
-                        <li><a class="dropdown-item" href="#popular">Popular</a></li>
-                        <li><a class="dropdown-item" href="#new">New Launches</a></li>
-                    </ul>
+                    <div class="dropdown-menu mega-menu" aria-labelledby="coursesDropdown">
+                        <div class="mega-menu-header">
+                            <div>
+                                <h6>Explore Courses</h6>
+                            </div>
+                            <a href="{% url 'courses' %}" class="mega-view-all">View All</a>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="mega-section">
+                                    <div class="mega-section-title">
+                                        <span class="mega-icon programming"><i class="bi bi-code-slash"></i></span>
+                                        <span>Programming</span>
+                                    </div>
+                                    <ul class="mega-links">
+                                        <li><a href="{% url 'courses' %}">Python Programming</a></li>
+                                        <li><a href="{% url 'courses' %}">Java Programming</a></li>
+                                        <li><a href="{% url 'courses' %}">C Programming</a></li>
+                                    </ul>
+                                </div>
+                                <div class="mega-section">
+                                    <div class="mega-section-title">
+                                        <span class="mega-icon web"><i class="bi bi-window-stack"></i></span>
+                                        <span>Web Development</span>
+                                    </div>
+                                    <ul class="mega-links">
+                                        <li><a href="{% url 'courses' %}">HTML & CSS</a></li>
+                                        <li><a href="{% url 'courses' %}">JavaScript</a></li>
+                                        <li><a href="{% url 'courses' %}">Django</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mega-section">
+                                    <div class="mega-section-title">
+                                        <span class="mega-icon data"><i class="bi bi-graph-up-arrow"></i></span>
+                                        <span>Data Science</span>
+                                    </div>
+                                    <ul class="mega-links">
+                                        <li><a href="{% url 'courses' %}">Data Analytics</a></li>
+                                        <li><a href="{% url 'courses' %}">Machine Learning</a></li>
+                                        <li><a href="{% url 'courses' %}">Artificial Intelligence</a></li>
+                                    </ul>
+                                </div>
+                                <div class="mega-section">
+                                    <div class="mega-section-title">
+                                        <span class="mega-icon design"><i class="bi bi-palette"></i></span>
+                                        <span>Design</span>
+                                    </div>
+                                    <ul class="mega-links">
+                                        <li><a href="{% url 'courses' %}">Graphic Design</a></li>
+                                        <li><a href="{% url 'courses' %}">UI/UX Design</a></li>
+                                        <li><a href="{% url 'courses' %}">Canva</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mega-footer">
+                            <span class="mega-popular-label">Popular:</span>
+                            <a href="{% url 'courses' %}">Python</a>
+                            <a href="{% url 'courses' %}">Java</a>
+                            <a href="{% url 'courses' %}">Django</a>
+                            <a href="{% url 'courses' %}">Web Development</a>
+                            <a href="{% url 'courses' %}">AI</a>
+                        </div>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'live_classes' %}"
@@ -102,16 +163,25 @@
                     About
                 </a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown courses-mega-dropdown">
                 <a href="{% url 'courses' %}"
                     class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'courses' %}active{% endif %}"
                     id="mobileCoursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Courses
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="mobileCoursesDropdown">
-                    <li><a class="dropdown-item" href="{% url 'courses' %}">All Courses</a></li>
-                    <li><a class="dropdown-item" href="#popular">Popular</a></li>
-                    <li><a class="dropdown-item" href="#new">New Launches</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Python Programming</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Java Programming</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">C Programming</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">HTML & CSS</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">JavaScript</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Django</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Data Analytics</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Machine Learning</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Artificial Intelligence</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">Graphic Design</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">UI/UX Design</a></li>
+                    <li><a class="dropdown-item" href="{% url 'courses' %}">View All Courses</a></li>
                 </ul>
             </li>
             <li class="nav-item">

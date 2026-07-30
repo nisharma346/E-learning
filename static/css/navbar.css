@@ -108,7 +108,154 @@
     border-bottom: 2px solid #0d6efd;
 }
 
+.courses-mega-dropdown .mega-menu {
+    display: block;
+    width: min(680px, calc(100vw - 2rem));
+    padding: 1rem 1.1rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(229, 231, 235, 0.95);
+    background: #ffffff;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    z-index: 1050;
+}
 
+.courses-mega-dropdown:hover .mega-menu,
+.courses-mega-dropdown.show .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.mega-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0 0.85rem;
+    border-bottom: 1px solid #eef2f7;
+    margin-bottom: 0.95rem;
+}
+
+.mega-menu-header h6 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-view-all {
+    color: #0d6efd;
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-section {
+    padding: 0.35rem 0 0.75rem;
+}
+
+.mega-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.45rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.mega-icon.programming {
+    background: linear-gradient(135deg, #0d6efd, #3b82f6);
+}
+
+.mega-icon.web {
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+}
+
+.mega-icon.data {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+}
+
+.mega-icon.design {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.mega-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.mega-links a {
+    display: block;
+    padding: 0.45rem 0.6rem;
+    border-radius: 8px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-links a:hover,
+.mega-links a:focus {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.08);
+    transform: translateX(2px);
+}
+
+.mega-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    padding-top: 0.9rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.mega-popular-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #111827;
+    margin-right: 0.25rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-footer a {
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mega-footer a:hover {
+    background: #e8f1ff;
+    color: #0d6efd;
+}
 
 .search-form {
     min-width: 250px;
