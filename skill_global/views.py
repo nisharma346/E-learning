@@ -18,7 +18,10 @@ def index(request):
         is_active=True,
         scheduled_at__gte=timezone.now()
     ).order_by('scheduled_at')[:3]
-    latest_articles = Article.objects.filter(is_published=True).order_by('-published_at')[:3]
+    latest_articles = list(Article.objects.filter(is_published=True).order_by('-published_at')[:3])
+    for article in latest_articles:
+        word_count = len(article.content.split()) if article.content else 0
+        article.reading_time = max(1, math.ceil(word_count / 200))
     context = {
         'page_title': 'Home',
         'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
