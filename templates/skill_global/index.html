@@ -159,6 +159,10 @@
         </div>
     </section>
 
+
+
+
+
     <section class="about-skill-global-section">
         <div class="container">
             <div class="about-skill-global-card reveal">
@@ -209,6 +213,138 @@
             </div>
         </div>
     </section>
+    <section class="featured-courses-section">
+        <div class="container">
+
+            <div class="section-heading text-center mb-5">
+                <span class="section-tag">Popular Courses</span>
+                <h2>Featured Courses</h2>
+                <p>Learn the most in-demand skills from industry experts.</p>
+            </div>
+
+            <div class="row g-4">
+
+                {% for course in featured_courses %}
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="course-card">
+
+                        <div class="course-image">
+                            <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                        </div>
+
+                        <div class="course-body">
+
+                            <span class="course-category">
+                                {{ course.category.name }}
+                            </span>
+
+                            <h4>{{ course.title }}</h4>
+
+                            <p>
+                                {{ course.description|truncatewords:18 }}
+                            </p>
+
+                            <div class="course-meta">
+                                <span>
+                                    <i class="bi bi-clock"></i>
+                                    {{ course.duration }}
+                                </span>
+
+                                <span>
+                                    <i class="bi bi-people"></i>
+                                    {{ course.students }} Students
+                                </span>
+                            </div>
+
+                            <div class="course-footer">
+
+                                <h5>
+                                    ₹{{ course.price }}
+                                </h5>
+
+                                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">
+                                    Enroll Now
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center">
+                    <h5>No Featured Courses Available</h5>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="live-classes-section">
+        <div class="container">
+            <div class="live-classes-header text-center mx-auto mb-5">
+                <span class="live-classes-eyebrow">INTERACTIVE LEARNING</span>
+                <h2 class="live-classes-title">Upcoming Live Classes</h2>
+                <p class="live-classes-subtitle">Join our expert-led live sessions and learn industry-ready skills in
+                    real time.</p>
+            </div>
+
+            {% if live_classes %}
+            <div class="row g-4">
+                {% for live_class in live_classes %}
+                <div class="col-lg-4 col-md-6">
+                    <article class="live-class-card">
+                        <div class="live-class-image-wrap">
+                            {% if live_class.image %}
+                            <img src="{{ live_class.image.url }}" alt="{{ live_class.title }}" class="live-class-image">
+                            {% else %}
+                            <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ live_class.title }}"
+                                class="live-class-image">
+                            {% endif %}
+                            <span class="live-class-badge">Live</span>
+                        </div>
+                        <div class="live-class-body">
+                            <h3>{{ live_class.title }}</h3>
+                            <div class="live-class-meta">
+                                {% if live_class.instructor %}
+                                <span><i class="bi bi-person-circle"></i> {{ live_class.instructor }}</span>
+                                {% endif %}
+                                {% if live_class.scheduled_at %}
+                                <span><i class="bi bi-calendar3"></i> {{ live_class.scheduled_at|date:"M d, Y" }}</span>
+                                <span><i class="bi bi-clock"></i> {{ live_class.scheduled_at|time:"g:i A" }}</span>
+                                {% endif %}
+                            </div>
+                            {% if live_class.description %}
+                            <p class="live-class-description">{{ live_class.description|truncatewords:18 }}</p>
+                            {% endif %}
+                            <a href="{% url 'live_classes' %}" class="btn btn-primary live-class-btn">View Details</a>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <h5 class="mb-0">No Upcoming Live Classes Available</h5>
+            </div>
+            {% endif %}
+
+            <div class="view-all-live-wrap text-center mt-4">
+                <a href="{% url 'live_classes' %}" class="btn btn-outline-primary view-all-live-btn">View All Live
+                    Classes</a>
+            </div>
+        </div>
+    </section>
+
 
     <footer class="site-footer">
         <div class="container">

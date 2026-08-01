@@ -2,6 +2,7 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from .models import Profile, LiveClass, Article, Course, About
 
 User = get_user_model()
@@ -11,11 +12,16 @@ User = get_user_model()
 def index(request):
     courses = Course.objects.filter(is_active=True).order_by('title')[:3]
     about = About.objects.first()
+    live_classes = LiveClass.objects.filter(
+        is_active=True,
+        scheduled_at__gte=timezone.now()
+    ).order_by('scheduled_at')[:3]
     context = {
         'page_title': 'Home',
         'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
         'courses': courses,
         'about': about,
+        'live_classes': live_classes,
     }
     return render(request, 'skill_global/index.html', context)
 
