@@ -149,7 +149,7 @@
 }
 
 .stats-section {
-    padding: 2.2rem 0 3rem;
+    padding: 2.2rem 0 1.5rem;
     background: #ffffff;
 }
 
@@ -200,7 +200,7 @@
 ==============================*/
 
 .recognition-announcement-section {
-    padding: 45px 0 70px;
+    padding: 18px 0 18px;
     background: #fff;
 }
 
@@ -213,8 +213,7 @@
     max-width: 1050px;
     margin: 0 auto;
 
-    padding: 16px 28px;
-    /* pehle 22px 35px tha */
+    padding: 14px 28px;
 
     border: 1.5px solid #d4af37;
     border-radius: 16px;
@@ -257,6 +256,21 @@
     color: #d49b00;
     white-space: nowrap;
     text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        padding: 1.5rem 0 1.25rem;
+    }
+
+    .recognition-announcement-section {
+        padding: 14px 0 14px;
+    }
+
+    .recognition-announcement-card {
+        padding: 12px 18px;
+        gap: 14px;
+    }
 }
 
 .recognition-announcement-link:hover {
