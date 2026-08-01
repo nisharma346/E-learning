@@ -191,6 +191,199 @@
     font-size: 0.92rem;
 }
 
+/* ===========================
+   Recognition Announcement
+=========================== */
+
+/* ==============================
+   Recognition Announcement
+==============================*/
+
+.recognition-announcement-section {
+    padding: 45px 0 70px;
+    background: #fff;
+}
+
+.recognition-announcement-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+
+    max-width: 1050px;
+    margin: 0 auto;
+
+    padding: 16px 28px;
+    /* pehle 22px 35px tha */
+
+    border: 1.5px solid #d4af37;
+    border-radius: 16px;
+
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .05);
+}
+
+.recognition-announcement-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+    flex-shrink: 0;
+
+    background: #fff7e5;
+    color: #d4af37;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recognition-announcement-text {
+    font-size: 16px;
+    /* pehle 22px */
+    font-weight: 600;
+    line-height: 1.45;
+    color: #1d2433;
+}
+
+.recognition-announcement-right {
+    border-left: 1px solid #ead7a0;
+    padding-left: 24px;
+}
+
+.recognition-announcement-link {
+    font-size: 15px;
+    font-weight: 700;
+    color: #d49b00;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.recognition-announcement-link:hover {
+    color: #b88300;
+}
+
+.recognition-announcement-right a {
+
+    text-decoration: none;
+
+    color: #d9a11d;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    transition: .3s;
+
+}
+
+.recognition-announcement-right a:hover {
+
+    color: #111;
+
+}
+
+.recognition-announcement-right i {
+
+    margin-left: 8px;
+
+}
+
+.recognition-announcement-center {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex: 1;
+}
+
+@media(max-width:991px) {
+
+    .recognition-announcement-card {
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+    .recognition-announcement-right {
+
+        border: none;
+
+        padding: 0;
+
+        text-align: center;
+
+        min-width: auto;
+
+    }
+
+    .recognition-announcement-text {
+
+        font-size: 24px;
+
+    }
+
+}
+
+@media(max-width:576px) {
+
+    .recognition-announcement-card {
+
+        padding: 25px;
+
+    }
+
+    .recognition-announcement-icon {
+
+        width: 70px;
+
+        height: 70px;
+
+        font-size: 28px;
+
+    }
+
+    .recognition-announcement-text {
+
+        font-size: 19px;
+
+    }
+
+    .recognition-announcement-right a {
+
+        font-size: 18px;
+
+    }
+
+}
+
+@media(max-width:991px) {
+
+    .recognition-announcement-card {
+
+        flex-direction: column;
+
+        text-align: center;
+
+        padding: 30px;
+
+    }
+
+    .recognition-announcement-left {
+
+        min-width: auto;
+
+    }
+
+    .recognition-announcement-center {
+
+        flex-direction: column;
+
+    }
+
+}
+
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -237,4 +430,37 @@
     .recognition-subtext {
         font-size: 14px;
     }
+}
+
+@media(max-width:768px) {
+
+    .recognition-announcement-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 18px;
+        padding: 18px;
+    }
+
+    .recognition-announcement-center {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .recognition-announcement-right {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        width: 100%;
+    }
+
+    .recognition-announcement-text {
+        font-size: 15px;
+    }
+
+    .recognition-announcement-link {
+        font-size: 14px;
+    }
+
+
 }
