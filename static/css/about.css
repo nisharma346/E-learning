@@ -175,8 +175,25 @@
 }
 
 .about-skill-global-card .row.g-5 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     row-gap: 1.75rem;
     column-gap: 1.75rem;
+}
+
+@media (min-width: 992px) {
+    .about-skill-global-card .row.g-5 {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .about-skill-global-card .row.g-5>.col-lg-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        width: 50% !important;
+    }
 }
 
 .about-skill-global-label {
