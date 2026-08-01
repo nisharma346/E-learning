@@ -393,6 +393,61 @@
         </div>
     </section>
 
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-heading text-center mb-5">
+                <span class="section-tag">TESTIMONIALS</span>
+                <h2>What Our Students Say</h2>
+                <p>Real experiences from our learners. Their success is our greatest inspiration.</p>
+            </div>
+
+            {% if testimonials %}
+            <div class="row g-4">
+                {% for testimonial in testimonials %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card h-100">
+                        <div class="testimonial-card-top d-flex align-items-center gap-3 mb-4">
+                            {% if testimonial.photo %}
+                            <img src="{{ testimonial.photo.url }}" alt="{{ testimonial.student_name }}"
+                                class="testimonial-photo">
+                            {% else %}
+                            <img src="{% static 'images/default-profile.svg' %}" alt="{{ testimonial.student_name }}"
+                                class="testimonial-photo">
+                            {% endif %}
+                            <div>
+                                <h5 class="testimonial-name mb-1">{{ testimonial.student_name }}</h5>
+                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student' }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating mb-3">
+                            {% for i in '12345' %}
+                            <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="testimonial-text">{{ testimonial.review|truncatewords:30 }}</p>
+                        <div class="testimonial-footer mt-auto">
+                            {% if testimonial.verified %}
+                            <span class="verified-badge"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <h5 class="mb-0">No Testimonials Available</h5>
+            </div>
+            {% endif %}
+
+            <div class="view-all-live-wrap text-center mt-4">
+                <a href="{% url 'testimonials' %}" class="btn btn-outline-primary view-all-live-btn">View All
+                    Testimonials →</a>
+            </div>
+        </div>
+    </section>
+
 
     <footer class="site-footer">
         <div class="container">

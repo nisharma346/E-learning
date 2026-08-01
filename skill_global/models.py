@@ -41,7 +41,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=150, unique=True, blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
     full_name = models.CharField(max_length=255, blank=True)
-    phone = models.CharField(max_length=20, blank=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     message = models.TextField(blank=True, default='')
@@ -133,6 +133,26 @@ class LiveClass(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Testimonial(models.Model):
+    student_name = models.CharField(max_length=150)
+    designation = models.CharField(max_length=150, blank=True)
+    review = models.TextField()
+    rating = models.PositiveSmallIntegerField(default=5)
+    photo = models.ImageField(upload_to='testimonials/', blank=True, null=True)
+    verified = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Testimonial'
+        verbose_name_plural = 'Testimonials'
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.student_name
 
 
 class Article(models.Model):

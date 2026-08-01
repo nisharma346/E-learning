@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import About, Course, LiveClass, Article, Profile, CustomUser
+from .models import About, Course, LiveClass, Article, Profile, Testimonial, CustomUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 # Register your models here.
@@ -56,6 +56,14 @@ class LiveClassAdmin(admin.ModelAdmin):
     )
 
     ordering = ('scheduled_at',)
+
+
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ('student_name', 'designation', 'rating', 'verified', 'is_active', 'created_at')
+    list_filter = ('is_active', 'verified')
+    search_fields = ('student_name', 'designation', 'review')
+    readonly_fields = ('created_at', 'updated_at')
 
 
 class ProfileInline(admin.StackedInline):

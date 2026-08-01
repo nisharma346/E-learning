@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from .models import Profile, LiveClass, Article, Course, About
+from .models import Profile, LiveClass, Article, Course, About, Testimonial
 
 User = get_user_model()
 
@@ -22,6 +22,7 @@ def index(request):
     for article in latest_articles:
         word_count = len(article.content.split()) if article.content else 0
         article.reading_time = max(1, math.ceil(word_count / 200))
+    testimonials = Testimonial.objects.filter(is_active=True).order_by('-id')[:3]
     context = {
         'page_title': 'Home',
         'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
@@ -29,8 +30,19 @@ def index(request):
         'about': about,
         'live_classes': live_classes,
         'latest_articles': latest_articles,
+        'testimonials': testimonials,
     }
     return render(request, 'skill_global/index.html', context)
+
+
+def testimonials(request):
+    testimonials = Testimonial.objects.filter(is_active=True).order_by('-id')
+    context = {
+        'page_title': 'Testimonials',
+        'page_description': 'Read what learners are saying about Skill Global training and support.',
+        'testimonials': testimonials,
+    }
+    return render(request, 'skill_global/testimonials.html', context)
 
 
 def courses(request):
