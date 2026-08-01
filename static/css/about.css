@@ -88,14 +88,14 @@
 /* ================= HOME ABOUT SECTION ================= */
 
 .about-skill-global-section {
-    padding: 96px 0;
+    padding: 18px 0 60px;
     background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 }
 
 .about-skill-global-card {
     background: #fff;
     border-radius: 28px;
-    padding: 32px;
+    padding: 24px;
     box-shadow: 0 20px 60px rgba(15, 23, 42, .08);
     border: 1px solid rgba(37, 99, 235, .08);
 }
@@ -108,7 +108,8 @@
 .about-image-wrapper .about-image,
 .about-image-wrapper .about-image-placeholder {
     width: 100%;
-    min-height: 380px;
+    height: 420px;
+    min-height: 420px;
     border-radius: 20px;
     object-fit: cover;
     box-shadow: 0 16px 45px rgba(15, 23, 42, .10);
@@ -173,6 +174,11 @@
     padding-left: 8px;
 }
 
+.about-skill-global-card .row.g-5 {
+    row-gap: 1.75rem;
+    column-gap: 1.75rem;
+}
+
 .about-skill-global-label {
     color: #2563eb;
     text-transform: uppercase;
@@ -183,11 +189,11 @@
 }
 
 .about-skill-global-title {
-    font-size: clamp(2rem, 3.2vw, 3rem);
-    line-height: 1.1;
+    font-size: clamp(2.5rem, 3vw, 2.75rem);
+    line-height: 1.05;
     font-weight: 800;
     color: #0f172a;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .about-divider {
@@ -195,13 +201,13 @@
     height: 4px;
     border-radius: 999px;
     background: linear-gradient(90deg, #2563eb, #60a5fa);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .about-copy p {
     color: #475569;
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 1rem;
+    line-height: 1.7;
     margin-bottom: 0;
 }
 
@@ -214,7 +220,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-top: 28px;
+    margin-top: 20px;
     padding: 14px 28px;
     border-radius: 50px;
     background: #2563eb;
@@ -349,6 +355,10 @@
 }
 
 @media(max-width:768px) {
+
+    .about-skill-global-section {
+        padding: 20px 0 72px;
+    }
 
     .page-header {
         padding: 70px 0 50px;
