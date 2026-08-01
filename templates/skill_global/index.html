@@ -144,27 +144,51 @@
 
     <section class="about-skill-global-section">
         <div class="container">
-            <div class="about-skill-global-inner reveal">
-                <p class="about-skill-global-label">About Skill Global</p>
-                <h2 class="about-skill-global-title">About Skill Global</h2>
-                <div class="about-skill-global-copy">
-                    <p>
-                        At Skill Global, we are committed to empowering students and professionals through
-                        <strong>industry-focused</strong>
-                        education, <strong>expert mentorship</strong>, and <strong>practical learning</strong>
-                        experiences.
-                        Our goal is to help learners develop future-ready skills that meet the demands of today’s
-                        competitive job market.
-                    </p>
-                    <p>
-                        We provide <strong>live training</strong> programs, <strong>certification courses</strong>,
-                        project-based learning, and <strong>career guidance</strong> designed to bridge the gap between
-                        education and <strong>real-world experience</strong>.
-                        Every program is carefully crafted to help learners gain confidence, knowledge, and professional
-                        growth.
-                    </p>
+            <div class="about-skill-global-card reveal">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="about-image-wrapper">
+                            {% if about and about.image %}
+                            <img src="{{ about.image.url }}" alt="{{ about.title|default:'About Skill Global' }}"
+                                class="about-image">
+                            {% else %}
+                            <div class="about-image-placeholder">
+                                <i class="bi bi-image"></i>
+                                <span>About image will appear here</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="about-floating-card">
+                                <div class="about-floating-icon">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                </div>
+                                <div>
+                                    <h4>Empowering Learners</h4>
+                                    <p>Building Careers<br>Transforming Futures</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="about-content">
+                            <p class="about-skill-global-label">{{ about.subtitle|default:'ABOUT SKILL GLOBAL' }}</p>
+                            <h2 class="about-skill-global-title">{{ about.title|default:'About Skill Global' }}</h2>
+                            <div class="about-divider"></div>
+                            <div class="about-copy">
+                                {% if about and about.description %}
+                                <p>{{ about.description }}</p>
+                                {% else %}
+                                <p>Skill Global delivers practical, career-focused learning experiences designed to help
+                                    learners build confidence and grow professionally.</p>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'about' %}" class="about-skill-global-btn">
+                                Learn More About Us <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <a href="#" class="about-skill-global-btn">Learn More About Us</a>
             </div>
         </div>
     </section>
