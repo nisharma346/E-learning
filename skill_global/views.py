@@ -1,4 +1,6 @@
-﻿from django.contrib import messages
+﻿import math
+
+from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
@@ -16,12 +18,14 @@ def index(request):
         is_active=True,
         scheduled_at__gte=timezone.now()
     ).order_by('scheduled_at')[:3]
+    latest_articles = Article.objects.filter(is_published=True).order_by('-published_at')[:3]
     context = {
         'page_title': 'Home',
         'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
         'courses': courses,
         'about': about,
         'live_classes': live_classes,
+        'latest_articles': latest_articles,
     }
     return render(request, 'skill_global/index.html', context)
 

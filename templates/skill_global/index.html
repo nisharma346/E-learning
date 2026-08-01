@@ -345,6 +345,54 @@
         </div>
     </section>
 
+    <section class="latest-articles-section">
+        <div class="container">
+            <div class="section-heading text-center mb-5">
+                <span class="section-tag">KNOWLEDGE HUB</span>
+                <h2>Latest Articles</h2>
+                <p>Explore expert insights, career guidance, and industry trends.</p>
+            </div>
+
+            {% if latest_articles %}
+            <div class="row g-4">
+                {% for article in latest_articles %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-card-img">
+                        {% else %}
+                        <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ article.title }}"
+                            class="article-card-img">
+                        {% endif %}
+                        <div class="article-card-body">
+                            <span class="article-category">Article</span>
+                            <h3>{{ article.title }}</h3>
+                            <p>{{ article.summary|default:article.content|truncatewords:22 }}</p>
+                            <div class="article-card-meta">
+                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team'
+                                    }}</span>
+                                <span><i class="bi bi-clock"></i> {{ article.content|wordcount|add:'0' }} min
+                                    read</span>
+                            </div>
+                            <a href="{% url 'articles' %}" class="btn btn-primary article-card-btn">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <h5 class="mb-0">No Articles Available</h5>
+            </div>
+            {% endif %}
+
+            <div class="view-all-live-wrap text-center mt-4">
+                <a href="{% url 'articles' %}" class="btn btn-outline-primary view-all-live-btn">Read More Articles
+                    →</a>
+            </div>
+        </div>
+    </section>
+
 
     <footer class="site-footer">
         <div class="container">
