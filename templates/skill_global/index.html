@@ -20,6 +20,7 @@
     <link href="{% static 'css/recognition.css' %}" rel="stylesheet">
     <link href="{% static 'css/courses.css' %}" rel="stylesheet">
     <link href="{% static 'css/footer.css' %}" rel="stylesheet">
+    <link href="{% static 'css/cta.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -407,6 +408,36 @@
                 <a href="{% url 'testimonials' %}" class="btn btn-outline-primary view-all-live-btn">View All
                     Testimonials →</a>
             </div>
+        </div>
+    </section>
+    <section class="cta-section">
+        <div class="container">
+
+            <div class="cta-content">
+
+                <h2>Begin Your Professional Transformation</h2>
+
+                <p>
+                    Join thousands of learners who are building practical skills,
+                    earning industry-recognized certifications, and accelerating
+                    their careers with Skill Global.
+                </p>
+
+                <div class="cta-buttons">
+
+                    <a href="{% url 'register' %}" class="btn-primary-cta">
+                        Register Now
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+
+                    <a href="{% url 'courses' %}" class="btn-outline-cta">
+                        Browse Courses
+                    </a>
+
+                </div>
+
+            </div>
+
         </div>
     </section>
 
