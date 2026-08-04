@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title|default:'Course Details' }} | Skill Global{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        {% if course %}
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                {% if course.image %}
+                <img src="{{ course.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ course.title }}">
+                {% else %}
+                <img src="{% static 'images/default-profile.svg' %}" class="img-fluid rounded shadow-sm"
+                    alt="{{ course.title }}">
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <h2 class="mb-3">{{ course.title }}</h2>
+                <p class="text-muted mb-4">{{ course.short_description }}</p>
+                <ul class="list-unstyled">
+                    <li><strong>Category:</strong> {{ course.category }}</li>
+                    <li><strong>Instructor:</strong> {{ course.instructor }}</li>
+                    <li><strong>Duration:</strong> {{ course.duration }}</li>
+                    <li><strong>Level:</strong> {{ course.level }}</li>
+                    <li><strong>Price:</strong> {{ course.price }}</li>
+                </ul>
+                <h5 class="mt-4">Full Description</h5>
+                <p class="text-muted">{{ course.description }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <h2>Course not found</h2>
+            <p class="text-muted">The requested course is not available.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

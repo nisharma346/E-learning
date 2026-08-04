@@ -55,6 +55,16 @@ def courses(request):
     return render(request, 'skill_global/courses.html', context)
 
 
+def course_detail(request, id):
+    course = Course.objects.filter(id=id, is_active=True).first()
+    context = {
+        'page_title': course.title if course else 'Course Details',
+        'page_description': 'View detailed information about this course.',
+        'course': course,
+    }
+    return render(request, 'skill_global/course_detail.html', context)
+
+
 def live_classes(request):
     classes = LiveClass.objects.filter(is_active=True).order_by('scheduled_at')
     context = {
