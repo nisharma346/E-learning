@@ -23,8 +23,9 @@
                         <h5 class="card-title">{{ article.title }}</h5>
                         <p class="card-text text-muted">{{ article.summary|default:article.content|truncatechars:140 }}
                         </p>
-                        <p class="text-secondary small mb-2">By {{ article.author|default:'Skill Global' }} · {{
-                            article.published_at|date:'M d, Y' }}</p>
+                        <p class="text-secondary small mb-2">
+                            By{{ article.author|default:'Skill Global' }} · {{article.published_at|date:'M d, Y' }}
+                        </p>
                         <a href="#" class="stretched-link text-decoration-none">Read article</a>
                     </div>
                 </div>

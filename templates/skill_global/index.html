@@ -189,46 +189,46 @@
 
                 {% for course in featured_courses %}
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 d-flex">
 
-                    <div class="course-card">
+                    <div class="course-card h-100">
 
-                        <div class="course-image">
-                            <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                        <div class="course-image-wrap position-relative">
+                            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
+                            <span class="course-category-badge">{{ course.category.name }}</span>
                         </div>
 
-                        <div class="course-body">
+                        <div class="course-body d-flex flex-column">
 
-                            <span class="course-category">
-                                {{ course.category.name }}
-                            </span>
+                            <div class="course-title-row">
+                                <h4 class="course-title">{{ course.title }}</h4>
+                                <span class="course-level-badge">{{ course.level|default:'Beginner' }}</span>
+                            </div>
 
-                            <h4>{{ course.title }}</h4>
-
-                            <p>
+                            <p class="course-description">
                                 {{ course.description|truncatewords:18 }}
                             </p>
 
                             <div class="course-meta">
-                                <span>
+                                <span class="course-meta-item">
+                                    <i class="bi bi-person-circle"></i>
+                                    {{ course.instructor|default:'Expert Instructor' }}
+                                </span>
+
+                                <span class="course-meta-item">
                                     <i class="bi bi-clock"></i>
                                     {{ course.duration }}
                                 </span>
-
-                                <span>
-                                    <i class="bi bi-people"></i>
-                                    {{ course.students }} Students
-                                </span>
                             </div>
 
-                            <div class="course-footer">
+                            <div class="course-footer mt-auto">
 
-                                <h5>
-                                    ₹{{ course.price }}
+                                <h5 class="course-price">
+                                    {% if course.price %}₹{{ course.price }}{% else %}Free{% endif %}
                                 </h5>
 
-                                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">
-                                    Enroll Now
+                                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary course-btn">
+                                    View Details
                                 </a>
 
                             </div>
@@ -332,8 +332,8 @@
                             <h3>{{ article.title }}</h3>
                             <p>{{ article.summary|default:article.content|truncatewords:22 }}</p>
                             <div class="article-card-meta">
-                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team'
-                                    }}</span>
+                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team' }}
+                                </span>
                                 <span><i class="bi bi-clock"></i> {{ article.content|wordcount|add:'0' }} min
                                     read</span>
                             </div>
@@ -456,10 +456,12 @@
                 <div class="col-lg-2 col-md-6">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#">Live Classes</a></li>
-                        <li><a href="#">Mentors</a></li>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'courses' %}">Courses</a></li>
+                        <li><a href="{% url 'live_classes' %}">Live Classes</a></li>
+                        <li><a href="{% url 'articles' %}">Articles</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6">

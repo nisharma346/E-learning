@@ -27,8 +27,8 @@
                     <div class="card-body">
                         <span class="badge bg-primary mb-3">{{ cls.topic|default:"Live Class" }}</span>
                         <h5 class="card-title">{{ cls.title }}</h5>
-                        <p class="card-text text-muted">{{ cls.description|default:"Join this live session for practical
-                            learning and direct guidance." }}</p>
+                        <p class="card-text text-muted">
+                            {{ cls.description|default:"Join this live session for practical learning and direct guidance." }}</p>
                         <p class="mb-1"><strong>Instructor:</strong> {{ cls.instructor|default:"Skill Global Team" }}
                         </p>
                         <p class="mb-1"><strong>Duration:</strong> {{ cls.duration|default:"60 mins" }}</p>

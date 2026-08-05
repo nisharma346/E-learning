@@ -44,10 +44,13 @@
                 <div class="col-lg-2 col-md-6">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#">Live Classes</a></li>
-                        <li><a href="#">Mentors</a></li>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'courses' %}">Courses</a></li>
+                        <li><a href="{% url 'live_classes' %}">Live Classes</a></li>
+                        <li><a href="{% url 'articles' %}">Articles</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                        <li><a href="#"><!-- TODO: Add mentors page URL later -->Mentors</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6">
