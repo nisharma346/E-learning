@@ -19,64 +19,192 @@
         height: 220px;
         object-fit: cover;
     }
+
+    .course-filter-section {
+        background: #fff;
+        margin-top: 30px;
+        margin-bottom: 35px;
+        padding: 20px 18px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .category-filter-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-filter-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-filter-wrap {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: nowrap;
+        min-width: 100%;
+    }
+
+    .category-filter-btn {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        color: #4B5563;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+    }
+
+    .category-filter-btn:hover,
+    .category-filter-btn:focus-visible {
+        background: #0D6EFD;
+        color: #fff;
+        border-color: #0D6EFD;
+        outline: none;
+        box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.18);
+    }
+
+    .category-filter-btn.active {
+        background: #0D6EFD;
+        color: #fff;
+        border-color: #0D6EFD;
+    }
+
+    .course-grid-item {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .course-grid-item.fade-in {
+        animation: filterFade 0.35s ease;
+    }
+
+    @keyframes filterFade {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="text-uppercase text-primary fw-semibold">Top courses</span>
-            <h2 class="mt-3">Explore skills that move your career forward.</h2>
-            <p class="text-muted mx-auto mt-3" style="max-width: 700px;">
-                Discover our premium course catalog featuring practical training, expert mentorship, and career-ready
-                learning paths.
-            </p>
-        </div>
 
-        <div class="row g-4">
-            {% if courses %}
-            {% for course in courses %}
-            <div class="col-12 col-sm-6 col-lg-4 d-flex">
-                <div class="card border-0 shadow-sm h-100 w-100 rounded-4 overflow-hidden course-card">
-                    <div class="position-relative">
-                        {% if course.image %}
-                        <img src="{{ course.image.url }}" class="img-fluid w-100 course-image" alt="{{ course.title }}">
-                        {% else %}
-                        <img src="{% static 'images/default-profile.svg' %}" class="img-fluid w-100 course-image"
-                            alt="{{ course.title }}">
-                        {% endif %}
-                        <span class="badge bg-primary position-absolute top-0 start-0 m-3">{{ course.category }}</span>
+
+    <div class="course-filter-section">
+        <div class="category-filter-scroll">
+            <div class="category-filter-wrap">
+                <button type="button" class="btn category-filter-btn active" data-filter="all">All</button>
+                <button type="button" class="btn category-filter-btn" data-filter="programming">Programming</button>
+                <button type="button" class="btn category-filter-btn" data-filter="web development">Web
+                    Development</button>
+                <button type="button" class="btn category-filter-btn" data-filter="data science">Data
+                    Science</button>
+                <button type="button" class="btn category-filter-btn" data-filter="design">Design</button>
+                <button type="button" class="btn category-filter-btn" data-filter="business">Business</button>
+                <button type="button" class="btn category-filter-btn" data-filter="digital marketing">Digital
+                    Marketing</button>
+                <button type="button" class="btn category-filter-btn" data-filter="artificial intelligence">Artificial
+                    Intelligence</button>
+                <button type="button" class="btn category-filter-btn" data-filter="machine learning">Machine
+                    Learning</button>
+                <button type="button" class="btn category-filter-btn" data-filter="cloud computing">Cloud
+                    Computing</button>
+                <button type="button" class="btn category-filter-btn" data-filter="cyber security">Cyber
+                    Security</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% if courses %}
+        {% for course in courses %}
+        <div class="col-12 col-sm-6 col-lg-4 d-flex course-grid-item"
+            data-category="{{ course.category|default_if_none:''|lower }}">
+            <div class="card border-0 shadow-sm h-100 w-100 rounded-4 overflow-hidden course-card">
+                <div class="position-relative">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="img-fluid w-100 course-image" alt="{{ course.title }}">
+                    {% else %}
+                    <img src="{% static 'images/default-profile.svg' %}" class="img-fluid w-100 course-image"
+                        alt="{{ course.title }}">
+                    {% endif %}
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-3">{{ course.category }}</span>
+                </div>
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <h5 class="card-title mb-0 fw-semibold">{{ course.title }}</h5>
+                        <span class="badge bg-light text-dark rounded-pill">{{ course.level }}</span>
                     </div>
-                    <div class="card-body d-flex flex-column p-4">
-                        <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
-                            <h5 class="card-title mb-0 fw-semibold">{{ course.title }}</h5>
-                            <span class="badge bg-light text-dark rounded-pill">{{ course.level }}</span>
-                        </div>
-                        <p class="card-text text-muted mb-3">{{ course.short_description }}</p>
-                        <div class="mt-auto">
-                            <p class="card-text text-muted mb-2">
-                                <i class="bi bi-person-circle me-2"></i>{{ course.instructor }}
-                            </p>
-                            <p class="card-text text-muted mb-2">
-                                <i class="bi bi-clock me-2"></i>{{ course.duration }}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="fw-bold text-primary">₹{{ course.price }}</span>
-                                <a href="{% url 'course_detail' course.id %}"
-                                    class="btn btn-outline-primary btn-sm rounded-pill">View Details</a>
-                            </div>
+                    <p class="card-text text-muted mb-3">{{ course.short_description }}</p>
+                    <div class="mt-auto">
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-person-circle me-2"></i>{{ course.instructor }}
+                        </p>
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-clock me-2"></i>{{ course.duration }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fw-bold text-primary">₹{{ course.price }}</span>
+                            <a href="{% url 'course_detail' course.id %}"
+                                class="btn btn-outline-primary btn-sm rounded-pill">View Details</a>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-            {% else %}
-            <div class="col-12">
-                <p class="text-muted text-center">No courses available at the moment.</p>
-            </div>
-            {% endif %}
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p class="text-muted text-center">No courses available at the moment.</p>
+        </div>
+        {% endif %}
+    </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterButtons = document.querySelectorAll('.category-filter-btn');
+        const courseItems = document.querySelectorAll('.course-grid-item');
+
+        function normalizeValue(value) {
+            return value.trim().toLowerCase();
+        }
+
+        function filterCourses(filter) {
+            courseItems.forEach((item) => {
+                const category = normalizeValue(item.dataset.category || '');
+                const matches = filter === 'all' || category === filter;
+                item.style.display = matches ? '' : 'none';
+                if (matches) {
+                    item.classList.add('fade-in');
+                    window.requestAnimationFrame(() => item.classList.remove('fade-in'));
+                } else {
+                    item.classList.remove('fade-in');
+                }
+            });
+        }
+
+        filterButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                if (this.classList.contains('active')) return;
+                document.querySelectorAll('.category-filter-btn.active').forEach((activeBtn) => {
+                    activeBtn.classList.remove('active');
+                });
+                this.classList.add('active');
+                filterCourses(normalizeValue(this.dataset.filter || 'all'));
+            });
+        });
+    });
+</script>
 {% endblock %}
