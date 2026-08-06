@@ -20,9 +20,13 @@
         object-fit: cover;
     }
 
+    .courses-hero-section {
+        padding-bottom: 20px;
+    }
+
     .course-filter-section {
         background: #fff;
-        margin-top: 30px;
+        margin-top: 12px;
         margin-bottom: 35px;
         padding: 20px 18px;
         border-radius: 16px;
@@ -95,9 +99,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="py-5 bg-light">
-
-
+<section class="pt-2 courses-hero-section bg-light">
     <div class="course-filter-section">
         <div class="category-filter-scroll">
             <div class="category-filter-wrap">
@@ -161,6 +163,9 @@
             </div>
         </div>
         {% endfor %}
+        <div id="no-category-message" class="col-12 d-none">
+            <p class="text-muted text-center mb-0">No courses available in this category.</p>
+        </div>
         {% else %}
         <div class="col-12">
             <p class="text-muted text-center">No courses available at the moment.</p>
@@ -182,17 +187,23 @@
         }
 
         function filterCourses(filter) {
+            let visibleCount = 0;
             courseItems.forEach((item) => {
                 const category = normalizeValue(item.dataset.category || '');
                 const matches = filter === 'all' || category === filter;
                 item.style.display = matches ? '' : 'none';
                 if (matches) {
+                    visibleCount += 1;
                     item.classList.add('fade-in');
                     window.requestAnimationFrame(() => item.classList.remove('fade-in'));
                 } else {
                     item.classList.remove('fade-in');
                 }
             });
+            const messageEl = document.getElementById('no-category-message');
+            if (messageEl) {
+                messageEl.classList.toggle('d-none', visibleCount !== 0);
+            }
         }
 
         filterButtons.forEach((button) => {
