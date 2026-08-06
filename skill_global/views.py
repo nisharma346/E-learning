@@ -45,15 +45,28 @@ def testimonials(request):
     return render(request, 'skill_global/testimonials.html', context)
 
 
+from django.db.models import Q
+
 def courses(request):
-    courses = Course.objects.filter(is_active=True).order_by('title')
+    query = request.GET.get('q', '')
+
+    courses = Course.objects.filter(is_active=True)
+
+    if query:
+        courses = courses.filter(
+            Q(title__icontains=query) |
+            Q(category__icontains=query) |
+            Q(instructor__icontains=query)
+        )
+
     context = {
         'page_title': 'Courses',
         'page_description': 'Browse premium courses designed to help you build career-ready skills.',
         'courses': courses,
+        'query': query,
     }
-    return render(request, 'skill_global/courses.html', context)
 
+    return render(request, 'skill_global/courses.html', context)
 
 def course_detail(request, id):
     course = Course.objects.filter(id=id, is_active=True).first()

@@ -100,6 +100,24 @@
 
 {% block content %}
 <section class="pt-2 courses-hero-section bg-light">
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-6">
+            <form method="GET">
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input type="text" class="form-control border-start-0" name="q" placeholder="Search courses..."
+                        value="{{ query }}">
+
+                    <button class="btn btn-primary px-4" type="submit">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="course-filter-section">
         <div class="category-filter-scroll">
             <div class="category-filter-wrap">
