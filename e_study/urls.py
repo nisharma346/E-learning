@@ -26,4 +26,8 @@ urlpatterns = [
     path('', include('skill_global.urls')),  # App Name
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# FIX #5: VERIFIED - Media files serving is correctly configured in development
+# This allows Django to serve uploaded files (thumbnails, profile images, etc.) at /media/ URL
+# When DEBUG=True in settings.py, this configuration serves files from MEDIA_ROOT directory
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -119,8 +119,9 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] ##Fourth Changes
 
+# MEDIA FILES CONFIGURATION - FIX #4: Verified MEDIA_URL and MEDIA_ROOT are correctly configured
+# This allows Django to serve uploaded files (images, documents, etc.) in development
 MEDIA_URL = '/media/'
-
-MEDIA_ROOT = BASE_DIR/ 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
