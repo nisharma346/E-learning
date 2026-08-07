@@ -116,12 +116,96 @@ class Course(models.Model):
 
 
 class LiveClass(models.Model):
+    PROGRAMMING = 'Programming'
+    DATA_SCIENCE = 'Data Science'
+    AI = 'Artificial Intelligence'
+    DIGITAL_MARKETING = 'Digital Marketing'
+    LEADERSHIP = 'Leadership'
+    UI_UX = 'UI/UX Design'
+
+    MEETING_GOOGLE = 'Google Meet'
+    MEETING_ZOOM = 'Zoom'
+    MEETING_TEAMS = 'Microsoft Teams'
+
+    SESSION_LIVE = 'Live Session'
+    SESSION_WEBINAR = 'Webinar'
+    SESSION_WORKSHOP = 'Workshop'
+    SESSION_MASTERCLASS = 'Masterclass'
+
+    LEVEL_BEGINNER = 'Beginner'
+    LEVEL_INTERMEDIATE = 'Intermediate'
+    LEVEL_ADVANCED = 'Advanced'
+
+    STATUS_UPCOMING = 'Upcoming'
+    STATUS_LIVE = 'Live Now'
+    STATUS_COMPLETED = 'Completed'
+    STATUS_CANCELLED = 'Cancelled'
+
+    CATEGORY_CHOICES = [
+        (PROGRAMMING, PROGRAMMING),
+        (DATA_SCIENCE, DATA_SCIENCE),
+        (AI, AI),
+        (DIGITAL_MARKETING, DIGITAL_MARKETING),
+        (LEADERSHIP, LEADERSHIP),
+        (UI_UX, UI_UX),
+    ]
+
+    MEETING_PLATFORM_CHOICES = [
+        (MEETING_GOOGLE, MEETING_GOOGLE),
+        (MEETING_ZOOM, MEETING_ZOOM),
+        (MEETING_TEAMS, MEETING_TEAMS),
+    ]
+
+    CLASS_TYPE_CHOICES = [
+        (SESSION_LIVE, SESSION_LIVE),
+        (SESSION_WEBINAR, SESSION_WEBINAR),
+        (SESSION_WORKSHOP, SESSION_WORKSHOP),
+        (SESSION_MASTERCLASS, SESSION_MASTERCLASS),
+    ]
+
+    LEVEL_CHOICES = [
+        (LEVEL_BEGINNER, LEVEL_BEGINNER),
+        (LEVEL_INTERMEDIATE, LEVEL_INTERMEDIATE),
+        (LEVEL_ADVANCED, LEVEL_ADVANCED),
+    ]
+
+    STATUS_CHOICES = [
+        (STATUS_UPCOMING, STATUS_UPCOMING),
+        (STATUS_LIVE, STATUS_LIVE),
+        (STATUS_COMPLETED, STATUS_COMPLETED),
+        (STATUS_CANCELLED, STATUS_CANCELLED),
+    ]
+
     title = models.CharField(max_length=200)
     instructor = models.CharField(max_length=150, blank=True)
     topic = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
+    category = models.CharField(max_length=120, choices=CATEGORY_CHOICES, blank=True)
+    thumbnail = models.ImageField(upload_to='liveclasses/thumbnails/', blank=True, null=True)
+    meeting_platform = models.CharField(max_length=50, choices=MEETING_PLATFORM_CHOICES, blank=True)
+    meeting_link = models.URLField(blank=True)
+    meeting_id = models.CharField(max_length=100, blank=True)
+    meeting_password = models.CharField(max_length=100, blank=True)
+    class_type = models.CharField(max_length=50, choices=CLASS_TYPE_CHOICES, blank=True)
+    level = models.CharField(max_length=50, choices=LEVEL_CHOICES, blank=True)
+    language = models.CharField(max_length=80, blank=True)
+    max_students = models.PositiveIntegerField(default=0)
+    enrolled_students = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    certificate_available = models.BooleanField(default=False)
+    recording_available = models.BooleanField(default=False)
+    featured = models.BooleanField(default=False)
     scheduled_at = models.DateTimeField(blank=True, null=True)
+    registration_deadline = models.DateTimeField(blank=True, null=True)
     duration = models.CharField(max_length=80, blank=True)
+    prerequisites = models.TextField(blank=True)
+    learning_outcomes = models.TextField(blank=True)
+    tags = models.CharField(max_length=255, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    display_order = models.PositiveIntegerField(default=0)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=STATUS_UPCOMING)
+    banner_color = models.CharField(max_length=20, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -129,7 +213,7 @@ class LiveClass(models.Model):
     class Meta:
         verbose_name = 'Live Class'
         verbose_name_plural = 'Live Classes'
-        ordering = ['scheduled_at']
+        ordering = ['display_order', 'scheduled_at']
 
     def __str__(self):
         return self.title

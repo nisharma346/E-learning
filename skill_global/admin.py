@@ -31,31 +31,98 @@ class CourseAdmin(admin.ModelAdmin):
 class LiveClassAdmin(admin.ModelAdmin):
     list_display = (
         'title',
+        'category',
         'instructor',
-        'topic',
+        'status',
         'scheduled_at',
-        'duration',
+        'featured',
         'is_active',
+        'price',
+        'created_at',
     )
-
     list_filter = (
+        'status',
+        'category',
+        'featured',
         'is_active',
-        'scheduled_at',
+        'meeting_platform',
+        'level',
     )
-
     search_fields = (
         'title',
         'instructor',
         'topic',
         'description',
+        'tags',
+        'meeting_link',
+        'meeting_id',
     )
-
     readonly_fields = (
+        'thumbnail_preview',
         'created_at',
         'updated_at',
     )
+    ordering = ('display_order', 'scheduled_at')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': (
+                'title',
+                'topic',
+                'category',
+                'status',
+                'class_type',
+                'level',
+                'language',
+                'tags',
+                'featured',
+                'is_active',
+            )
+        }),
+        ('Schedule & Meeting Details', {
+            'fields': (
+                'scheduled_at',
+                'registration_deadline',
+                'duration',
+                'meeting_platform',
+                'meeting_link',
+                'meeting_id',
+                'meeting_password',
+            )
+        }),
+        ('Pricing & Capacity', {
+            'fields': (
+                'price',
+                'discount_price',
+                'certificate_available',
+                'recording_available',
+                'max_students',
+                'enrolled_students',
+                'display_order',
+            )
+        }),
+        ('Content & Media', {
+            'fields': (
+                'description',
+                'prerequisites',
+                'learning_outcomes',
+                'banner_color',
+                'thumbnail',
+                'thumbnail_preview',
+                'slug',
+            )
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+        }),
+    )
 
-    ordering = ('scheduled_at',)
+    def thumbnail_preview(self, obj):
+        if obj.thumbnail:
+            from django.utils.html import format_html
+            return format_html('<img src="{}" style="max-width: 250px; max-height: 150px; object-fit: cover;"/>', obj.thumbnail.url)
+        return 'No image uploaded'
+
+    thumbnail_preview.short_description = 'Thumbnail Preview'
 
 
 @admin.register(Testimonial)
