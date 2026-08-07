@@ -345,13 +345,7 @@
 
 {% block content %}
 <!-- HERO SECTION -->
-<section class="live-classes-hero">
-    <div class="hero-content">
-        <h1>Live Classes</h1>
-        <p>Join interactive online sessions with industry experts. Learn in real time, ask questions, and connect with
-            fellow learners from around the world.</p>
-    </div>
-</section>
+
 
 <!-- LIVE CLASSES GRID -->
 <section class="container live-classes-container">
@@ -381,8 +375,9 @@
             <!-- CARD CONTENT -->
             <div class="card-body">
                 <h3 class="card-title">{{ cls.title }}</h3>
-                <p class="card-description">{{ cls.description|default:"Join this live session for practical learning
-                    and direct guidance." }}</p>
+                <p class="card-description">
+                    {{ cls.description|default:"Join this live session for practical learning and direct guidance." }}
+                </p>
 
                 <!-- META INFORMATION -->
                 <div class="card-meta">
