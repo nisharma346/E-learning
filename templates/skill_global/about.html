@@ -9,96 +9,336 @@
 
 {% block content %}
 
-<!-- ================= ABOUT ================= -->
 
-<section class="about-section py-5">
+
+<section class="about-overview-section py-5">
     <div class="container">
-
-        <div class="row align-items-center g-5">
-
+        <div class="row align-items-center gx-5 gy-5">
             <div class="col-lg-6">
-
                 <span class="section-tag">ABOUT US</span>
-
-                <h2 class="section-title">
-                    About Skill Global
-                </h2>
-
-                <p>
-                    Skill Global is an industry-focused learning platform dedicated to
-                    helping students and professionals build practical skills through
-                    expert-led training programs.
-                </p>
-
-                <p>
-                    Our courses combine real-world projects, mentorship,
-                    certification, and career guidance to prepare learners for today's
-                    competitive job market.
-                </p>
-
-                <a href="#" class="btn btn-primary mt-3">
-                    Explore Courses
-                </a>
-
+                <h2 class="section-title">Empowering People Through Skills, Knowledge &amp; Action</h2>
+                <p>Skill Global is a learning and professional development platform focused on helping students,
+                    professionals, and aspiring learners build practical, career-ready skills.</p>
+                <p>We believe meaningful learning goes beyond completing a course. It is about understanding concepts,
+                    applying knowledge, solving real-world problems, and developing the confidence to take the next
+                    step.</p>
+                <p>Our learning experience combines structured courses, practical projects, expert guidance, live
+                    learning opportunities, career-focused resources, and continuous skill development.</p>
+                <p>From foundational digital skills to programming, artificial intelligence, data, communication,
+                    leadership, and professional development, Skill Global is designed to help learners move from
+                    knowledge to action.</p>
+                {% if about.description %}
+                <p class="about-content-extra">{{ about.description }}</p>
+                {% endif %}
             </div>
-
             <div class="col-lg-6">
-
-                <img src="{% static 'images/skill_global_buildings.png' %}" class="img-fluid rounded-4 shadow"
-                    alt="About Skill Global">
-
+                <div class="about-image-wrapper">
+                    {% if about.image %}
+                    <img src="{{ about.image.url }}" class="about-image" alt="Skill Global About Image">
+                    {% else %}
+                    <div class="about-image-placeholder">
+                        <i class="bi bi-building"></i>
+                        <div>
+                            <strong>Skill Global</strong>
+                            <p>Professional learning with clarity and confidence.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-
         </div>
-
     </div>
 </section>
 
-<!-- ================= MISSION & VISION ================= -->
-
-<section class="mission-section py-5">
-
+<section class="about-purpose-section py-5">
     <div class="container">
-
-        <div class="row g-4">
-
-            <div class="col-md-6">
-
-                <div class="mission-card">
-
-                    <h3>Our Mission</h3>
-
-                    <p>
-                        To bridge the gap between education and industry by providing
-                        high-quality practical learning experiences.
-                    </p>
-
-                </div>
-
+        <div class="row align-items-center gy-4">
+            <div class="col-xl-5">
+                <span class="section-tag">OUR PURPOSE</span>
+                <h2 class="section-title">Learning That Leads to Real-World Growth</h2>
+                <p class="section-intro">At Skill Global, our purpose is to make skill development practical,
+                    accessible, and meaningful. We want learners to develop capabilities they can actually use — in
+                    classrooms, workplaces, projects, interviews, businesses, and everyday professional situations.</p>
             </div>
-
-            <div class="col-md-6">
-
-                <div class="mission-card">
-
-                    <h3>Our Vision</h3>
-
-                    <p>
-                        To become one of India's most trusted professional learning
-                        platforms helping millions achieve career success.
-                    </p>
-
+            <div class="col-xl-7">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="purpose-card">
+                            <div class="purpose-icon"><i class="bi bi-journal-bookmark"></i></div>
+                            <h4>LEARN</h4>
+                            <p>Build strong foundations through structured and engaging learning experiences.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="purpose-card">
+                            <div class="purpose-icon"><i class="bi bi-tools"></i></div>
+                            <h4>PRACTICE</h4>
+                            <p>Apply knowledge through projects, activities, exercises, and real-world scenarios.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="purpose-card">
+                            <div class="purpose-icon"><i class="bi bi-graph-up"></i></div>
+                            <h4>GROW</h4>
+                            <p>Turn skills into confidence, career opportunities, and continuous professional growth.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
-<!-- ================= CORE VALUES ================= -->
+<section class="about-mission-section py-5">
+    <div class="container">
+        <div class="row gy-4 align-items-center">
+            <div class="col-lg-5">
+                <span class="section-tag">OUR MISSION</span>
+                <h2 class="section-title">Bridging the Gap Between Learning and Industry</h2>
+                <p class="section-intro">Our mission is to provide practical, high-quality learning experiences that
+                    help learners develop relevant skills, apply knowledge with confidence, and prepare for real-world
+                    opportunities. We aim to connect education with practical application by combining structured
+                    learning, hands-on experience, expert guidance, and continuous improvement.</p>
+            </div>
+            <div class="col-lg-7">
+                <div class="impact-card">
+                    <h3>Mission</h3>
+                    <p>Skill Global helps learners build skills, apply knowledge, and move
+                        toward meaningful career and professional growth.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-vision-section py-5">
+    <div class="container">
+        <div class="row gy-4 align-items-center">
+            <div class="col-lg-5">
+                <span class="section-tag">OUR VISION</span>
+                <h2 class="section-title">Building a Future-Ready Learning Community</h2>
+                <p class="section-intro">Our vision is to create a trusted learning ecosystem where people can
+                    continuously develop their skills, discover new possibilities, and build meaningful careers. We
+                    envision a future where learning is practical, accessible, inclusive, and closely connected to the
+                    evolving needs of the professional world.</p>
+            </div>
+            <div class="col-lg-7">
+                <div class="vision-card">
+                    <h3>Vision</h3>
+                    <p>We believe every learner should have access to practical, future-focused
+                        learning that turns potential into progress.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-values-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">OUR VALUES</span>
+            <h2 class="section-title">What We Believe</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">01</div>
+                    <h4>Practical Learning</h4>
+                    <p>Learning becomes valuable when knowledge can be applied.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">02</div>
+                    <h4>Continuous Growth</h4>
+                    <p>There is always an opportunity to learn, improve, and grow.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">03</div>
+                    <h4>Learner First</h4>
+                    <p>Learning experiences should be designed around real learner needs.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">04</div>
+                    <h4>Innovation</h4>
+                    <p>We embrace modern tools, technology, and new approaches to learning.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">05</div>
+                    <h4>Integrity</h4>
+                    <p>We value honesty, responsibility, transparency, and trust.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="value-card">
+                    <div class="value-number">06</div>
+                    <h4>Excellence</h4>
+                    <p>We continuously strive to improve the quality of learning and learner experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-process-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">OUR APPROACH</span>
+            <h2 class="section-title">From Knowledge to Action</h2>
+        </div>
+        <div class="process-grid">
+            <div class="process-step">
+                <div class="step-number">01</div>
+                <h5>Learn</h5>
+                <p>Understand concepts through structured learning.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">02</div>
+                <h5>Practice</h5>
+                <p>Apply concepts through exercises and projects.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">03</div>
+                <h5>Connect</h5>
+                <p>Learn through mentors, instructors, peers, and live sessions.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">04</div>
+                <h5>Advance</h5>
+                <p>Use your skills to pursue academic, professional, and career opportunities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-benefits-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Why Choose Skill Global?</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-briefcase-fill benefit-icon"></i>
+                    <h5>Career-Focused Learning</h5>
+                    <p>Courses shaped to help learners build skills employers value.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-code-slash benefit-icon"></i>
+                    <h5>Practical Projects</h5>
+                    <p>Hands-on work that reinforces learning with real outcomes.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-people-fill benefit-icon"></i>
+                    <h5>Expert-Led Training</h5>
+                    <p>Guidance from instructors and industry-informed learning designers.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-tv-fill benefit-icon"></i>
+                    <h5>Live Learning Opportunities</h5>
+                    <p>Interactive sessions, workshops, and live practice spaces.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-clock-fill benefit-icon"></i>
+                    <h5>Flexible Learning Resources</h5>
+                    <p>Study at your pace with accessible materials and tools.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="benefit-card">
+                    <i class="bi bi-arrow-up-right-circle-fill benefit-icon"></i>
+                    <h5>Continuous Skill Development</h5>
+                    <p>Keep advancing with resources created for lifelong learners.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-ecosystem-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">PLATFORM FEATURES</span>
+            <h2 class="section-title">Skill Global Learning Ecosystem</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-mortarboard-fill feature-icon"></i>
+                    <h5>Courses</h5>
+                    <p>Build structured technical and professional skills through guided curriculum.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-calendar-check-fill feature-icon"></i>
+                    <h5>Live Classes</h5>
+                    <p>Learn directly through interactive sessions and workshops.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-journal-text feature-icon"></i>
+                    <h5>Articles</h5>
+                    <p>Explore practical insights, career guidance, and industry knowledge.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-laptop-fill feature-icon"></i>
+                    <h5>Projects</h5>
+                    <p>Turn concepts into hands-on experience with project-based learning.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-award-fill feature-icon"></i>
+                    <h5>Certifications</h5>
+                    <p>Build evidence of learning and professional development.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card">
+                    <i class="bi bi-graph-up-arrow feature-icon"></i>
+                    <h5>Career Development</h5>
+                    <p>Prepare for opportunities through relevant skills and guidance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-cta-section py-5">
+    <div class="container">
+        <div class="row align-items-center justify-content-between gy-4">
+            <div class="col-lg-7">
+                <h2>Start Your Learning Journey With Skill Global</h2>
+                <p>Whether you are starting your first skill, strengthening your professional capabilities, or preparing
+                    for your next career opportunity, Skill Global is here to help you keep learning, practicing, and
+                    growing.</p>
+            </div>
+            <div class="col-lg-4 d-flex flex-column flex-sm-row gap-3 justify-content-lg-end">
+                <a href="{% url 'courses' %}" class="btn btn-primary btn-lg">Explore Courses</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">Join Skill Global</a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="values-section py-5">
 

@@ -289,8 +289,8 @@ def edit_profile(request):
 def about(request):
     about = About.objects.first()
     context = {
-        'page_title': 'About Us',
-        'page_description': 'Learn. Practice. Grow. Build an industry-ready career with Skill Global.',
+        'page_title': 'About Skill Global',
+        'page_description': 'Empowering learners with practical skills, knowledge, and confidence for a changing world.',
         'about': about,
     }
     return render(request, 'skill_global/about.html', context)

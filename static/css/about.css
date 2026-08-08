@@ -258,6 +258,254 @@
     transition: transform .3s ease;
 }
 
+/* ================= ABOUT PAGE ENHANCEMENTS ================= */
+
+.about-hero-section {
+    padding-top: 80px;
+    padding-bottom: 70px;
+    background: #f8fbff;
+}
+
+.about-hero-title {
+    font-size: clamp(2.5rem, 3vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 800;
+    color: #0f172a;
+    max-width: 880px;
+    margin: 0 auto 1rem;
+}
+
+.about-hero-copy {
+    max-width: 720px;
+    margin: 0 auto;
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.85;
+}
+
+.about-overview-section,
+.about-purpose-section,
+.about-mission-section,
+.about-vision-section,
+.about-values-section,
+.about-process-section,
+.about-benefits-section,
+.about-ecosystem-section,
+.about-cta-section {
+    padding-top: 75px;
+    padding-bottom: 75px;
+}
+
+.about-overview-section .section-tag,
+.about-purpose-section .section-tag,
+.about-mission-section .section-tag,
+.about-vision-section .section-tag,
+.about-values-section .section-tag,
+.about-process-section .section-tag {
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.about-overview-section .about-content-extra,
+.about-purpose-section .section-intro,
+.about-mission-section .section-intro,
+.about-vision-section .section-intro {
+    margin-top: 1rem;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.about-image-wrapper {
+    position: relative;
+}
+
+.about-image {
+    width: 100%;
+    border-radius: 24px;
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.12);
+    object-fit: cover;
+}
+
+.about-image-placeholder {
+    min-height: 420px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #eef6ff 0%, #f8fbff 100%);
+    border: 1px solid rgba(37, 99, 235, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+    gap: 18px;
+    color: #1d4ed8;
+}
+
+.about-image-placeholder i {
+    font-size: 2.4rem;
+}
+
+.about-image-placeholder strong {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+}
+
+.about-image-placeholder p {
+    margin: 0;
+    color: #334155;
+    font-size: 0.98rem;
+    line-height: 1.7;
+}
+
+.purpose-card,
+.impact-card,
+.vision-card,
+.value-card,
+.process-step,
+.benefit-card,
+.feature-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 28px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.06);
+    min-height: 220px;
+}
+
+.purpose-card h4,
+.benefit-card h5,
+.feature-card h5,
+.process-step h5,
+.value-card h4 {
+    margin-top: 18px;
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+
+.purpose-card p,
+.impact-card p,
+.vision-card p,
+.value-card p,
+.process-step p,
+.benefit-card p,
+.feature-card p {
+    margin: 0;
+    color: #525f7f;
+    line-height: 1.75;
+    font-size: 0.98rem;
+}
+
+.purpose-icon,
+.benefit-icon,
+.feature-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: #e0ebff;
+    color: #2563eb;
+    font-size: 1.45rem;
+}
+
+.value-number,
+.step-number {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: #eef2ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.about-cta-section {
+    background: #0f2340;
+    color: #fff;
+}
+
+.about-cta-section h2,
+.about-cta-section p {
+    color: #fff;
+}
+
+.about-cta-section p {
+    max-width: 640px;
+    margin-bottom: 0;
+    line-height: 1.85;
+}
+
+.about-cta-section .btn-outline-primary {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.about-cta-section .btn-outline-primary:hover {
+    color: #fff;
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+@media (max-width: 1199px) {
+    .process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 991px) {
+    .about-hero-title {
+        font-size: 2.45rem;
+    }
+
+    .about-hero-section {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .about-overview-section .about-content-extra,
+    .about-purpose-section .section-intro,
+    .about-mission-section .section-intro,
+    .about-vision-section .section-intro {
+        font-size: 0.99rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .about-hero-title {
+        font-size: 2rem;
+    }
+
+    .purpose-card,
+    .impact-card,
+    .vision-card,
+    .value-card,
+    .process-step,
+    .benefit-card,
+    .feature-card {
+        padding: 24px;
+    }
+
+    .about-cta-section {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+}
+
 .about-skill-global-btn:hover i {
     transform: translateX(3px);
 }
