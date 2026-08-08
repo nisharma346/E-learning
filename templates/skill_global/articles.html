@@ -350,6 +350,42 @@
 </style>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var filterButtons = document.querySelectorAll('.category-filter-btn');
+        var articleCards = document.querySelectorAll('.article-card[data-category]');
+
+        function filterArticles(category) {
+            articleCards.forEach(function (card) {
+                var cardCategory = card.dataset.category ? card.dataset.category.trim() : '';
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        filterButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                var category = button.dataset.category ? button.dataset.category.trim() : 'all';
+
+                filterButtons.forEach(function (btn) {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+
+                filterArticles(category);
+            });
+        });
+
+        filterArticles('all');
+    });
+</script>
+{% endblock %}
+
 
 {% block content %}
 
@@ -401,7 +437,7 @@
 
                 <div class="col-12 col-md-6 col-lg-4">
 
-                    <article class="article-card">
+                    <article class="article-card" data-category="{{ article.category }}">
 
                         <!-- Image -->
                         <div class="article-card-image-wrapper">
