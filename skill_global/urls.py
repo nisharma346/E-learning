@@ -6,6 +6,11 @@ urlpatterns = [
     path('courses/', views.courses, name='courses'),
     path('courses/<int:id>/', views.course_detail, name='course_detail'),
     path('articles/', views.articles, name='articles'),
+    path(
+    'articles/<slug:slug>/',
+    views.article_detail,
+    name='article_detail'
+),
     path('testimonials/', views.testimonials, name='testimonials'),
     path('contact/', views.contact, name='contact'),
     path('live-classes/', views.live_classes, name='live_classes'),

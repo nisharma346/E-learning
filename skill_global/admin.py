@@ -14,11 +14,66 @@ class AboutAdmin(admin.ModelAdmin):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_at', 'is_published')
-    list_filter = ('is_published',)
-    search_fields = ('title', 'author', 'summary', 'content')
-    readonly_fields = ('published_at',)
+    list_display = (
+        'title',
+        'category',
+        'author',
+        'featured',
+        'is_published',
+        'published_at',
+    )
 
+    list_filter = (
+        'category',
+        'featured',
+        'is_published',
+    )
+
+    search_fields = (
+        'title',
+        'category',
+        'author',
+        'summary',
+        'content',
+        'tags',
+    )
+
+    prepopulated_fields = {
+        'slug': ('title',)
+    }
+
+    readonly_fields = (
+        'published_at',
+    )
+
+    fieldsets = (
+        ('Article Information', {
+            'fields': (
+                'title',
+                'slug',
+                'category',
+                'author',
+                'summary',
+                'content',
+            )
+        }),
+
+        ('Media & Reading Information', {
+            'fields': (
+                'image',
+                'read_time',
+                'tags',
+            )
+        }),
+
+        ('Publishing', {
+            'fields': (
+                'featured',
+                'is_published',
+                'published_at',
+            )
+        }),
+    )
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):

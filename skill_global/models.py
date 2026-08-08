@@ -241,12 +241,23 @@ class Testimonial(models.Model):
 
 class Article(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True, blank=True)
+
+    category = models.CharField(max_length=100, blank=True)
     author = models.CharField(max_length=150, blank=True)
+
     summary = models.CharField(max_length=255, blank=True)
     content = models.TextField()
+
     image = models.ImageField(upload_to='articles/', blank=True, null=True)
-    published_at = models.DateTimeField(auto_now_add=True)
+
+    read_time = models.PositiveIntegerField(default=5)
+    tags = models.CharField(max_length=255, blank=True)
+
+    featured = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
+
+    published_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Article'

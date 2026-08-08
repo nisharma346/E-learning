@@ -6,6 +6,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .models import Profile, LiveClass, Article, Course, About, Testimonial
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -100,6 +101,31 @@ def articles(request):
         'articles': articles,
     }
     return render(request, 'skill_global/articles.html', context)
+def article_detail(request, slug):
+    article = get_object_or_404(
+        Article,
+        slug=slug,
+        is_published=True
+    )
+
+    related_articles = Article.objects.filter(
+        is_published=True
+    ).exclude(
+        id=article.id
+    ).order_by('-published_at')[:3]
+
+    context = {
+        'page_title': article.title,
+        'page_description': article.summary,
+        'article': article,
+        'related_articles': related_articles,
+    }
+
+    return render(
+        request,
+        'skill_global/article_detail.html',
+        context
+    )
 
 
 def contact(request):
