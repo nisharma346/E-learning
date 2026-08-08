@@ -309,6 +309,63 @@
         font-size: 14px;
     }
 
+    /* =========================================
+   ARTICLE CATEGORY FILTER
+   ========================================= */
+
+    .article-category-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        margin-bottom: 32px;
+        padding: 0;
+
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .article-category-filter::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-filter-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 37px;
+        padding: 8px 14px;
+
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 5px;
+
+        color: #667085;
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 500;
+
+        white-space: nowrap;
+
+        transition: all .2s ease;
+    }
+
+    .category-filter-btn:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+        background: #f8fbff;
+    }
+
+    .category-filter-btn.active {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
     /* Responsive */
     @media (max-width: 991px) {
         .featured-content {
@@ -370,7 +427,38 @@
 <section class="articles-page">
 
     <div class="articles-container">
+        <!-- Article Categories -->
+        <div class="article-category-filter">
 
+            <a href="#" class="category-filter-btn active" data-category="all">
+                All
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Career Development">
+                Career Development
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Artificial Intelligence">
+                Artificial Intelligence
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Digital Skills">
+                Digital Skills
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Career Growth">
+                Career Growth
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Learning & Development">
+                Learning & Development
+            </a>
+
+            <a href="#" class="category-filter-btn" data-category="Professional Development">
+                Professional Development
+            </a>
+
+        </div>
 
 
     </div>
