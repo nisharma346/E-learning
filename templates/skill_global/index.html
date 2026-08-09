@@ -128,49 +128,36 @@
 
     <section class="about-skill-global-section">
         <div class="container">
-            <div class="about-skill-global-card reveal">
-                <div class="row g-5 align-items-center">
-                    <div class="col-lg-6">
-                        <div class="about-image-wrapper">
-                            {% if about and about.image %}
-                            <img src="{{ about.image.url }}" alt="{{ about.title|default:'About Skill Global' }}"
-                                class="about-image">
-                            {% else %}
-                            <div class="about-image-placeholder">
-                                <i class="bi bi-image"></i>
-                                <span>About image will appear here</span>
-                            </div>
-                            {% endif %}
-
-                            <div class="about-floating-card">
-                                <div class="about-floating-icon">
-                                    <i class="bi bi-mortarboard-fill"></i>
-                                </div>
-                                <div>
-                                    <h4>Empowering Learners</h4>
-                                    <p>Building Careers<br>Transforming Futures</p>
-                                </div>
-                            </div>
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="about-skill-global-image mx-auto">
+                        {% if about and about.image %}
+                        <img src="{{ about.image.url }}" alt="{{ about.title|default:'About Skill Global' }}"
+                            class="img-fluid">
+                        {% else %}
+                        <div class="about-image-placeholder">
+                            <i class="bi bi-image"></i>
+                            <strong>About image will appear here</strong>
+                            <p>Update the image from Django Admin.</p>
                         </div>
+                        {% endif %}
                     </div>
+                </div>
 
-                    <div class="col-lg-6">
-                        <div class="about-content">
-                            <p class="about-skill-global-label">{{ about.subtitle|default:'ABOUT SKILL GLOBAL' }}</p>
-                            <h2 class="about-skill-global-title">{{ about.title|default:'About Skill Global' }}</h2>
-                            <div class="about-divider"></div>
-                            <div class="about-copy">
-                                {% if about and about.description %}
-                                <p>{{ about.description }}</p>
-                                {% else %}
-                                <p>Skill Global delivers practical, career-focused learning experiences designed to help
-                                    learners build confidence and grow professionally.</p>
-                                {% endif %}
-                            </div>
-                            <a href="{% url 'about' %}" class="about-skill-global-btn">
-                                Learn More About Us <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="about-skill-global-copy pe-lg-4">
+                        <p class="section-tag about-skill-global-eyebrow">ABOUT SKILL GLOBAL</p>
+                        <h2 class="about-skill-global-heading">Empowering Learners, Building Careers</h2>
+                        <p class="about-skill-global-lead">
+                            Skill Global is committed to empowering learners with practical skills,
+                            industry-relevant knowledge, and confidence to succeed in a changing world.
+                        </p>
+                        {% if about and about.description %}
+                        <p class="about-skill-global-description">{{ about.description }}</p>
+                        {% endif %}
+                        <a href="{% url 'about' %}" class="btn btn-primary about-skill-global-btn">
+                            Learn More About Us <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
