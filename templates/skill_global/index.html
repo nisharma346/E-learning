@@ -163,62 +163,70 @@
             </div>
         </div>
     </section>
+
     <section class="featured-courses-section">
-        <div class="container">
 
-            <div class="section-heading text-center mb-5">
-                <span class="section-tag">Popular Courses</span>
-                <h2>Featured Courses</h2>
-                <p>Learn the most in-demand skills from industry experts.</p>
-            </div>
+        <div class="row g-4">
 
-            <div class="row g-4">
+            {% for course in featured_courses %}
 
-                {% for course in featured_courses %}
+            <div class="col-lg-4 col-md-6 d-flex">
 
-                <div class="col-lg-4 col-md-6 d-flex">
+                <div class="course-card h-100">
 
-                    <div class="course-card h-100">
+                    <div class="course-image-wrap position-relative">
+                        {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
+                        {% endif %}
 
-                        <div class="course-image-wrap position-relative">
-                            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
-                            <span class="course-category-badge">{{ course.category.name }}</span>
+                        {% if course.category %}
+                        <span class="course-category-badge">
+                            {{ course.category.name }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="course-body d-flex flex-column">
+
+                        <div class="course-title-row">
+                            <h4 class="course-title">{{ course.title }}</h4>
+
+                            <span class="course-level-badge">
+                                {{ course.level|default:'Beginner' }}
+                            </span>
                         </div>
 
-                        <div class="course-body d-flex flex-column">
+                        <p class="course-description">
+                            {{ course.description|truncatewords:18 }}
+                        </p>
 
-                            <div class="course-title-row">
-                                <h4 class="course-title">{{ course.title }}</h4>
-                                <span class="course-level-badge">{{ course.level|default:'Beginner' }}</span>
-                            </div>
+                        <div class="course-meta">
 
-                            <p class="course-description">
-                                {{ course.description|truncatewords:18 }}
-                            </p>
+                            <span class="course-meta-item">
+                                <i class="bi bi-person-circle"></i>
+                                {{ course.instructor|default:'Expert Instructor' }}
+                            </span>
 
-                            <div class="course-meta">
-                                <span class="course-meta-item">
-                                    <i class="bi bi-person-circle"></i>
-                                    {{ course.instructor|default:'Expert Instructor' }}
-                                </span>
+                            <span class="course-meta-item">
+                                <i class="bi bi-clock"></i>
+                                {{ course.duration }}
+                            </span>
 
-                                <span class="course-meta-item">
-                                    <i class="bi bi-clock"></i>
-                                    {{ course.duration }}
-                                </span>
-                            </div>
+                        </div>
 
-                            <div class="course-footer mt-auto">
+                        <div class="course-footer mt-auto">
 
-                                <h5 class="course-price">
-                                    {% if course.price %}₹{{ course.price }}{% else %}Free{% endif %}
-                                </h5>
+                            <h5 class="course-price">
+                                {% if course.price %}
+                                ₹{{ course.price }}
+                                {% else %}
+                                Free
+                                {% endif %}
+                            </h5>
 
-                                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary course-btn">
-                                    View Details
-                                </a>
-
-                            </div>
+                            <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary course-btn">
+                                View Details
+                            </a>
 
                         </div>
 
@@ -226,25 +234,39 @@
 
                 </div>
 
-                {% empty %}
-
-                <div class="text-center">
-                    <h5>No Featured Courses Available</h5>
-                </div>
-
-                {% endfor %}
-
             </div>
 
+            {% empty %}
+
+            <div class="col-12">
+                <div class="featured-empty-state text-center">
+                    <h5>Explore Our Courses</h5>
+                    <p>
+                        Discover practical, career-focused courses designed
+                        to build your skills and confidence.
+                    </p>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- VIEW ALL COURSES BUTTON -->
+        <div class="text-center mt-5">
+            <a href="{% url 'courses' %}" class="view-all-courses-btn">
+                View All Courses
+                <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
     </section>
-
     <section class="live-classes-section">
         <div class="container">
             <div class="live-classes-header text-center mx-auto mb-5">
                 <span class="live-classes-eyebrow">INTERACTIVE LEARNING</span>
                 <h2 class="live-classes-title">Upcoming Live Classes</h2>
-                <p class="live-classes-subtitle">Join our expert-led live sessions and learn industry-ready skills in
+                <p class="live-classes-subtitle">Join our expert-led live sessions and learn industry-ready skills
+                    in
                     real time.</p>
             </div>
 
@@ -269,14 +291,16 @@
                                 <span><i class="bi bi-person-circle"></i> {{ live_class.instructor }}</span>
                                 {% endif %}
                                 {% if live_class.scheduled_at %}
-                                <span><i class="bi bi-calendar3"></i> {{ live_class.scheduled_at|date:"M d, Y" }}</span>
+                                <span><i class="bi bi-calendar3"></i> {{ live_class.scheduled_at|date:"M d, Y"
+                                    }}</span>
                                 <span><i class="bi bi-clock"></i> {{ live_class.scheduled_at|time:"g:i A" }}</span>
                                 {% endif %}
                             </div>
                             {% if live_class.description %}
                             <p class="live-class-description">{{ live_class.description|truncatewords:18 }}</p>
                             {% endif %}
-                            <a href="{% url 'live_classes' %}" class="btn btn-primary live-class-btn">View Details</a>
+                            <a href="{% url 'live_classes' %}" class="btn btn-primary live-class-btn">View
+                                Details</a>
                         </div>
                     </article>
                 </div>
@@ -366,7 +390,8 @@
                             {% endif %}
                             <div>
                                 <h5 class="testimonial-name mb-1">{{ testimonial.student_name }}</h5>
-                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student' }}
+                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student'
+                                    }}
                                 </p>
                             </div>
                         </div>

@@ -9,13 +9,13 @@
 }
 
 .featured-courses-section {
-    padding: 6rem 0;
+    padding: 70px 0 55px;
     background: var(--course-bg);
 }
 
 .featured-courses-header {
     max-width: 720px;
-    margin: 0 auto 3rem;
+    margin: 0 auto 1.6rem;
     text-align: center;
 }
 
@@ -41,6 +41,51 @@
     line-height: 1.7;
     color: var(--course-muted);
     margin: 0;
+}
+
+/* View All Courses Button */
+.view-all-courses-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 13px 28px;
+    background: #0D6EFD;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.view-all-courses-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.20);
+}
+
+.view-all-courses-btn i {
+    font-size: 16px;
+}
+
+/* Empty Featured Courses State */
+.featured-empty-state {
+    padding: 25px 20px;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.featured-empty-state h5 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.featured-empty-state p {
+    margin: 0;
+    color: #6B7280;
+    font-size: 15px;
 }
 
 .course-card .card-img-top {
