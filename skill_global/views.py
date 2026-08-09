@@ -13,7 +13,7 @@ User = get_user_model()
 # Create your views here.
 
 def index(request):
-    courses = Course.objects.filter(is_active=True).order_by('title')[:3]
+    featured_courses = Course.objects.filter(is_active=True).order_by('title')[:4]
     about = About.objects.first()
     live_classes = LiveClass.objects.filter(
         is_active=True,
@@ -27,7 +27,7 @@ def index(request):
     context = {
         'page_title': 'Home',
         'page_description': 'Skill Global offers premium training, live mentoring, and certification pathways for students and professionals ready to accelerate their career.',
-        'courses': courses,
+        'featured_courses': featured_courses,
         'about': about,
         'live_classes': live_classes,
         'latest_articles': latest_articles,
