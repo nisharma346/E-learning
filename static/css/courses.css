@@ -9,13 +9,13 @@
 }
 
 .featured-courses-section {
-    padding: 70px 0 55px;
+    padding: 55px 0 40px;
     background: var(--course-bg);
 }
 
 .featured-courses-header {
     max-width: 720px;
-    margin: 0 auto 1.6rem;
+    margin: 0 auto 1.2rem;
     text-align: center;
 }
 
@@ -370,13 +370,13 @@
 }
 
 .live-classes-section {
-    padding: 5rem 0;
+    padding: 4.5rem 0;
     background: var(--course-bg);
 }
 
 .live-classes-header {
     max-width: 720px;
-    margin: 0 auto 2.5rem;
+    margin: 0 auto 1.6rem;
 }
 
 .live-classes-eyebrow {
@@ -504,7 +504,7 @@
 }
 
 .view-all-live-wrap {
-    margin-top: 2.7rem;
+    margin-top: 1.8rem;
 }
 
 .view-all-live-btn {
