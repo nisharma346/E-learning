@@ -361,7 +361,7 @@
                             <h3>{{ article.title }}</h3>
                             <p>{{ article.summary|default:article.content|truncatewords:22 }}</p>
                             <div class="article-card-meta">
-                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team' }}
+                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team'}}
                                 </span>
                                 <span><i class="bi bi-clock"></i> {{ article.content|wordcount|add:'0' }} min
                                     read</span>
@@ -408,8 +408,8 @@
                             {% endif %}
                             <div>
                                 <h5 class="testimonial-name mb-1">{{ testimonial.student_name }}</h5>
-                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student'
-                                    }}
+                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student'}}
+
                                 </p>
                             </div>
                         </div>
