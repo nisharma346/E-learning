@@ -17,8 +17,8 @@ def index(request):
     about = About.objects.first()
     live_classes = LiveClass.objects.filter(
         is_active=True,
-        scheduled_at__gte=timezone.now()
-    ).order_by('scheduled_at')[:3]
+        status__in=(LiveClass.STATUS_LIVE, LiveClass.STATUS_UPCOMING)
+    ).order_by('scheduled_at')[:2]
     latest_articles = list(Article.objects.filter(is_published=True).order_by('-published_at')[:3])
     for article in latest_articles:
         word_count = len(article.content.split()) if article.content else 0
