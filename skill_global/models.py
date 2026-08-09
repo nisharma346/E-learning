@@ -1,9 +1,12 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
@@ -94,6 +97,7 @@ class About(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     category = models.CharField(max_length=100, blank=True)
     short_description = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
@@ -111,8 +115,63 @@ class Course(models.Model):
         verbose_name_plural = 'Courses'
         ordering = ['title']
 
+    def save(self, *args, **kwargs):
+        if not self.slug and self.title:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Course.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
+
+
+class CourseEnrollment(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        ('UPI', 'UPI'),
+        ('Card', 'Card'),
+        ('Net Banking', 'Net Banking'),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Failed', 'Failed'),
+    ]
+
+    ORDER_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    enrollment_id = models.CharField(max_length=36, unique=True, editable=False)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, blank=True)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Course Enrollment'
+        verbose_name_plural = 'Course Enrollments'
+        unique_together = ('user', 'course')
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.enrollment_id:
+            self.enrollment_id = str(uuid.uuid4()).replace('-', '').upper()[:20]
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.enrollment_id} - {self.user.email} - {self.course.title}"
 
 
 class LiveClass(models.Model):

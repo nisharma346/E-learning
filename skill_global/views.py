@@ -4,8 +4,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
-from .models import Profile, LiveClass, Article, Course, About, Testimonial
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.csrf import ensure_csrf_cookie
+from .models import Profile, LiveClass, Article, Course, About, Testimonial, CourseEnrollment
 from django.shortcuts import get_object_or_404
 
 User = get_user_model()
@@ -77,6 +80,123 @@ def course_detail(request, id):
         'course': course,
     }
     return render(request, 'skill_global/course_detail.html', context)
+
+
+def course_enroll(request, slug):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
+
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    enrollment, created = CourseEnrollment.objects.get_or_create(
+        user=request.user,
+        course=course,
+        defaults={
+            'amount': course.price or 0,
+            'payment_status': 'Pending',
+            'order_status': 'Pending',
+        }
+    )
+
+    if enrollment.payment_status == 'Paid' and enrollment.order_status == 'Confirmed':
+        return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
+
+    if request.method == 'POST':
+        payment_method = request.POST.get('payment_method')
+        agree_terms = request.POST.get('agree_terms') == 'on'
+
+        if not agree_terms:
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': request.user.get_full_name() or request.user.email,
+                'user_email': request.user.email,
+                'user_phone': request.user.phone or getattr(request.user.profile, 'phone', ''),
+                'error': 'You must agree to the Terms & Conditions and Refund Policy to continue.',
+            }
+            return render(request, 'skill_global/course_enrollment.html', context)
+
+        if course.price and course.price > 0:
+            if payment_method not in dict(CourseEnrollment.PAYMENT_METHOD_CHOICES):
+                payment_method = 'UPI'
+
+            enrollment.payment_method = payment_method
+            enrollment.amount = course.price or 0
+            enrollment.payment_status = 'Pending'
+            enrollment.order_status = 'Pending'
+            enrollment.save()
+
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': request.user.get_full_name() or request.user.email,
+                'user_email': request.user.email,
+                'user_phone': request.user.phone or getattr(request.user.profile, 'phone', ''),
+                'payment_pending': True,
+                'success_message': 'Your order has been created and is pending payment verification.',
+            }
+            return render(request, 'skill_global/course_enrollment.html', context)
+        else:
+            enrollment.payment_method = ''
+            enrollment.amount = 0
+            enrollment.payment_status = 'Paid'
+            enrollment.order_status = 'Confirmed'
+            enrollment.save()
+            return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
+
+    user_phone = request.user.phone or getattr(request.user.profile, 'phone', '')
+    context = {
+        'page_title': 'Course Enrollment',
+        'page_description': 'Complete your enrollment securely.',
+        'course': course,
+        'enrollment': enrollment,
+        'user_full_name': request.user.get_full_name() or request.user.email,
+        'user_email': request.user.email,
+        'user_phone': user_phone,
+    }
+    return render(request, 'skill_global/course_enrollment.html', context)
+
+
+def enrollment_success(request, enrollment_id):
+    enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
+    if enrollment.payment_status != 'Paid' or enrollment.order_status != 'Confirmed':
+        return redirect('course_enrollment', slug=enrollment.course.slug)
+
+    context = {
+        'page_title': 'Enrollment Successful',
+        'page_description': 'Your course enrollment is confirmed.',
+        'enrollment': enrollment,
+    }
+    return render(request, 'skill_global/enrollment_success.html', context)
+
+
+def payment_failed(request):
+    context = {
+        'page_title': 'Payment Failed',
+        'page_description': 'Your payment could not be completed.',
+    }
+    return render(request, 'skill_global/payment_failed.html', context)
+
+
+def my_courses(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    enrollments = CourseEnrollment.objects.filter(
+        user=request.user,
+        payment_status='Paid',
+        order_status='Confirmed',
+    ).select_related('course').order_by('-created_at')
+
+    context = {
+        'page_title': 'My Courses',
+        'page_description': 'View the courses you are enrolled in.',
+        'enrollments': enrollments,
+    }
+    return render(request, 'skill_global/my_courses.html', context)
 
 
 def live_classes(request):
@@ -195,6 +315,7 @@ def profile(request):
     return render(request, 'skill_global/profile.html', context)
 
 
+@ensure_csrf_cookie
 def sign_in(request):
     if request.user.is_authenticated:
         return redirect('profile')
@@ -203,6 +324,9 @@ def sign_in(request):
         'page_title': 'Sign In',
         'page_description': 'Sign in to access your Skill Global account.'
     }
+
+    next_url = request.GET.get('next') or request.POST.get('next')
+    context['next'] = next_url
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip().lower()
@@ -214,6 +338,8 @@ def sign_in(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, 'Successfully signed in.')
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+                return redirect(next_url)
             return redirect('profile')
 
         context['error'] = 'Invalid email or password.'

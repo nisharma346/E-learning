@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Enrollment Successful | Skill Global{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+            <span class="badge bg-success rounded-pill mb-3">Enrollment Successful!</span>
+            <h1 class="fw-bold mb-3">You are now enrolled</h1>
+            <p class="text-muted mb-4">Your course enrollment is confirmed and ready to start.</p>
+
+            <div class="row justify-content-center g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="p-4 rounded-4 border bg-white">
+                        <h5 class="fw-semibold">Course</h5>
+                        <p class="mb-1">{{ enrollment.course.title }}</p>
+                        <p class="text-muted mb-0">Instructor: {{ enrollment.course.instructor|default:'Skill Global
+                            Team' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 rounded-4 border bg-white">
+                        <h5 class="fw-semibold">Enrollment ID</h5>
+                        <p class="mb-1 text-primary fw-bold">{{ enrollment.enrollment_id }}</p>
+                        <p class="text-muted mb-0">{{ enrollment.created_at|date:'F j, Y' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border bg-white">
+                        <h6 class="fw-semibold">Payment Status</h6>
+                        <p class="mb-0 text-success">{{ enrollment.payment_status }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border bg-white">
+                        <h6 class="fw-semibold">Amount Paid</h6>
+                        <p class="mb-0">₹{{ enrollment.amount }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border bg-white">
+                        <h6 class="fw-semibold">Duration</h6>
+                        <p class="mb-0">{{ enrollment.course.duration|default:'Self-paced' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'my_courses' %}" class="btn btn-primary rounded-pill px-5">Go to My Courses</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-5">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

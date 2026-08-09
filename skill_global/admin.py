@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import About, Course, LiveClass, Article, Profile, Testimonial, CustomUser
+from .models import About, Course, CourseEnrollment, LiveClass, Article, Profile, Testimonial, CustomUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 # Register your models here.
@@ -81,6 +81,22 @@ class CourseAdmin(admin.ModelAdmin):
     list_filter = ('category', 'level', 'is_active')
     search_fields = ('title', 'category', 'instructor', 'short_description', 'description')
     readonly_fields = ('created_at', 'updated_at')
+
+@admin.register(CourseEnrollment)
+class CourseEnrollmentAdmin(admin.ModelAdmin):
+    list_display = (
+        'enrollment_id',
+        'user',
+        'course',
+        'amount',
+        'payment_method',
+        'payment_status',
+        'order_status',
+        'created_at',
+    )
+    list_filter = ('payment_method', 'payment_status', 'order_status', 'created_at')
+    search_fields = ('enrollment_id', 'user__email', 'user__full_name', 'course__title')
+    readonly_fields = ('enrollment_id', 'created_at', 'updated_at')
 
 @admin.register(LiveClass)
 class LiveClassAdmin(admin.ModelAdmin):
