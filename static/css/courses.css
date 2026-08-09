@@ -9,7 +9,7 @@
 }
 
 .featured-courses-section {
-    padding: 55px 0 40px;
+    padding: 55px 0 1rem;
     background: var(--course-bg);
 }
 
@@ -275,7 +275,7 @@
 
 @media (max-width: 767.98px) {
     .featured-courses-section {
-        padding: 4.5rem 0;
+        padding: 3rem 0 1rem;
     }
 
     .course-image {
@@ -370,7 +370,7 @@
 }
 
 .live-classes-section {
-    padding: 4.5rem 0 1.75rem;
+    padding: 3rem 0 1.75rem;
     background: var(--course-bg);
 }
 
@@ -516,7 +516,7 @@
 
 @media (max-width: 767.98px) {
     .live-classes-section {
-        padding: 3rem 0 1.5rem;
+        padding: 2.5rem 0 1.5rem;
     }
 
     .live-class-image {
