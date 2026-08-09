@@ -370,7 +370,7 @@
 }
 
 .live-classes-section {
-    padding: 4.5rem 0;
+    padding: 4.5rem 0 1.75rem;
     background: var(--course-bg);
 }
 
@@ -516,7 +516,7 @@
 
 @media (max-width: 767.98px) {
     .live-classes-section {
-        padding: 4rem 0;
+        padding: 3rem 0 1.5rem;
     }
 
     .live-class-image {
@@ -525,7 +525,7 @@
 }
 
 .latest-articles-section {
-    padding: 5rem 0;
+    padding: 3.5rem 0 4rem;
     background: var(--course-bg);
 }
 
@@ -628,7 +628,7 @@
     }
 
     .latest-articles-section {
-        padding: 4rem 0;
+        padding: 3rem 0 3.5rem;
     }
 }
 
