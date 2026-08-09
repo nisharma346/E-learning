@@ -30,33 +30,50 @@
 
                     <h3 class="fw-bold mb-2">{{ course.title }}</h3>
                     <p class="text-muted mb-3">
-                        {{ course.short_description|default:'A detailed course designed to helpyou grow your skills and
-                        career.' }}
+                        {% if course.short_description %}
+                        {{ course.short_description }}
+                        {% else %}
+                        A detailed course designed to help you grow your skills and career.
+                        {% endif %}
                     </p>
 
-                    <div class="mb-3">
-                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill me-2">
-                            {{ course.category|default:'General' }}</span>
-                        <span class="badge bg-light text-dark rounded-pill">{{ course.level|default:'All Levels'}}
-                        </span>
+                    <div class="row row-cols-2 g-2 mb-3">
+                        <div class="col">
+                            <div
+                                class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 w-100 text-start">
+                                {% if course.category %}
+                                {{ course.category }}
+                                {% else %}
+                                General
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="badge bg-light text-dark rounded-pill px-3 py-2 w-100 text-start">
+                                {{ course.level|default:"All Levels" }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row g-3 text-muted mb-4">
                         <div class="col-6">
                             <div class="fw-semibold">Instructor</div>
-                            <div>{{ course.instructor|default:'Skill Global Team' }}</div>
+                            <div>{{ course.instructor|default:"Expert Instructor" }}</div>
                         </div>
                         <div class="col-6">
                             <div class="fw-semibold">Duration</div>
-                            <div>{{ course.duration|default:'Self-paced' }}</div>
+                            <div>{{ course.duration|default:"Self-paced" }}</div>
                         </div>
                     </div>
 
                     <div class="card border-1 rounded-4 p-3 bg-light mb-4">
-                        <h6 class="fw-semibold mb-3">Course Notes</h6>
+                        <h6 class="fw-semibold mb-3">Course Overview</h6>
                         <p class="text-muted mb-0">
-                            {{ course.description|truncatewords:35|default:'Get industry-alignedlessons, practical
-                            exercises, and certification guidance.' }}
+                            {% if course.description %}
+                            {{ course.description|truncatewords:35 }}
+                            {% else %}
+                            Get industry-aligned lessons, practical exercises, and certification guidance.
+                            {% endif %}
                         </p>
                     </div>
 
