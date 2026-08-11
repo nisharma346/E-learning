@@ -1,532 +1,447 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿{% extends 'base.html' %}
 {% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Global | Learn Without Limits</title>
+{% block title %}Skill Global | Learn Without Limits{% endblock %}
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block content %}
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<section class="hero-section">
 
-    <!-- Custom styles -->
-    <link href="{% static 'css/navbar.css' %}" rel="stylesheet">
-    <link href="{% static 'css/hero.css' %}" rel="stylesheet">
-    <link href="{% static 'css/about.css' %}" rel="stylesheet">
-    <link href="{% static 'css/recognition.css' %}" rel="stylesheet">
-    <link href="{% static 'css/courses.css' %}" rel="stylesheet">
-    <link href="{% static 'css/footer.css' %}" rel="stylesheet">
-    <link href="{% static 'css/cta.css' %}" rel="stylesheet">
-</head>
+    <!-- Background Video -->
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source src="{% static 'vedios/A_professional_Indian_mentor_i.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
-<body>
-    {% include 'skill_global/navbar.html' %}
+    <!-- Dark Overlay -->
+    <div class="hero-overlay"></div>
 
-    {% load static %}
+    <!-- Hero Content -->
+    <div class="container hero-content">
+        <p class="hero-tag">EMPOWERING YOUR FUTURE THROUGH LEARNING</p>
 
-    <section class="hero-section">
+        <h1>
+            Learn Without Limits <br>
+            with Skill Global
+        </h1>
 
-        <!-- Background Video -->
-        <video class="hero-video" autoplay muted loop playsinline>
-            <source src="{% static 'vedios/A_professional_Indian_mentor_i.mp4' %}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <p>
+            Access industry-ready courses, live classes, expert mentors,
+            certifications, and practical learning experiences.
+        </p>
 
-        <!-- Dark Overlay -->
-        <div class="hero-overlay"></div>
+        <div class="hero-buttons">
+            <a href="{% url 'courses' %}" class="btn btn-primary">Explore Courses</a>
+            <a href="{% url 'register' %}" class="btn btn-outline-light">Get Started</a>
+        </div>
+    </div>
 
-        <!-- Hero Content -->
-        <div class="container hero-content">
-            <p class="hero-tag">EMPOWERING YOUR FUTURE THROUGH LEARNING</p>
+</section>
+<section class="recognition-section">
+    <div class="container">
+        <div class="recognition-banner">
+            <div class="recognition-left">
+                <div class="recognition-badge">Featured In</div>
+                <div class="recognition-logo">SG</div>
+                <div class="recognition-stars">★★★★★</div>
+                <div class="recognition-small-text">Featured Recognition 2026</div>
+            </div>
 
-            <h1>
-                Learn Without Limits <br>
-                with Skill Global
-            </h1>
+            <div class="recognition-center">
+                <div class="recognition-title">Recognized as a Leading Skill Development Platform</div>
+                <p class="recognition-quote">
+                    “Empowering students and professionals with practical learning, expert mentorship, and
+                    industry-ready skills.”
+                </p>
+                <p class="recognition-subtext">
+                    Recognized for delivering high-quality education and career-focused training programs.
+                </p>
+                <div class="recognition-founder">— Skill Global Team</div>
+            </div>
+
+            <div class="recognition-right">
+                <a href="#" class="recognition-btn">Read Our Story <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="bi bi-journal-bookmark"></i></div>
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Professional Courses</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="bi bi-people"></i></div>
+                    <div class="stat-number">5000+</div>
+                    <div class="stat-label">Students Trained</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="bi bi-award"></i></div>
+                    <div class="stat-number">2000+</div>
+                    <div class="stat-label">Certificates Awarded</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="bi bi-play-circle"></i></div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Live Sessions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="about-skill-global-section">
+    <div class="container">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6">
+                <div class="about-skill-global-image mx-auto">
+                    {% if about and about.image %}
+                    <img src="{{ about.image.url }}" alt="{{ about.title|default:'About Skill Global' }}"
+                        class="img-fluid">
+                    {% else %}
+                    <div class="about-image-placeholder">
+                        <i class="bi bi-image"></i>
+                        <strong>About image will appear here</strong>
+                        <p>Update the image from Django Admin.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="about-skill-global-copy pe-lg-4">
+                    <p class="section-tag about-skill-global-eyebrow">ABOUT SKILL GLOBAL</p>
+                    <h2 class="about-skill-global-heading">Empowering Learners, Building Careers</h2>
+                    <p class="about-skill-global-lead">
+                        Skill Global is committed to empowering learners with practical skills,
+                        industry-relevant knowledge, and confidence to succeed in a changing world.
+                    </p>
+                    {% if about and about.description %}
+                    <p class="about-skill-global-description">{{ about.description }}</p>
+                    {% endif %}
+                    <a href="{% url 'about' %}" class="btn btn-primary about-skill-global-btn">
+                        Learn More About Us <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-courses-section">
+    <div class="container">
+        <div class="featured-courses-header text-center mb-5">
+            <span class="featured-courses-eyebrow">FEATURED COURSES</span>
+            <h2 class="featured-courses-title">Explore Our Most Popular Courses</h2>
+            <p class="featured-courses-subtitle">
+                Discover practical, career-focused courses designed to build your skills and confidence.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            {% for course in featured_courses %}
+
+            <div class="col-lg-3 col-md-6 d-flex">
+                <div class="course-card h-100">
+                    <div class="course-image-wrap position-relative">
+                        {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
+                        {% else %}
+                        <div class="course-image bg-light d-flex align-items-center justify-content-center"
+                            style="height:220px;">
+                            <i class="bi bi-image fs-1 text-secondary"></i>
+                        </div>
+                        {% endif %}
+
+                        {% if course.category %}
+                        <span class="course-category-badge">
+                            {{ course.category }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="course-body d-flex flex-column">
+                        <div class="course-title-row">
+                            <h4 class="course-title">{{ course.title }}</h4>
+                            <span class="course-level-badge">
+                                {{ course.level|default:'Beginner' }}
+                            </span>
+                        </div>
+
+                        <p class="course-description">
+                            {{ course.description|truncatewords:18 }}
+                        </p>
+
+                        <div class="course-meta">
+                            <span class="course-meta-item">
+                                <i class="bi bi-person-circle"></i>
+                                {{ course.instructor|default:'Expert Instructor' }}
+                            </span>
+                            <span class="course-meta-item">
+                                <i class="bi bi-clock"></i>
+                                {{ course.duration|default:'Self paced' }}
+                            </span>
+                        </div>
+
+                        <div class="course-footer mt-auto">
+                            <h5 class="course-price">
+                                {% if course.price %}
+                                ₹{{ course.price }}
+                                {% else %}
+                                Free
+                                {% endif %}
+                            </h5>
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-primary course-btn">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% empty %}
+
+            <div class="col-12">
+                <div class="featured-empty-state text-center">
+                    <h5>Explore Our Courses</h5>
+                    <p>
+                        Discover practical, career-focused courses designed
+                        to build your skills and confidence.
+                    </p>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'courses' %}" class="view-all-courses-btn">
+                View All Courses
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<section class="live-classes-section">
+    <div class="container">
+        <div class="live-classes-header text-center mx-auto mb-5">
+            <span class="live-classes-eyebrow">INTERACTIVE LEARNING</span>
+            <h2 class="live-classes-title">Upcoming Live Classes</h2>
+            <p class="live-classes-subtitle">Join our expert-led live sessions and learn industry-ready skills
+                in
+                real time.</p>
+        </div>
+
+        {% if live_classes %}
+        <div class="row g-4">
+            {% for live_class in live_classes %}
+            <div class="col-lg-6 col-md-6 col-12 d-flex">
+                <article class="live-class-card flex-fill">
+                    <div class="live-class-image-wrap position-relative">
+                        {% if live_class.thumbnail %}
+                        <img src="{{ live_class.thumbnail.url }}" alt="{{ live_class.title }}" class="live-class-image">
+                        {% else %}
+                        <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ live_class.title }}"
+                            class="live-class-image">
+                        {% endif %}
+                        <span class="live-class-badge">{{ live_class.status|default:'Live' }}</span>
+                    </div>
+                    <div class="live-class-body d-flex flex-column">
+                        {% if live_class.category %}
+                        <span class="live-class-category">{{ live_class.category }}</span>
+                        {% endif %}
+                        <h3>{{ live_class.title }}</h3>
+                        {% if live_class.scheduled_at or live_class.duration %}
+                        <div class="live-class-meta flex-wrap gap-2 mb-3">
+                            {% if live_class.scheduled_at %}
+                            <span><i class="bi bi-calendar3"></i> {{ live_class.scheduled_at|date:"M d, Y" }}</span>
+                            <span><i class="bi bi-clock"></i> {{ live_class.scheduled_at|time:"g:i A" }}</span>
+                            {% endif %}
+                            {% if live_class.duration %}
+                            <span><i class="bi bi-hourglass-split"></i> {{ live_class.duration }}</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        <div class="live-class-meta mb-3">
+                            {% if live_class.instructor %}
+                            <span><i class="bi bi-person-circle"></i> {{ live_class.instructor }}</span>
+                            {% endif %}
+                        </div>
+                        {% if live_class.description %}
+                        <p class="live-class-description">{{ live_class.description|truncatewords:18 }}</p>
+                        {% endif %}
+                        <div class="mt-auto pt-3">
+                            {% if live_class.meeting_link %}
+                            <a href="{{ live_class.meeting_link }}" target="_blank" rel="noopener"
+                                class="btn btn-primary live-class-btn">Join Now</a>
+                            {% else %}
+                            <a href="{% url 'live_classes' %}" class="btn btn-primary live-class-btn">View
+                                Details</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center">
+            <h5 class="mb-0">No Upcoming Live Classes Available</h5>
+        </div>
+        {% endif %}
+
+        <div class="view-all-live-wrap text-center mt-4">
+            <a href="{% url 'live_classes' %}" class="btn btn-outline-primary view-all-live-btn">View All Live
+                Classes</a>
+        </div>
+    </div>
+</section>
+
+<section class="latest-articles-section">
+    <div class="container">
+        <div class="section-heading text-center mb-5">
+            <span class="section-tag">KNOWLEDGE HUB</span>
+            <h2>Latest Articles</h2>
+            <p>Explore expert insights, career guidance, and industry trends.</p>
+        </div>
+
+        {% if latest_articles %}
+        <div class="row g-4">
+            {% for article in latest_articles %}
+            <div class="col-lg-4 col-md-6">
+                <div class="article-card">
+                    {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-card-img">
+                    {% else %}
+                    <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ article.title }}"
+                        class="article-card-img">
+                    {% endif %}
+                    <div class="article-card-body">
+                        <span class="article-category">Article</span>
+                        <h3>{{ article.title }}</h3>
+                        <p>{{ article.summary|default:article.content|truncatewords:22 }}</p>
+                        <div class="article-card-meta">
+                            <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team'}}
+                            </span>
+                            <span><i class="bi bi-clock"></i> {{ article.content|wordcount|add:'0' }} min
+                                read</span>
+                        </div>
+                        <a href="{% url 'articles' %}" class="btn btn-primary article-card-btn">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center">
+            <h5 class="mb-0">No Articles Available</h5>
+        </div>
+        {% endif %}
+
+        <div class="view-all-live-wrap text-center mt-4">
+            <a href="{% url 'articles' %}" class="btn btn-outline-primary view-all-live-btn">Read More Articles
+                →</a>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-heading text-center mb-5">
+            <span class="section-tag">TESTIMONIALS</span>
+            <h2>What Our Students Say</h2>
+            <p>Real experiences from our learners. Their success is our greatest inspiration.</p>
+        </div>
+
+        {% if testimonials %}
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card h-100">
+                    <div class="testimonial-card-top d-flex align-items-center gap-3 mb-4">
+                        {% if testimonial.photo %}
+                        <img src="{{ testimonial.photo.url }}" alt="{{ testimonial.student_name }}"
+                            class="testimonial-photo">
+                        {% else %}
+                        <img src="{% static 'images/default-profile.svg' %}" alt="{{ testimonial.student_name }}"
+                            class="testimonial-photo">
+                        {% endif %}
+                        <div>
+                            <h5 class="testimonial-name mb-1">{{ testimonial.student_name }}</h5>
+                            <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student'}}
+
+                            </p>
+                        </div>
+                    </div>
+                    <div class="testimonial-rating mb-3">
+                        {% for i in '12345' %}
+                        <i class="bi bi-star-fill"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="testimonial-text">{{ testimonial.review|truncatewords:30 }}</p>
+                    <div class="testimonial-footer mt-auto">
+                        {% if testimonial.verified %}
+                        <span class="verified-badge"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center">
+            <h5 class="mb-0">No Testimonials Available</h5>
+        </div>
+        {% endif %}
+
+        <div class="view-all-live-wrap text-center mt-4">
+            <a href="{% url 'testimonials' %}" class="btn btn-outline-primary view-all-live-btn">View All
+                Testimonials →</a>
+        </div>
+    </div>
+</section>
+<section class="cta-section">
+    <div class="container">
+
+        <div class="cta-content">
+
+            <h2>Begin Your Professional Transformation</h2>
 
             <p>
-                Access industry-ready courses, live classes, expert mentors,
-                certifications, and practical learning experiences.
+                Join thousands of learners who are building practical skills,
+                earning industry-recognized certifications, and accelerating
+                their careers with Skill Global.
             </p>
 
-            <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Explore Courses</a>
-                <a href="#" class="btn btn-outline-light">Get Started</a>
-            </div>
-        </div>
+            <div class="cta-buttons">
 
-    </section>
-
-    <section class="recognition-section">
-        <div class="container">
-            <div class="recognition-banner">
-                <div class="recognition-left">
-                    <div class="recognition-badge">Featured In</div>
-                    <div class="recognition-logo">SG</div>
-                    <div class="recognition-stars">★★★★★</div>
-                    <div class="recognition-small-text">Featured Recognition 2026</div>
-                </div>
-
-                <div class="recognition-center">
-                    <div class="recognition-title">Recognized as a Leading Skill Development Platform</div>
-                    <p class="recognition-quote">
-                        “Empowering students and professionals with practical learning, expert mentorship, and
-                        industry-ready skills.”
-                    </p>
-                    <p class="recognition-subtext">
-                        Recognized for delivering high-quality education and career-focused training programs.
-                    </p>
-                    <div class="recognition-founder">— Skill Global Team</div>
-                </div>
-
-                <div class="recognition-right">
-                    <a href="#" class="recognition-btn">Read Our Story <i class="bi bi-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="stats-section">
-        <div class="container">
-            <div class="row g-4 text-center">
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="bi bi-journal-bookmark"></i></div>
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Professional Courses</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="bi bi-people"></i></div>
-                        <div class="stat-number">5000+</div>
-                        <div class="stat-label">Students Trained</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="bi bi-award"></i></div>
-                        <div class="stat-number">2000+</div>
-                        <div class="stat-label">Certificates Awarded</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="bi bi-play-circle"></i></div>
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Live Sessions</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <section class="about-skill-global-section">
-        <div class="container">
-            <div class="row gx-5 align-items-center">
-                <div class="col-lg-6">
-                    <div class="about-skill-global-image mx-auto">
-                        {% if about and about.image %}
-                        <img src="{{ about.image.url }}" alt="{{ about.title|default:'About Skill Global' }}"
-                            class="img-fluid">
-                        {% else %}
-                        <div class="about-image-placeholder">
-                            <i class="bi bi-image"></i>
-                            <strong>About image will appear here</strong>
-                            <p>Update the image from Django Admin.</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="about-skill-global-copy pe-lg-4">
-                        <p class="section-tag about-skill-global-eyebrow">ABOUT SKILL GLOBAL</p>
-                        <h2 class="about-skill-global-heading">Empowering Learners, Building Careers</h2>
-                        <p class="about-skill-global-lead">
-                            Skill Global is committed to empowering learners with practical skills,
-                            industry-relevant knowledge, and confidence to succeed in a changing world.
-                        </p>
-                        {% if about and about.description %}
-                        <p class="about-skill-global-description">{{ about.description }}</p>
-                        {% endif %}
-                        <a href="{% url 'about' %}" class="btn btn-primary about-skill-global-btn">
-                            Learn More About Us <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="featured-courses-section">
-        <div class="container">
-            <div class="featured-courses-header text-center mb-5">
-                <span class="featured-courses-eyebrow">FEATURED COURSES</span>
-                <h2 class="featured-courses-title">Explore Our Most Popular Courses</h2>
-                <p class="featured-courses-subtitle">
-                    Discover practical, career-focused courses designed to build your skills and confidence.
-                </p>
-            </div>
-
-            <div class="row g-4">
-
-                {% for course in featured_courses %}
-
-                <div class="col-lg-3 col-md-6 d-flex">
-                    <div class="course-card h-100">
-                        <div class="course-image-wrap position-relative">
-                            {% if course.image %}
-                            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
-                            {% else %}
-                            <div class="course-image bg-light d-flex align-items-center justify-content-center"
-                                style="height:220px;">
-                                <i class="bi bi-image fs-1 text-secondary"></i>
-                            </div>
-                            {% endif %}
-
-                            {% if course.category %}
-                            <span class="course-category-badge">
-                                {{ course.category }}
-                            </span>
-                            {% endif %}
-                        </div>
-
-                        <div class="course-body d-flex flex-column">
-                            <div class="course-title-row">
-                                <h4 class="course-title">{{ course.title }}</h4>
-                                <span class="course-level-badge">
-                                    {{ course.level|default:'Beginner' }}
-                                </span>
-                            </div>
-
-                            <p class="course-description">
-                                {{ course.description|truncatewords:18 }}
-                            </p>
-
-                            <div class="course-meta">
-                                <span class="course-meta-item">
-                                    <i class="bi bi-person-circle"></i>
-                                    {{ course.instructor|default:'Expert Instructor' }}
-                                </span>
-                                <span class="course-meta-item">
-                                    <i class="bi bi-clock"></i>
-                                    {{ course.duration|default:'Self paced' }}
-                                </span>
-                            </div>
-
-                            <div class="course-footer mt-auto">
-                                <h5 class="course-price">
-                                    {% if course.price %}
-                                    ₹{{ course.price }}
-                                    {% else %}
-                                    Free
-                                    {% endif %}
-                                </h5>
-                                <a href="{% url 'course_detail' course.id %}" class="btn btn-primary course-btn">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {% empty %}
-
-                <div class="col-12">
-                    <div class="featured-empty-state text-center">
-                        <h5>Explore Our Courses</h5>
-                        <p>
-                            Discover practical, career-focused courses designed
-                            to build your skills and confidence.
-                        </p>
-                    </div>
-                </div>
-
-                {% endfor %}
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="{% url 'courses' %}" class="view-all-courses-btn">
-                    View All Courses
-                    <i class="bi bi-arrow-right"></i>
+                <a href="{% url 'register' %}" class="btn-primary-cta">
+                    Register Now
+                    <i class="fas fa-arrow-right ms-2"></i>
                 </a>
-            </div>
-        </div>
-    </section>
-    <section class="live-classes-section">
-        <div class="container">
-            <div class="live-classes-header text-center mx-auto mb-5">
-                <span class="live-classes-eyebrow">INTERACTIVE LEARNING</span>
-                <h2 class="live-classes-title">Upcoming Live Classes</h2>
-                <p class="live-classes-subtitle">Join our expert-led live sessions and learn industry-ready skills
-                    in
-                    real time.</p>
-            </div>
 
-            {% if live_classes %}
-            <div class="row g-4">
-                {% for live_class in live_classes %}
-                <div class="col-lg-6 col-md-6 col-12 d-flex">
-                    <article class="live-class-card flex-fill">
-                        <div class="live-class-image-wrap position-relative">
-                            {% if live_class.thumbnail %}
-                            <img src="{{ live_class.thumbnail.url }}" alt="{{ live_class.title }}"
-                                class="live-class-image">
-                            {% else %}
-                            <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ live_class.title }}"
-                                class="live-class-image">
-                            {% endif %}
-                            <span class="live-class-badge">{{ live_class.status|default:'Live' }}</span>
-                        </div>
-                        <div class="live-class-body d-flex flex-column">
-                            {% if live_class.category %}
-                            <span class="live-class-category">{{ live_class.category }}</span>
-                            {% endif %}
-                            <h3>{{ live_class.title }}</h3>
-                            {% if live_class.scheduled_at or live_class.duration %}
-                            <div class="live-class-meta flex-wrap gap-2 mb-3">
-                                {% if live_class.scheduled_at %}
-                                <span><i class="bi bi-calendar3"></i> {{ live_class.scheduled_at|date:"M d, Y" }}</span>
-                                <span><i class="bi bi-clock"></i> {{ live_class.scheduled_at|time:"g:i A" }}</span>
-                                {% endif %}
-                                {% if live_class.duration %}
-                                <span><i class="bi bi-hourglass-split"></i> {{ live_class.duration }}</span>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-                            <div class="live-class-meta mb-3">
-                                {% if live_class.instructor %}
-                                <span><i class="bi bi-person-circle"></i> {{ live_class.instructor }}</span>
-                                {% endif %}
-                            </div>
-                            {% if live_class.description %}
-                            <p class="live-class-description">{{ live_class.description|truncatewords:18 }}</p>
-                            {% endif %}
-                            <div class="mt-auto pt-3">
-                                {% if live_class.meeting_link %}
-                                <a href="{{ live_class.meeting_link }}" target="_blank" rel="noopener"
-                                    class="btn btn-primary live-class-btn">Join Now</a>
-                                {% else %}
-                                <a href="{% url 'live_classes' %}" class="btn btn-primary live-class-btn">View
-                                    Details</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="text-center">
-                <h5 class="mb-0">No Upcoming Live Classes Available</h5>
-            </div>
-            {% endif %}
-
-            <div class="view-all-live-wrap text-center mt-4">
-                <a href="{% url 'live_classes' %}" class="btn btn-outline-primary view-all-live-btn">View All Live
-                    Classes</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="latest-articles-section">
-        <div class="container">
-            <div class="section-heading text-center mb-5">
-                <span class="section-tag">KNOWLEDGE HUB</span>
-                <h2>Latest Articles</h2>
-                <p>Explore expert insights, career guidance, and industry trends.</p>
-            </div>
-
-            {% if latest_articles %}
-            <div class="row g-4">
-                {% for article in latest_articles %}
-                <div class="col-lg-4 col-md-6">
-                    <div class="article-card">
-                        {% if article.image %}
-                        <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-card-img">
-                        {% else %}
-                        <img src="{% static 'images/skill_global_buildings.png' %}" alt="{{ article.title }}"
-                            class="article-card-img">
-                        {% endif %}
-                        <div class="article-card-body">
-                            <span class="article-category">Article</span>
-                            <h3>{{ article.title }}</h3>
-                            <p>{{ article.summary|default:article.content|truncatewords:22 }}</p>
-                            <div class="article-card-meta">
-                                <span><i class="bi bi-person"></i> {{ article.author|default:'Skill Global Team'}}
-                                </span>
-                                <span><i class="bi bi-clock"></i> {{ article.content|wordcount|add:'0' }} min
-                                    read</span>
-                            </div>
-                            <a href="{% url 'articles' %}" class="btn btn-primary article-card-btn">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="text-center">
-                <h5 class="mb-0">No Articles Available</h5>
-            </div>
-            {% endif %}
-
-            <div class="view-all-live-wrap text-center mt-4">
-                <a href="{% url 'articles' %}" class="btn btn-outline-primary view-all-live-btn">Read More Articles
-                    →</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="section-heading text-center mb-5">
-                <span class="section-tag">TESTIMONIALS</span>
-                <h2>What Our Students Say</h2>
-                <p>Real experiences from our learners. Their success is our greatest inspiration.</p>
-            </div>
-
-            {% if testimonials %}
-            <div class="row g-4">
-                {% for testimonial in testimonials %}
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-card h-100">
-                        <div class="testimonial-card-top d-flex align-items-center gap-3 mb-4">
-                            {% if testimonial.photo %}
-                            <img src="{{ testimonial.photo.url }}" alt="{{ testimonial.student_name }}"
-                                class="testimonial-photo">
-                            {% else %}
-                            <img src="{% static 'images/default-profile.svg' %}" alt="{{ testimonial.student_name }}"
-                                class="testimonial-photo">
-                            {% endif %}
-                            <div>
-                                <h5 class="testimonial-name mb-1">{{ testimonial.student_name }}</h5>
-                                <p class="testimonial-designation mb-0">{{ testimonial.designation|default:'Student'}}
-
-                                </p>
-                            </div>
-                        </div>
-                        <div class="testimonial-rating mb-3">
-                            {% for i in '12345' %}
-                            <i class="bi bi-star-fill"></i>
-                            {% endfor %}
-                        </div>
-                        <p class="testimonial-text">{{ testimonial.review|truncatewords:30 }}</p>
-                        <div class="testimonial-footer mt-auto">
-                            {% if testimonial.verified %}
-                            <span class="verified-badge"><i class="bi bi-patch-check-fill"></i> Verified</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="text-center">
-                <h5 class="mb-0">No Testimonials Available</h5>
-            </div>
-            {% endif %}
-
-            <div class="view-all-live-wrap text-center mt-4">
-                <a href="{% url 'testimonials' %}" class="btn btn-outline-primary view-all-live-btn">View All
-                    Testimonials →</a>
-            </div>
-        </div>
-    </section>
-    <section class="cta-section">
-        <div class="container">
-
-            <div class="cta-content">
-
-                <h2>Begin Your Professional Transformation</h2>
-
-                <p>
-                    Join thousands of learners who are building practical skills,
-                    earning industry-recognized certifications, and accelerating
-                    their careers with Skill Global.
-                </p>
-
-                <div class="cta-buttons">
-
-                    <a href="{% url 'register' %}" class="btn-primary-cta">
-                        Register Now
-                        <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-
-                    <a href="{% url 'courses' %}" class="btn-outline-cta">
-                        Browse Courses
-                    </a>
-
-                </div>
+                <a href="{% url 'courses' %}" class="btn-outline-cta">
+                    Browse Courses
+                </a>
 
             </div>
 
         </div>
-    </section>
 
+    </div>
+</section>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <h3>Skill Global</h3>
-                    <p>Premium learning experiences built to help individuals and teams grow with confidence and
-                        clarity.</p>
-                    <div class="social-links"><a href="#"><i class="bi bi-facebook"></i></a><a href="#"><i
-                                class="bi bi-linkedin"></i></a><a href="#"><i class="bi bi-twitter-x"></i></a><a
-                            href="#"><i class="bi bi-instagram"></i></a></div>
-                </div>
-                <div class="col-lg-2 col-md-6">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="{% url 'home' %}">Home</a></li>
-                        <li><a href="{% url 'about' %}">About</a></li>
-                        <li><a href="{% url 'courses' %}">Courses</a></li>
-                        <li><a href="{% url 'live_classes' %}">Live Classes</a></li>
-                        <li><a href="{% url 'articles' %}">Articles</a></li>
-                        <li><a href="{% url 'contact' %}">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6">
-                    <h4>Popular Courses</h4>
-                    <ul>
-                        <li><a href="#">Machine Learning</a></li>
-                        <li><a href="#">UI/UX Design</a></li>
-                        <li><a href="#">Digital Marketing</a></li>
-                        <li><a href="#">Leadership</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6">
-                    <h4>Contact</h4>
-                    <ul>
-                        <li><a href="mailto:hello@skillglobal.com">hello@skillglobal.com</a></li>
-                        <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-                        <li>Hyderabad, India</li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4>Newsletter</h4>
-                    <p>Get weekly learning insights and course updates.</p>
-                    <div class="newsletter-form d-flex gap-2 rounded-4 overflow-hidden bg-light p-2">
-                        <input type="email" class="form-control border-0 bg-transparent" placeholder="Email Address">
-                        <button type="button" class="btn btn-primary">Join</button>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom text-center mt-5 pt-4 border-top">
-                <p class="mb-0">© 2026 Skill Global. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/hero.js' %}"></script>
-</body>
-
-</html>
+{% endblock %}
