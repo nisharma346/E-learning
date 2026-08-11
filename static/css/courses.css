@@ -9,7 +9,7 @@
 }
 
 .featured-courses-section {
-    padding: 55px 0 1rem;
+    padding: 42px 0 1rem;
     background: var(--course-bg);
 }
 
@@ -30,15 +30,15 @@
 }
 
 .featured-courses-title {
-    font-size: clamp(2rem, 3.3vw, 2.7rem);
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
     font-weight: 800;
     color: var(--course-text);
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 }
 
 .featured-courses-subtitle {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: var(--course-muted);
     margin: 0;
 }
@@ -90,7 +90,7 @@
 
 .course-card .card-img-top {
     width: 100%;
-    height: 220px;
+    height: 180px;
     object-fit: cover;
     object-position: center;
     border-radius: 18px 18px 0 0;
@@ -122,7 +122,7 @@
 
 .course-image {
     width: 100%;
-    height: 220px;
+    height: 180px;
     object-fit: cover;
     object-position: center;
     display: block;
@@ -134,18 +134,20 @@
     transform: scale(1.05);
 }
 
+
+
 .course-card-body {
-    padding: 1.2rem 1.2rem 1.35rem;
+    padding: 1rem 1rem 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.55rem;
 }
 
 .course-body {
-    padding: 1.2rem 1.2rem 1.35rem;
+    padding: 1rem 1rem 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.55rem;
 }
 
 .course-category-badge {
@@ -197,9 +199,9 @@
 }
 
 .course-description {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: var(--course-muted);
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -244,21 +246,27 @@
 
 .course-price {
     color: var(--course-primary);
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
 }
 
-.course-btn {
-    border-radius: 999px;
-    padding: 0.65rem 1rem;
+.course-card .course-btn {
+    min-width: 145px;
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 600;
-    transition: transform 0.2s ease, background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    transition: all 0.25s ease;
 }
 
-.course-btn:hover {
-    transform: translateY(-1px);
-    background: var(--course-primary-dark);
+.course-card .course-btn:hover {
+    transform: translateY(-2px);
 }
 
 .view-all-wrap {
@@ -275,11 +283,11 @@
 
 @media (max-width: 767.98px) {
     .featured-courses-section {
-        padding: 3rem 0 1rem;
+        padding: 2.5rem 0 1rem;
     }
 
     .course-image {
-        height: 200px;
+        height: 180px;
     }
 }
 
