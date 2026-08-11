@@ -248,6 +248,10 @@
             </div>
 
             {% endfor %}
+
+            <div id="no-category-message" class="col-12 d-none text-center">
+                <p class="text-muted mb-0">No courses available in this category.</p>
+            </div>
         </div>
 
         <div class="text-center mt-4">
@@ -268,6 +272,8 @@
             return String(value || '').trim().toLowerCase();
         }
 
+        const noCategoryMessage = document.getElementById('no-category-message');
+
         function filterCourses(filter) {
             let visibleCount = 0;
             courseItems.forEach((item) => {
@@ -280,6 +286,14 @@
                     window.requestAnimationFrame(() => item.classList.remove('fade-in'));
                 }
             });
+
+            if (noCategoryMessage) {
+                if (visibleCount === 0) {
+                    noCategoryMessage.classList.remove('d-none');
+                } else {
+                    noCategoryMessage.classList.add('d-none');
+                }
+            }
         }
 
         filterButtons.forEach((button) => {
