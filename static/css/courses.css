@@ -727,3 +727,58 @@
         padding: 4.5rem 0;
     }
 }
+
+/* =================================
+   STEP 2.5 - COURSE CATEGORY FILTER
+   ================================= */
+
+.course-category-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px auto 32px;
+}
+
+.category-filter {
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    color: #374151;
+    padding: 9px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.category-filter:hover,
+.category-filter:focus-visible {
+    background: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+    transform: translateY(-1px);
+}
+
+.category-filter.active {
+    background: #0d6efd;
+    border: 1px solid #0d6efd;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.12);
+}
+
+/* Responsive: allow wrapping and slightly smaller buttons under 768px */
+@media (max-width: 767.98px) {
+    .course-category-filter {
+        gap: 8px;
+        margin: 18px auto 32px;
+    }
+
+    .category-filter {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}

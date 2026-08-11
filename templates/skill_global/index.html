@@ -149,13 +149,35 @@
             <p class="featured-courses-subtitle">
                 Discover practical, career-focused courses designed to build your skills and confidence.
             </p>
+            <div class="course-category-filter">
+                <button class="category-filter active" data-category="all">
+                    All
+                </button>
+
+                <button class="category-filter" data-category="Data Science">
+                    Data Science
+                </button>
+
+                <button class="category-filter" data-category="Design">
+                    Design
+                </button>
+
+                <button class="category-filter" data-category="Programming">
+                    Programming
+                </button>
+
+                <button class="category-filter" data-category="Business">
+                    Business
+                </button>
+            </div>
         </div>
 
         <div class="row g-4">
 
             {% for course in featured_courses %}
 
-            <div class="col-lg-3 col-md-6 d-flex">
+            <div class="col-lg-3 col-md-6 d-flex course-grid-item"
+                data-category="{{ course.category|default_if_none:''|lower }}">
                 <div class="course-card h-100">
                     <div class="course-image-wrap position-relative">
                         {% if course.image %}
@@ -236,6 +258,45 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterButtons = document.querySelectorAll('.category-filter');
+        const courseItems = document.querySelectorAll('.course-grid-item');
+
+        function normalizeValue(value) {
+            return String(value || '').trim().toLowerCase();
+        }
+
+        function filterCourses(filter) {
+            let visibleCount = 0;
+            courseItems.forEach((item) => {
+                const category = normalizeValue(item.dataset.category || '');
+                const matches = filter === 'all' || category === filter;
+                item.style.display = matches ? '' : 'none';
+                if (matches) {
+                    visibleCount += 1;
+                    item.classList.add('fade-in');
+                    window.requestAnimationFrame(() => item.classList.remove('fade-in'));
+                }
+            });
+        }
+
+        filterButtons.forEach((button) => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (this.classList.contains('active')) return;
+                document.querySelectorAll('.category-filter.active').forEach((b) => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = normalizeValue(this.dataset.category || this.getAttribute('data-category') || this.textContent || 'all');
+                filterCourses(filter);
+            });
+        });
+
+        // Initialize view
+        filterCourses('all');
+    });
+</script>
 <section class="live-classes-section">
     <div class="container">
         <div class="live-classes-header text-center mx-auto mb-5">
