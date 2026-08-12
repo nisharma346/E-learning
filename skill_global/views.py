@@ -73,11 +73,19 @@ def courses(request):
     return render(request, 'skill_global/courses.html', context)
 
 def course_detail(request, id):
-    course = Course.objects.filter(id=id, is_active=True).first()
+    course = get_object_or_404(Course, id=id, is_active=True)
+    
+    # Fetch related courses from the same category, excluding current course, limit to 3
+    related_courses = Course.objects.filter(
+        category=course.category,
+        is_active=True
+    ).exclude(id=course.id)[:3]
+    
     context = {
-        'page_title': course.title if course else 'Course Details',
+        'page_title': course.title,
         'page_description': 'View detailed information about this course.',
         'course': course,
+        'related_courses': related_courses,
     }
     return render(request, 'skill_global/course_detail.html', context)
 
