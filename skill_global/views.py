@@ -208,15 +208,11 @@ def my_courses(request):
 
 
 def live_classes(request):
-    # FIX #6: VERIFIED - View correctly passes live_classes context to template
-    # The 'live_classes' variable contains all active LiveClass objects with thumbnails and descriptions
-    # Template can now access cls.thumbnail (correct field) and cls.description for each live class
     live_classes = LiveClass.objects.filter(is_active=True).order_by('scheduled_at')
     context = {
         'page_title': 'Live Classes',
         'page_description': 'Join live sessions led by experts and sharpen your skills in real time.',
         'live_classes': live_classes,
-        'classes': live_classes,
     }
     return render(request, 'skill_global/live_classes.html', context)
 

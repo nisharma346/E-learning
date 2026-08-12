@@ -4,60 +4,65 @@
 {% block title %}Live Classes | Skill Global{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
+    :root {
+        --primary-blue: #0D6EFD;
+        --primary-dark: #0b5ed7;
+        --bg-light: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-primary: #1f2937;
+        --text-muted: #6b7280;
+        --border-light: #e5e7eb;
+    }
+
     /* ============================================
-       HERO SECTION
+       PAGE HEADER SECTION
        ============================================ */
-    .live-classes-hero {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: #ffffff;
+    .live-classes-header {
+        background: var(--bg-light);
         padding: 4rem 2rem;
         margin-bottom: 3.5rem;
         text-align: center;
-        position: relative;
-        overflow: hidden;
     }
 
-    .live-classes-hero::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1), transparent 50%),
-            radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.05), transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .live-classes-hero .hero-content {
-        position: relative;
-        z-index: 1;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .live-classes-hero h1 {
-        font-size: 2.5rem;
+    .live-classes-eyebrow {
+        display: inline-block;
+        margin-bottom: 0.8rem;
+        color: var(--primary-blue);
+        font-size: 0.85rem;
         font-weight: 700;
-        margin-bottom: 1rem;
-        color: #ffffff;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
     }
 
-    .live-classes-hero p {
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.95);
+    .live-classes-title {
+        font-size: clamp(1.8rem, 3vw, 2.35rem);
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.6rem;
+    }
+
+    .live-classes-subtitle {
+        font-size: 0.95rem;
         line-height: 1.6;
+        color: var(--text-muted);
+        margin: 0;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     /* ============================================
-       CARDS GRID & LAYOUT
+       CONTAINER & GRID LAYOUT
        ============================================ */
     .live-classes-container {
-        padding: 2rem 0;
+        padding: 1rem 0 3.5rem;
     }
 
     .live-classes-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
     }
 
@@ -65,52 +70,54 @@
        CARD STYLING
        ============================================ */
     .live-class-card {
-        background: #ffffff;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
+        background: var(--card-bg);
+        border: none;
+        border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
         display: flex;
         flex-direction: column;
         height: 100%;
     }
 
     .live-class-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
     }
 
-    /* Thumbnail Image */
-    .card-thumbnail-wrapper {
+    /* Thumbnail Section */
+    .card-image-wrapper {
         position: relative;
         width: 100%;
-        height: 200px;
+        height: 220px;
         overflow: hidden;
-        background: #f5f5f5;
+        background: var(--bg-light);
     }
 
-    .card-thumbnail {
+    .card-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.3s ease;
     }
 
-    .thumbnail-placeholder {
+    .live-class-card:hover .card-image {
+        transform: scale(1.05);
+    }
+
+    .image-placeholder {
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        font-size: 3.5rem;
+        background: linear-gradient(135deg, #0D6EFD 0%, #0b5ed7 100%);
         color: rgba(255, 255, 255, 0.8);
     }
 
-    .thumbnail-placeholder i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .image-placeholder i {
+        font-size: 64px;
     }
 
     /* Badge Container */
@@ -124,22 +131,38 @@
         z-index: 2;
     }
 
-    .badge {
-        padding: 0.4rem 0.8rem;
+    .badge-category {
+        display: inline-block;
+        padding: 0.5rem 0.9rem;
         border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.95);
-        color: #333;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: rgba(13, 110, 253, 0.92);
+        color: #ffffff;
     }
 
-    .badge.badge-live {
+    .badge-status {
+        display: inline-block;
+        padding: 0.5rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
         background: #dc3545;
         color: #ffffff;
     }
 
+    .badge-level {
+        display: inline-block;
+        padding: 0.4rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--primary-blue);
+    }
+
     /* Card Body */
-    .card-body {
+    .card-body-content {
         padding: 1.5rem;
         flex-grow: 1;
         display: flex;
@@ -149,14 +172,18 @@
     .card-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: var(--text-primary);
         margin-bottom: 0.75rem;
         line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .card-description {
-        color: #666;
-        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
         line-height: 1.5;
         margin-bottom: 1rem;
         display: -webkit-box;
@@ -169,37 +196,36 @@
     .card-meta {
         margin-top: auto;
         padding-top: 1rem;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-light);
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
-        color: #666;
-        font-size: 0.9rem;
     }
 
     .meta-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
     }
 
     .meta-item i {
         width: 18px;
-        color: #2a5298;
+        color: var(--primary-blue);
         font-size: 0.95rem;
     }
 
     .meta-item strong {
-        min-width: 80px;
-        color: #333;
+        min-width: 75px;
+        color: var(--text-primary);
         font-weight: 600;
     }
 
-    /* Card Action Button */
+    /* Action Button */
     .card-action {
         padding: 1rem 1.5rem;
-        background: #f9f9f9;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-light);
         display: flex;
         gap: 0.75rem;
     }
@@ -207,29 +233,35 @@
     .card-action .btn {
         flex: 1;
         padding: 0.75rem 1rem;
-        border-radius: 8px;
+        border-radius: 12px;
         font-weight: 600;
         font-size: 0.95rem;
         text-decoration: none;
         text-align: center;
         transition: all 0.3s ease;
-        border: 2px solid #2a5298;
-        background: #2a5298;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .card-action .btn-primary {
+        background: var(--primary-blue);
         color: #ffffff;
     }
 
-    .card-action .btn:hover {
-        background: #1e3c72;
-        border-color: #1e3c72;
+    .card-action .btn-primary:hover {
+        background: var(--primary-dark);
         text-decoration: none;
         color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.2);
     }
 
-    .card-action .btn:disabled,
-    .card-action .btn.disabled {
-        background: #ccc;
-        border-color: #ccc;
-        color: #999;
+    .card-action .btn-secondary {
+        background: var(--bg-light);
+        color: var(--text-muted);
         cursor: not-allowed;
     }
 
@@ -238,53 +270,79 @@
        ============================================ */
     .empty-state {
         text-align: center;
-        padding: 4rem 2rem;
-        color: #666;
+        padding: 5rem 2rem;
+        color: var(--text-muted);
     }
 
     .empty-state-icon {
-        font-size: 3rem;
-        color: #2a5298;
-        margin-bottom: 1rem;
+        font-size: 4rem;
+        color: var(--primary-blue);
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+    }
+
+    .empty-state h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin: 0;
     }
 
     /* ============================================
        RESPONSIVE DESIGN
        ============================================ */
-    @media (max-width: 1024px) {
+    @media (max-width: 1199px) {
         .live-classes-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
         }
 
-        .live-classes-hero h1 {
-            font-size: 2rem;
-        }
-
-        .live-classes-hero p {
-            font-size: 1rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .live-classes-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .live-classes-hero {
+        .live-classes-header {
             padding: 3rem 1.5rem;
             margin-bottom: 2.5rem;
         }
 
-        .live-classes-hero h1 {
+        .live-classes-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .live-classes-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .live-classes-header {
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .live-classes-title {
             font-size: 1.75rem;
+            margin-bottom: 0.5rem;
         }
 
-        .live-classes-hero p {
-            font-size: 0.95rem;
+        .live-classes-eyebrow {
+            font-size: 0.8rem;
+            margin-bottom: 0.6rem;
         }
 
-        .card-body {
+        .live-classes-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .card-image-wrapper {
+            height: 180px;
+        }
+
+        .card-body-content {
             padding: 1.25rem;
         }
 
@@ -292,36 +350,35 @@
             padding: 0.75rem 1.25rem;
         }
 
-        .card-thumbnail-wrapper {
-            height: 180px;
+        .image-placeholder i {
+            font-size: 48px;
         }
     }
 
     @media (max-width: 480px) {
-        .live-classes-hero {
-            padding: 2rem 1rem;
-            margin-bottom: 2rem;
+        .live-classes-header {
+            padding: 1.5rem 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .live-classes-hero h1 {
+        .live-classes-title {
             font-size: 1.5rem;
-            margin-bottom: 0.75rem;
         }
 
-        .live-classes-hero p {
-            font-size: 0.9rem;
+        .live-classes-subtitle {
+            font-size: 0.85rem;
         }
 
         .live-classes-grid {
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
-        .card-thumbnail-wrapper {
+        .card-image-wrapper {
             height: 150px;
         }
 
-        .thumbnail-placeholder {
-            font-size: 2.5rem;
+        .image-placeholder i {
+            font-size: 40px;
         }
 
         .card-title {
@@ -329,14 +386,10 @@
         }
 
         .card-description {
-            font-size: 0.9rem;
-        }
-
-        .card-meta {
             font-size: 0.85rem;
         }
 
-        .meta-item i {
+        .meta-item {
             font-size: 0.85rem;
         }
     }
@@ -344,8 +397,15 @@
 {% endblock %}
 
 {% block content %}
-<!-- HERO SECTION -->
-
+<!-- PAGE HEADER -->
+<section class="live-classes-header">
+    <div class="live-classes-eyebrow">Interactive Learning</div>
+    <h1 class="live-classes-title">Upcoming Live Classes</h1>
+    <p class="live-classes-subtitle">
+        Join expert-led live sessions designed to sharpen your skills, answer your questions in real-time, and
+        accelerate your learning journey.
+    </p>
+</section>
 
 <!-- LIVE CLASSES GRID -->
 <section class="container live-classes-container">
@@ -353,58 +413,86 @@
     <div class="live-classes-grid">
         {% for cls in live_classes %}
         <div class="live-class-card">
-            <!-- THUMBNAIL SECTION -->
-            <div class="card-thumbnail-wrapper">
+            <!-- IMAGE & BADGES -->
+            <div class="card-image-wrapper">
                 {% if cls.thumbnail %}
-                <img src="{{ cls.thumbnail.url }}" alt="{{ cls.title }}" class="card-thumbnail">
+                <img src="{{ cls.thumbnail.url }}" alt="{{ cls.title }}" class="card-image">
                 {% else %}
-                <div class="thumbnail-placeholder">
-                    <i class="bi bi-play-circle"></i>
+                <div class="image-placeholder">
+                    <i class="bi bi-camera-video"></i>
                 </div>
                 {% endif %}
 
-                <!-- BADGES -->
                 <div class="card-badges">
                     {% if cls.category %}
-                    <span class="badge">{{ cls.category }}</span>
+                    <span class="badge-category">{{ cls.category }}</span>
                     {% endif %}
-                    <span class="badge badge-live">Live</span>
+                    {% if cls.status == 'Live Now' %}
+                    <span class="badge-status">{{ cls.status }}</span>
+                    {% endif %}
                 </div>
             </div>
 
             <!-- CARD CONTENT -->
-            <div class="card-body">
+            <div class="card-body-content">
                 <h3 class="card-title">{{ cls.title }}</h3>
                 <p class="card-description">
-                    {{ cls.description|default:"Join this live session for practical learning and direct guidance." }}
+                    {% if cls.description %}
+                    {{ cls.description|truncatewords:15 }}
+                    {% else %}
+                    Join this live session for practical learning and direct guidance from industry experts.
+                    {% endif %}
                 </p>
 
                 <!-- META INFORMATION -->
                 <div class="card-meta">
+                    {% if cls.scheduled_at %}
                     <div class="meta-item">
-                        <i class="bi bi-calendar-event"></i>
+                        <i class="bi bi-calendar3"></i>
                         <strong>Date:</strong>
-                        <span>{{ cls.scheduled_at|date:"M d, Y"|default:"TBA" }}</span>
+                        <span>{{ cls.scheduled_at|date:"M d, Y" }}</span>
                     </div>
                     <div class="meta-item">
                         <i class="bi bi-clock"></i>
                         <strong>Time:</strong>
-                        <span>{{ cls.scheduled_at|time:"h:i A"|default:"TBA" }}</span>
+                        <span>{{ cls.scheduled_at|time:"h:i A" }}</span>
                     </div>
+                    {% endif %}
+
+                    {% if cls.duration %}
+                    <div class="meta-item">
+                        <i class="bi bi-hourglass-split"></i>
+                        <strong>Duration:</strong>
+                        <span>{{ cls.duration }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if cls.instructor %}
                     <div class="meta-item">
                         <i class="bi bi-person-check"></i>
                         <strong>Instructor:</strong>
-                        <span>{{ cls.instructor|default:"Skill Global Team" }}</span>
+                        <span>{{ cls.instructor }}</span>
                     </div>
+                    {% endif %}
+
+                    {% if cls.level %}
+                    <div style="margin-top: 0.5rem;">
+                        <span class="badge-level">{{ cls.level }}</span>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
             <!-- ACTION BUTTON -->
             <div class="card-action">
                 {% if cls.meeting_link %}
-                <a href="{{ cls.meeting_link }}" class="btn" target="_blank" rel="noopener">Join Now</a>
+                <a href="{{ cls.meeting_link }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-box-arrow-up-right"></i> Join Now
+                </a>
                 {% else %}
-                <button class="btn disabled" disabled>No Link Available</button>
+                <button class="btn btn-secondary" disabled>
+                    <i class="bi bi-clock"></i> Coming Soon
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -415,8 +503,8 @@
         <div class="empty-state-icon">
             <i class="bi bi-camera-video"></i>
         </div>
-        <h4>No Live Classes Available</h4>
-        <p>Check back soon for upcoming live sessions with our expert instructors.</p>
+        <h4>No Upcoming Live Classes</h4>
+        <p>New expert-led sessions will be announced soon. Please check back shortly.</p>
     </div>
     {% endif %}
 </section>
