@@ -16,7 +16,9 @@
         <div class="row align-items-center gx-5 gy-5">
             <div class="col-lg-6">
                 <span class="section-tag">ABOUT US</span>
-                <h2 class="section-title">Empowering People Through Skills, Knowledge &amp; Action</h2>
+                <h2 class="section-title">
+                    {{ about.title }}
+                </h2>
                 <p>Skill Global is a learning and professional development platform focused on helping students,
                     professionals, and aspiring learners build practical, career-ready skills.</p>
                 <p>We believe meaningful learning goes beyond completing a course. It is about understanding concepts,
@@ -101,8 +103,15 @@
             <div class="col-lg-7">
                 <div class="impact-card">
                     <h3>Mission</h3>
-                    <p>Skill Global helps learners build skills, apply knowledge, and move
-                        toward meaningful career and professional growth.</p>
+
+                    {% if about.mission %}
+                    <p>{{ about.mission }}</p>
+                    {% else %}
+                    <p>
+                        Skill Global helps learners build skills, apply knowledge,
+                        and move toward meaningful career and professional growth.
+                    </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -123,8 +132,15 @@
             <div class="col-lg-7">
                 <div class="vision-card">
                     <h3>Vision</h3>
-                    <p>We believe every learner should have access to practical, future-focused
-                        learning that turns potential into progress.</p>
+
+                    {% if about.vision %}
+                    <p>{{ about.vision }}</p>
+                    {% else %}
+                    <p>
+                        We believe every learner should have access to practical,
+                        future-focused learning that turns potential into progress.
+                    </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -337,66 +353,7 @@
     </div>
 </section>
 
-<section class="values-section py-5">
 
-    <div class="container">
 
-        <div class="text-center mb-5">
-
-            <span class="section-tag">OUR VALUES</span>
-
-            <h2 class="section-title">What We Believe</h2>
-
-        </div>
-
-        <div class="row g-4">
-
-            <div class="col-md-4">
-                <div class="value-card">
-                    <h4>Integrity</h4>
-                    <p>We build trust through honesty and transparency.</p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="value-card">
-                    <h4>Innovation</h4>
-                    <p>Continuous learning through modern technology.</p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="value-card">
-                    <h4>Excellence</h4>
-                    <p>Delivering the highest quality education.</p>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= CTA ================= -->
-
-<section class="cta-section">
-
-    <div class="container text-center">
-
-        <h2>Start Learning With Skill Global Today</h2>
-
-        <p>
-            Build practical skills and advance your career with industry-focused
-            training programs.
-        </p>
-
-        <a href="#" class="btn btn-primary">
-            Explore Courses
-        </a>
-
-    </div>
-
-</section>
 
 {% endblock %}
