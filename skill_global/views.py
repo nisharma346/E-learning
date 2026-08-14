@@ -10,6 +10,9 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import Profile, LiveClass, Article, Course, About, Testimonial, CourseEnrollment
 from django.shortcuts import get_object_or_404
+import razorpay
+from django.conf import settings
+from django.http import JsonResponse
 
 User = get_user_model()
 
@@ -94,7 +97,12 @@ def course_enroll(request, slug):
     if not request.user.is_authenticated:
         return redirect(f"{reverse('login')}?next={request.path}")
 
-    course = get_object_or_404(Course, slug=slug, is_active=True)
+    course = get_object_or_404(
+        Course,
+        slug=slug,
+        is_active=True
+    )
+
     enrollment, created = CourseEnrollment.objects.get_or_create(
         user=request.user,
         course=course,
@@ -105,68 +113,157 @@ def course_enroll(request, slug):
         }
     )
 
-    if enrollment.payment_status == 'Paid' and enrollment.order_status == 'Confirmed':
-        return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
+    # Already paid enrollment
+    if (
+        enrollment.payment_status == 'Paid'
+        and enrollment.order_status == 'Confirmed'
+    ):
+        return redirect(
+            'enrollment_success',
+            enrollment_id=enrollment.enrollment_id
+        )
 
+    user_phone = (
+        request.user.phone
+        or getattr(
+            getattr(request.user, 'profile', None),
+            'phone',
+            ''
+        )
+    )
+
+    # =========================
+    # POST - START PAYMENT
+    # =========================
     if request.method == 'POST':
-        payment_method = request.POST.get('payment_method')
+
+        payment_method = request.POST.get(
+            'payment_method',
+            'UPI'
+        )
+
         agree_terms = request.POST.get('agree_terms') == 'on'
 
+        # Terms validation
         if not agree_terms:
             context = {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
                 'course': course,
                 'enrollment': enrollment,
-                'user_full_name': request.user.get_full_name() or request.user.email,
+                'user_full_name': (
+                    request.user.get_full_name()
+                    or request.user.email
+                ),
                 'user_email': request.user.email,
-                'user_phone': request.user.phone or getattr(request.user.profile, 'phone', ''),
-                'error': 'You must agree to the Terms & Conditions and Refund Policy to continue.',
+                'user_phone': user_phone,
+                'error': (
+                    'You must agree to the Terms & Conditions '
+                    'and Refund Policy to continue.'
+                ),
             }
-            return render(request, 'skill_global/course_enrollment.html', context)
 
-        if course.price and course.price > 0:
-            if payment_method not in dict(CourseEnrollment.PAYMENT_METHOD_CHOICES):
-                payment_method = 'UPI'
+            return render(
+                request,
+                'skill_global/course_enrollment.html',
+                context
+            )
+
+        # =========================
+        # FREE COURSE
+        # =========================
+        if not course.price or course.price <= 0:
 
             enrollment.payment_method = payment_method
-            enrollment.amount = course.price or 0
-            enrollment.payment_status = 'Pending'
-            enrollment.order_status = 'Pending'
-            enrollment.save()
-
-            context = {
-                'page_title': 'Course Enrollment',
-                'page_description': 'Complete your enrollment securely.',
-                'course': course,
-                'enrollment': enrollment,
-                'user_full_name': request.user.get_full_name() or request.user.email,
-                'user_email': request.user.email,
-                'user_phone': request.user.phone or getattr(request.user.profile, 'phone', ''),
-                'payment_pending': True,
-                'success_message': 'Your order has been created and is pending payment verification.',
-            }
-            return render(request, 'skill_global/course_enrollment.html', context)
-        else:
-            enrollment.payment_method = ''
             enrollment.amount = 0
             enrollment.payment_status = 'Paid'
             enrollment.order_status = 'Confirmed'
             enrollment.save()
-            return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
 
-    user_phone = request.user.phone or getattr(request.user.profile, 'phone', '')
+            return redirect(
+                'enrollment_success',
+                enrollment_id=enrollment.enrollment_id
+            )
+
+        # =========================
+        # PAID COURSE - RAZORPAY
+        # =========================
+
+        enrollment.payment_method = payment_method
+        enrollment.amount = course.price
+        enrollment.payment_status = 'Pending'
+        enrollment.order_status = 'Pending'
+        enrollment.save()
+
+        # Razorpay client
+        client = razorpay.Client(
+            auth=(
+                settings.RAZORPAY_KEY_ID,
+                settings.RAZORPAY_KEY_SECRET
+            )
+        )
+
+        amount_paise = int(enrollment.amount * 100)
+
+        # Create Razorpay order
+        razorpay_order = client.order.create({
+            'amount': amount_paise,
+            'currency': 'INR',
+            'receipt': enrollment.enrollment_id,
+            'payment_capture': 1,
+        })
+
+        enrollment.razorpay_order_id = razorpay_order['id']
+        enrollment.save()
+
+        context = {
+            'page_title': 'Course Enrollment',
+            'page_description': 'Complete your enrollment securely.',
+            'course': course,
+            'enrollment': enrollment,
+            'user_full_name': (
+                request.user.get_full_name()
+                or request.user.email
+            ),
+            'user_email': request.user.email,
+            'user_phone': user_phone,
+
+            # Razorpay data
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+            'razorpay_order_id': razorpay_order['id'],
+            'razorpay_amount': amount_paise,
+            'razorpay_currency': 'INR',
+            'open_razorpay': True,
+        }
+
+        return render(
+            request,
+            'skill_global/course_enrollment.html',
+            context
+        )
+
+    # =========================
+    # GET - SHOW ENROLLMENT PAGE
+    # =========================
+
     context = {
         'page_title': 'Course Enrollment',
         'page_description': 'Complete your enrollment securely.',
         'course': course,
         'enrollment': enrollment,
-        'user_full_name': request.user.get_full_name() or request.user.email,
+        'user_full_name': (
+            request.user.get_full_name()
+            or request.user.email
+        ),
         'user_email': request.user.email,
         'user_phone': user_phone,
     }
-    return render(request, 'skill_global/course_enrollment.html', context)
 
+    return render(
+        request,
+        'skill_global/course_enrollment.html',
+        context
+    )
 
 def enrollment_success(request, enrollment_id):
     enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
@@ -187,6 +284,50 @@ def payment_failed(request):
         'page_description': 'Your payment could not be completed.',
     }
     return render(request, 'skill_global/payment_failed.html', context)
+def razorpay_verify(request):
+
+    payment_id = request.GET.get('razorpay_payment_id')
+    order_id = request.GET.get('razorpay_order_id')
+    signature = request.GET.get('razorpay_signature')
+
+    enrollment = get_object_or_404(
+        CourseEnrollment,
+        razorpay_order_id=order_id,
+        user=request.user
+    )
+
+    client = razorpay.Client(
+        auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET
+        )
+    )
+
+    try:
+
+        client.utility.verify_payment_signature({
+            'razorpay_order_id': order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': signature
+        })
+
+        enrollment.razorpay_payment_id = payment_id
+        enrollment.razorpay_signature = signature
+        enrollment.payment_status = 'Paid'
+        enrollment.order_status = 'Confirmed'
+        enrollment.save()
+
+        return redirect(
+            'enrollment_success',
+            enrollment_id=enrollment.enrollment_id
+        )
+
+    except Exception:
+        enrollment.payment_status = 'Failed'
+        enrollment.order_status = 'Cancelled'
+        enrollment.save()
+
+        return redirect('payment_failed')
 
 
 def my_courses(request):

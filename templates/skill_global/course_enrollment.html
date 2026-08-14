@@ -182,6 +182,7 @@
                             Your payment information is securely processed.
                         </div>
 
+
                         <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">
                             {% if course.price and course.price > 0 %}Proceed to Payment{% else %}Enroll Now{% endif %}
                         </button>
@@ -191,4 +192,54 @@
         </div>
     </div>
 </section>
+{% if open_razorpay %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var options = {
+            "key": "{{ razorpay_key_id }}",
+            "amount": "{{ razorpay_amount }}",
+            "currency": "{{ razorpay_currency }}",
+            "name": "Skill Global",
+            "description": "{{ course.title|escapejs }}",
+            "order_id": "{{ razorpay_order_id }}",
+
+            "prefill": {
+                "name": "{{ user_full_name|escapejs }}",
+                "email": "{{ user_email|escapejs }}",
+                "contact": "{{ user_phone|escapejs }}"
+            },
+
+            "theme": {
+                "color": "#0D6EFD"
+            },
+
+            "handler": function (response) {
+
+                window.location.href =
+                    "{% url 'razorpay_verify' %}" +
+                    "?razorpay_payment_id=" + response.razorpay_payment_id +
+                    "&razorpay_order_id=" + response.razorpay_order_id +
+                    "&razorpay_signature=" + response.razorpay_signature;
+            },
+
+            "modal": {
+                "ondismiss": function () {
+                    window.location.href = "{% url 'payment_failed' %}";
+                }
+            }
+        };
+
+        var rzp = new Razorpay(options);
+
+        rzp.on('payment.failed', function () {
+            window.location.href = "{% url 'payment_failed' %}";
+        });
+
+        rzp.open();
+    });
+</script>
+{% endif %}
 {% endblock %}

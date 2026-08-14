@@ -8,6 +8,11 @@ urlpatterns = [
     path('courses/<slug:slug>/enroll/', views.course_enroll, name='course_enrollment'),
     path('courses/my-courses/', views.my_courses, name='my_courses'),
     path('enrollment/success/<str:enrollment_id>/', views.enrollment_success, name='enrollment_success'),
+    path(
+    'payment/razorpay/verify/',
+    views.razorpay_verify,
+    name='razorpay_verify'
+),
     path('payment-failed/', views.payment_failed, name='payment_failed'),
     path('articles/', views.articles, name='articles'),
     path(
