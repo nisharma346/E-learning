@@ -124,6 +124,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] ##Fourth Changes
 # This allows Django to serve uploaded files (images, documents, etc.) in development
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-rzp_test
-RAZORPAY_KEY_ID = ""
-RAZORPAY_KEY_SECRET = ""
+
+# ===================================
+# RAZORPAY PAYMENT GATEWAY
+# ===================================
+# Use environment variables for credentials (recommended for production)
+# Set these in your .env file or system environment variables
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
