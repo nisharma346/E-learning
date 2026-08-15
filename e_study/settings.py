@@ -124,6 +124,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] ##Fourth Changes
 # This allows Django to serve uploaded files (images, documents, etc.) in development
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-RAZORPAY_KEY_ID = "rzp_test_TPZTbCEXf3sHx"
-RAZORPAY_KEY_SECRET = "TA6b9AIpegFXYOKnVPQHZDDX"
+rzp_test
+RAZORPAY_KEY_ID = ""
+RAZORPAY_KEY_SECRET = ""
