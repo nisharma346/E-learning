@@ -98,13 +98,13 @@
                     <h5 class="fw-semibold mb-4">Complete Your Enrollment</h5>
 
                     {% if error %}
-                    <div class="alert alert-danger rounded-4">{{ error }}</div>
-                    {% endif %}
-                    {% if payment_pending %}
-                    <div class="alert alert-info rounded-4">{{ success_message }}</div>
+                    <div class="alert alert-danger rounded-4 alert-dismissible fade show" role="alert">
+                        <strong>Error!</strong> {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                     {% endif %}
 
-                    <form method="post">
+                    <form method="post" id="enrollmentForm">
                         {% csrf_token %}
                         <div class="mb-4">
                             <h6 class="fw-semibold mb-3">Student Information</h6>
@@ -120,9 +120,10 @@
                                         readonly>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="text" name="phone" class="form-control rounded-pill"
-                                        value="{{ user_phone }}" placeholder="Enter phone number" required>
+                                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                    <input type="tel" name="phone" class="form-control rounded-pill"
+                                        value="{{ user_phone }}" placeholder="Enter phone number" required
+                                        pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
                                 </div>
                             </div>
                         </div>
@@ -132,38 +133,41 @@
                             <h6 class="fw-semibold mb-3">Payment Method</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100"
-                                        for="payment_upi">
+                                    <label
+                                        class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100 cursor-pointer"
+                                        for="payment_upi" style="cursor: pointer;">
                                         <input class="form-check-input mt-1" type="radio" name="payment_method"
                                             id="payment_upi" value="UPI" {% if enrollment.payment_method=='UPI' or not
-                                            enrollment.payment_method %}checked{% endif %}>
+                                            enrollment.payment_method %}checked{% endif %} required>
                                         <div>
                                             <div class="fw-semibold">UPI</div>
-                                            <div class="text-muted">Pay securely using UPI</div>
+                                            <div class="text-muted small">Pay securely using UPI</div>
                                         </div>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100"
-                                        for="payment_card">
+                                    <label
+                                        class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100 cursor-pointer"
+                                        for="payment_card" style="cursor: pointer;">
                                         <input class="form-check-input mt-1" type="radio" name="payment_method"
                                             id="payment_card" value="Card" {% if enrollment.payment_method=='Card'
-                                            %}checked{% endif %}>
+                                            %}checked{% endif %} required>
                                         <div>
                                             <div class="fw-semibold">Credit / Debit Card</div>
-                                            <div class="text-muted">Visa, Mastercard and other cards</div>
+                                            <div class="text-muted small">Visa, Mastercard and other cards</div>
                                         </div>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100"
-                                        for="payment_netbanking">
+                                    <label
+                                        class="border rounded-4 p-3 d-flex align-items-start gap-3 w-100 cursor-pointer"
+                                        for="payment_netbanking" style="cursor: pointer;">
                                         <input class="form-check-input mt-1" type="radio" name="payment_method"
                                             id="payment_netbanking" value="Net Banking" {% if
-                                            enrollment.payment_method=='Net Banking' %}checked{% endif %}>
+                                            enrollment.payment_method=='Net Banking' %}checked{% endif %} required>
                                         <div>
                                             <div class="fw-semibold">Net Banking</div>
-                                            <div class="text-muted">Pay using your bank account</div>
+                                            <div class="text-muted small">Pay using your bank account</div>
                                         </div>
                                     </label>
                                 </div>
@@ -172,19 +176,25 @@
                         {% endif %}
 
                         <div class="mb-4 form-check">
-                            <input class="form-check-input" type="checkbox" name="agree_terms" id="agree_terms">
+                            <input class="form-check-input" type="checkbox" name="agree_terms" id="agree_terms"
+                                required>
                             <label class="form-check-label text-muted" for="agree_terms">
-                                I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Refund Policy</a>.
+                                I agree to the <a href="#" class="text-decoration-none">Terms & Conditions</a> and <a
+                                    href="#" class="text-decoration-none">Refund Policy</a>.
                             </label>
                         </div>
 
                         <div class="mb-4 text-muted small">
-                            Your payment information is securely processed.
+                            <i class="bi bi-lock"></i> Your payment information is securely processed.
                         </div>
 
-
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">
-                            {% if course.price and course.price > 0 %}Proceed to Payment{% else %}Enroll Now{% endif %}
+                        <button type="button" class="btn btn-primary btn-lg rounded-pill w-100" id="submitBtn"
+                            data-bs-toggle="modal" data-bs-target="#userDetailsModal">
+                            {% if course.price and course.price > 0 %}
+                            <span id="btnText">Proceed to Payment (₹{{ course.price }})</span>
+                            {% else %}
+                            <span id="btnText">Enroll Now</span>
+                            {% endif %}
                         </button>
                     </form>
                 </div>
@@ -192,53 +202,228 @@
         </div>
     </div>
 </section>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="userDetailsModalLabel">Complete Your Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userDetailsForm">
+                    <div class="row g-3">
+                        <!-- Full Name -->
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill" id="detailName" name="detail_name"
+                                value="{{ user_full_name }}" placeholder="Enter your full name" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control rounded-pill" id="detailEmail" name="detail_email"
+                                value="{{ user_email }}" placeholder="Enter your email" required readonly>
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="col-md-6">
+                            <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control rounded-pill" id="detailMobile" name="detail_mobile"
+                                placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="col-md-6">
+                            <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control rounded-pill" id="detailDOB" name="detail_dob"
+                                required>
+                        </div>
+
+                        <!-- Branch -->
+                        <div class="col-md-6">
+                            <label class="form-label">Branch <span class="text-danger">*</span></label>
+                            <select class="form-select rounded-pill" id="detailBranch" name="detail_branch" required>
+                                <option value="">Select Branch</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Specialization -->
+                        <div class="col-md-6">
+                            <label class="form-label">Specialization <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill" id="detailSpecialization"
+                                name="detail_specialization" placeholder="Enter your specialization" required>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="col-12">
+                            <label class="form-label">Address <span class="text-danger">*</span></label>
+                            <textarea class="form-control rounded-4" id="detailAddress" name="detail_address" rows="3"
+                                placeholder="Enter your complete address" required></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top pt-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" id="paymentBtn">
+                    {% if course.price and course.price > 0 %}
+                    <span>Proceed to Payment</span>
+                    {% else %}
+                    <span>Complete Enrollment</span>
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% if open_razorpay %}
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        var paymentBtn = document.getElementById('paymentBtn');
+        var userDetailsForm = document.getElementById('userDetailsForm');
+        var enrollmentForm = document.getElementById('enrollmentForm');
+        var isProcessing = false;
 
+        // Handle Payment Button Click in Modal
+        if (paymentBtn) {
+            paymentBtn.addEventListener('click', function () {
+                // Validate main enrollment form first
+                if (!enrollmentForm.checkValidity()) {
+                    enrollmentForm.classList.add('was-validated');
+                    alert('Please complete the enrollment form first');
+                    return;
+                }
+
+                // Validate user details form
+                if (!userDetailsForm.checkValidity()) {
+                    userDetailsForm.classList.add('was-validated');
+                    alert('Please fill all required fields');
+                    return;
+                }
+
+                // Validate phone number format
+                var phoneInput = enrollmentForm.querySelector('input[name="phone"]');
+                if (!phoneInput.value || !/^\d{10}$/.test(phoneInput.value.replace(/\D/g, ''))) {
+                    alert('Please enter a valid 10-digit phone number');
+                    return;
+                }
+
+                // Validate mobile in details form
+                var mobileInput = userDetailsForm.querySelector('input[name="detail_mobile"]');
+                if (!mobileInput.value || !/^\d{10}$/.test(mobileInput.value.replace(/\D/g, ''))) {
+                    alert('Please enter a valid 10-digit mobile number');
+                    return;
+                }
+
+                // Check if terms agreed
+                var agreeTerms = enrollmentForm.querySelector('input[name="agree_terms"]');
+                if (!agreeTerms.checked) {
+                    alert('Please agree to Terms & Conditions');
+                    return;
+                }
+
+                // Prevent multiple submissions
+                if (isProcessing) {
+                    return;
+                }
+
+                isProcessing = true;
+                paymentBtn.disabled = true;
+                paymentBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+                // Collect all form data
+                var formData = new FormData(enrollmentForm);
+                var detailsData = new FormData(userDetailsForm);
+
+                // Merge details into form data
+                for (var pair of detailsData) {
+                    formData.append(pair[0], pair[1]);
+                }
+
+                // Check if free or paid course
+                var isPaidCourse = {{ course.price|default: 0
+            }} > 0;
+
+        if (!isPaidCourse) {
+            // For free courses, submit form directly
+            enrollmentForm.submit();
+        } else {
+            // For paid courses, submit and handle Razorpay
+            var submitBtn = document.createElement('button');
+            submitBtn.type = 'submit';
+            submitBtn.style.display = 'none';
+            enrollmentForm.appendChild(submitBtn);
+
+            // Close modal before submitting
+            var modal = bootstrap.Modal.getInstance(document.getElementById('userDetailsModal'));
+            if (modal) modal.hide();
+
+            // Submit form - server will handle Razorpay
+            submitBtn.click();
+        }
+    });
+        }
+
+    // Validate modal form on input
+    if (userDetailsForm) {
+        userDetailsForm.addEventListener('input', function () {
+            userDetailsForm.classList.remove('was-validated');
+        });
+    }
+    });
+</script>
+
+{% if open_razorpay %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Auto-open Razorpay if payment data is available
         var options = {
             "key": "{{ razorpay_key_id }}",
-            "amount": "{{ razorpay_amount }}",
-            "currency": "{{ razorpay_currency }}",
-            "name": "Skill Global",
-            "description": "{{ course.title|escapejs }}",
-            "order_id": "{{ razorpay_order_id }}",
-
-            "prefill": {
-                "name": "{{ user_full_name|escapejs }}",
-                "email": "{{ user_email|escapejs }}",
-                "contact": "{{ user_phone|escapejs }}"
-            },
-
-            "theme": {
-                "color": "#0D6EFD"
-            },
-
-            "handler": function (response) {
-
-                window.location.href =
-                    "{% url 'razorpay_verify' %}" +
-                    "?razorpay_payment_id=" + response.razorpay_payment_id +
-                    "&razorpay_order_id=" + response.razorpay_order_id +
-                    "&razorpay_signature=" + response.razorpay_signature;
-            },
-
-            "modal": {
-                "ondismiss": function () {
-                    window.location.href = "{% url 'payment_failed' %}";
-                }
-            }
+            "amount": {{ razorpay_amount }
+    },
+        "currency": "{{ razorpay_currency }}",
+        "order_id": "{{ razorpay_order_id }}",
+        "name": "Skill Global",
+        "description": "Course Enrollment Payment",
+        "prefill": {
+        "name": "{{ user_full_name }}",
+        "email": "{{ user_email }}"
+    },
+        "handler": function (response) {
+            // Payment successful - redirect to verification
+            window.location.href = "{% url 'razorpay_verify' %}?order_id={{ razorpay_order_id }}&payment_id=" + response.razorpay_payment_id + "&signature=" + response.razorpay_signature;
+        },
+        "modal": {
+        "ondismiss": function () {
+            alert("Payment cancelled. Please try again.");
+        }
+    }
         };
 
-        var rzp = new Razorpay(options);
+    var rzp = new Razorpay(options);
 
-        rzp.on('payment.failed', function () {
-            window.location.href = "{% url 'payment_failed' %}";
-        });
+    rzp.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        window.location.href = "{% url 'payment_failed' %}";
+    });
 
-        rzp.open();
+    // Open Razorpay checkout automatically
+    rzp.open();
     });
 </script>
 {% endif %}

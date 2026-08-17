@@ -141,6 +141,7 @@ def course_enroll(request, slug):
             'payment_method',
             'UPI'
         )
+        phone = request.POST.get('phone', user_phone)
 
         agree_terms = request.POST.get('agree_terms') == 'on'
 
@@ -169,6 +170,43 @@ def course_enroll(request, slug):
                 context
             )
 
+        # Phone validation
+        if not phone:
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': (
+                    request.user.get_full_name()
+                    or request.user.email
+                ),
+                'user_email': request.user.email,
+                'user_phone': user_phone,
+                'error': 'Please enter a valid phone number.',
+            }
+
+            return render(
+                request,
+                'skill_global/course_enrollment.html',
+                context
+            )
+
+        # Extract additional user details from modal
+        branch = request.POST.get('detail_branch', '')
+        specialization = request.POST.get('detail_specialization', '')
+        dob_str = request.POST.get('detail_dob', '')
+        address = request.POST.get('detail_address', '')
+        
+        # Parse date of birth
+        date_of_birth = None
+        if dob_str:
+            try:
+                from datetime import datetime
+                date_of_birth = datetime.strptime(dob_str, '%Y-%m-%d').date()
+            except:
+                pass
+
         # =========================
         # FREE COURSE
         # =========================
@@ -178,6 +216,10 @@ def course_enroll(request, slug):
             enrollment.amount = 0
             enrollment.payment_status = 'Paid'
             enrollment.order_status = 'Confirmed'
+            enrollment.branch = branch
+            enrollment.specialization = specialization
+            enrollment.date_of_birth = date_of_birth
+            enrollment.address = address
             enrollment.save()
 
             return redirect(
@@ -193,54 +235,84 @@ def course_enroll(request, slug):
         enrollment.amount = course.price
         enrollment.payment_status = 'Pending'
         enrollment.order_status = 'Pending'
+        enrollment.branch = branch
+        enrollment.specialization = specialization
+        enrollment.date_of_birth = date_of_birth
+        enrollment.address = address
         enrollment.save()
 
         # Razorpay client
-        client = razorpay.Client(
-            auth=(
-                settings.RAZORPAY_KEY_ID,
-                settings.RAZORPAY_KEY_SECRET
+        try:
+            client = razorpay.Client(
+                auth=(
+                    settings.RAZORPAY_KEY_ID,
+                    settings.RAZORPAY_KEY_SECRET
+                )
             )
-        )
 
-        amount_paise = int(enrollment.amount * 100)
+            amount_paise = int(enrollment.amount * 100)
 
-        # Create Razorpay order
-        razorpay_order = client.order.create({
-            'amount': amount_paise,
-            'currency': 'INR',
-            'receipt': enrollment.enrollment_id,
-            'payment_capture': 1,
-        })
+            # Create Razorpay order
+            razorpay_order = client.order.create({
+                'amount': amount_paise,
+                'currency': 'INR',
+                'receipt': enrollment.enrollment_id,
+                'payment_capture': 1,
+            })
 
-        enrollment.razorpay_order_id = razorpay_order['id']
-        enrollment.save()
+            enrollment.razorpay_order_id = razorpay_order['id']
+            enrollment.save()
 
-        context = {
-            'page_title': 'Course Enrollment',
-            'page_description': 'Complete your enrollment securely.',
-            'course': course,
-            'enrollment': enrollment,
-            'user_full_name': (
-                request.user.get_full_name()
-                or request.user.email
-            ),
-            'user_email': request.user.email,
-            'user_phone': user_phone,
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': (
+                    request.user.get_full_name()
+                    or request.user.email
+                ),
+                'user_email': request.user.email,
+                'user_phone': phone,
 
-            # Razorpay data
-            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
-            'razorpay_order_id': razorpay_order['id'],
-            'razorpay_amount': amount_paise,
-            'razorpay_currency': 'INR',
-            'open_razorpay': True,
-        }
+                # Razorpay data
+                'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                'razorpay_order_id': razorpay_order['id'],
+                'razorpay_amount': amount_paise,
+                'razorpay_currency': 'INR',
+                'open_razorpay': True,
+            }
 
-        return render(
-            request,
-            'skill_global/course_enrollment.html',
-            context
-        )
+            return render(
+                request,
+                'skill_global/course_enrollment.html',
+                context
+            )
+
+        except Exception as e:
+            enrollment.payment_status = 'Failed'
+            enrollment.order_status = 'Cancelled'
+            enrollment.save()
+
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': (
+                    request.user.get_full_name()
+                    or request.user.email
+                ),
+                'user_email': request.user.email,
+                'user_phone': user_phone,
+                'error': 'Unable to process payment. Please try again later.',
+            }
+
+            return render(
+                request,
+                'skill_global/course_enrollment.html',
+                context
+            )
 
     # =========================
     # GET - SHOW ENROLLMENT PAGE
@@ -285,48 +357,62 @@ def payment_failed(request):
     }
     return render(request, 'skill_global/payment_failed.html', context)
 def razorpay_verify(request):
-
+    """Verify Razorpay payment signature and confirm enrollment"""
+    
+    # Get payment details from request
     payment_id = request.GET.get('razorpay_payment_id')
     order_id = request.GET.get('razorpay_order_id')
     signature = request.GET.get('razorpay_signature')
 
-    enrollment = get_object_or_404(
-        CourseEnrollment,
-        razorpay_order_id=order_id,
-        user=request.user
-    )
-
-    client = razorpay.Client(
-        auth=(
-            settings.RAZORPAY_KEY_ID,
-            settings.RAZORPAY_KEY_SECRET
-        )
-    )
+    # Validate required fields
+    if not all([payment_id, order_id, signature]):
+        return redirect('payment_failed')
 
     try:
+        # Get enrollment record
+        enrollment = get_object_or_404(
+            CourseEnrollment,
+            razorpay_order_id=order_id,
+            user=request.user
+        )
 
+        # Initialize Razorpay client
+        client = razorpay.Client(
+            auth=(
+                settings.RAZORPAY_KEY_ID,
+                settings.RAZORPAY_KEY_SECRET
+            )
+        )
+
+        # Verify payment signature
         client.utility.verify_payment_signature({
             'razorpay_order_id': order_id,
             'razorpay_payment_id': payment_id,
             'razorpay_signature': signature
         })
 
+        # Update enrollment with payment details
         enrollment.razorpay_payment_id = payment_id
         enrollment.razorpay_signature = signature
         enrollment.payment_status = 'Paid'
         enrollment.order_status = 'Confirmed'
         enrollment.save()
 
+        # Redirect to success page
         return redirect(
             'enrollment_success',
             enrollment_id=enrollment.enrollment_id
         )
 
-    except Exception:
-        enrollment.payment_status = 'Failed'
-        enrollment.order_status = 'Cancelled'
-        enrollment.save()
-
+    except Exception as e:
+        # Handle payment verification failure
+        try:
+            enrollment.payment_status = 'Failed'
+            enrollment.order_status = 'Cancelled'
+            enrollment.save()
+        except:
+            pass
+        
         return redirect('payment_failed')
 
 
