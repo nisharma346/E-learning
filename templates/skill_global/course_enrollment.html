@@ -290,140 +290,83 @@
 
 {% if open_razorpay %}
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var paymentBtn = document.getElementById('paymentBtn');
-        var userDetailsForm = document.getElementById('userDetailsForm');
-        var enrollmentForm = document.getElementById('enrollmentForm');
-        var isProcessing = false;
+        const paymentBtn = document.getElementById('paymentBtn');
+        const userDetailsForm = document.getElementById('userDetailsForm');
+        const enrollmentForm = document.getElementById('enrollmentForm');
 
-        // Handle Payment Button Click in Modal
+        function openRazorpay() {
+            const options = {
+                key: "{{ razorpay_key_id }}",
+                amount: "{{ razorpay_amount }}",
+                currency: "{{ razorpay_currency }}",
+                order_id: "{{ razorpay_order_id }}",
+                name: "Skill Global",
+                description: "Course Enrollment Payment",
+                prefill: {
+                    name: "{{ user_full_name }}",
+                    email: "{{ user_email }}"
+                },
+                handler: function (response) {
+                    window.location.href = "{% url 'razorpay_verify' %}?razorpay_order_id={{ razorpay_order_id }}&razorpay_payment_id=" + response.razorpay_payment_id + "&razorpay_signature=" + response.razorpay_signature;
+                },
+                theme: {
+                    color: "#0d6efd"
+                },
+                modal: {
+                    ondismiss: function () {
+                        alert("Payment cancelled. Please try again.");
+                    }
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                console.error('Payment failed:', response.error);
+                window.location.href = "{% url 'payment_failed' %}";
+            });
+            rzp.open();
+        }
+
         if (paymentBtn) {
             paymentBtn.addEventListener('click', function () {
-                // Validate main enrollment form first
                 if (!enrollmentForm.checkValidity()) {
                     enrollmentForm.classList.add('was-validated');
                     alert('Please complete the enrollment form first');
                     return;
                 }
 
-                // Validate user details form
                 if (!userDetailsForm.checkValidity()) {
                     userDetailsForm.classList.add('was-validated');
                     alert('Please fill all required fields');
                     return;
                 }
 
-                // Validate phone number format
-                var phoneInput = enrollmentForm.querySelector('input[name="phone"]');
+                const phoneInput = enrollmentForm.querySelector('input[name="phone"]');
                 if (!phoneInput.value || !/^\d{10}$/.test(phoneInput.value.replace(/\D/g, ''))) {
                     alert('Please enter a valid 10-digit phone number');
                     return;
                 }
 
-                // Validate mobile in details form
-                var mobileInput = userDetailsForm.querySelector('input[name="detail_mobile"]');
+                const mobileInput = userDetailsForm.querySelector('input[name="detail_mobile"]');
                 if (!mobileInput.value || !/^\d{10}$/.test(mobileInput.value.replace(/\D/g, ''))) {
                     alert('Please enter a valid 10-digit mobile number');
                     return;
                 }
 
-                // Check if terms agreed
-                var agreeTerms = enrollmentForm.querySelector('input[name="agree_terms"]');
+                const agreeTerms = enrollmentForm.querySelector('input[name="agree_terms"]');
                 if (!agreeTerms.checked) {
                     alert('Please agree to Terms & Conditions');
                     return;
                 }
 
-                // Prevent multiple submissions
-                if (isProcessing) {
-                    return;
-                }
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userDetailsModal'));
+                if (modal) { modal.hide(); }
 
-                isProcessing = true;
-                paymentBtn.disabled = true;
-                paymentBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
-
-                // Collect all form data
-                var formData = new FormData(enrollmentForm);
-                var detailsData = new FormData(userDetailsForm);
-
-                // Merge details into form data
-                for (var pair of detailsData) {
-                    formData.append(pair[0], pair[1]);
-                }
-
-                // Check if free or paid course
-                var isPaidCourse = {{ course.price|default: 0
-            }} > 0;
-
-        if (!isPaidCourse) {
-            // For free courses, submit form directly
-            enrollmentForm.submit();
-        } else {
-            // For paid courses, submit and handle Razorpay
-            var submitBtn = document.createElement('button');
-            submitBtn.type = 'submit';
-            submitBtn.style.display = 'none';
-            enrollmentForm.appendChild(submitBtn);
-
-            // Close modal before submitting
-            var modal = bootstrap.Modal.getInstance(document.getElementById('userDetailsModal'));
-            if (modal) modal.hide();
-
-            // Submit form - server will handle Razorpay
-            submitBtn.click();
+                openRazorpay();
+            });
         }
-    });
-        }
-
-    // Validate modal form on input
-    if (userDetailsForm) {
-        userDetailsForm.addEventListener('input', function () {
-            userDetailsForm.classList.remove('was-validated');
-        });
-    }
-    });
-</script>
-
-{% if open_razorpay %}
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Auto-open Razorpay if payment data is available
-        var options = {
-            "key": "{{ razorpay_key_id }}",
-            "amount": {{ razorpay_amount }
-    },
-        "currency": "{{ razorpay_currency }}",
-        "order_id": "{{ razorpay_order_id }}",
-        "name": "Skill Global",
-        "description": "Course Enrollment Payment",
-        "prefill": {
-        "name": "{{ user_full_name }}",
-        "email": "{{ user_email }}"
-    },
-        "handler": function (response) {
-            // Payment successful - redirect to verification
-            window.location.href = "{% url 'razorpay_verify' %}?order_id={{ razorpay_order_id }}&payment_id=" + response.razorpay_payment_id + "&signature=" + response.razorpay_signature;
-        },
-        "modal": {
-        "ondismiss": function () {
-            alert("Payment cancelled. Please try again.");
-        }
-    }
-        };
-
-    var rzp = new Razorpay(options);
-
-    rzp.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
-        window.location.href = "{% url 'payment_failed' %}";
-    });
-
-    // Open Razorpay checkout automatically
-    rzp.open();
     });
 </script>
 {% endif %}

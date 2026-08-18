@@ -358,25 +358,21 @@ def payment_failed(request):
     return render(request, 'skill_global/payment_failed.html', context)
 def razorpay_verify(request):
     """Verify Razorpay payment signature and confirm enrollment"""
-    
-    # Get payment details from request
+
     payment_id = request.GET.get('razorpay_payment_id')
     order_id = request.GET.get('razorpay_order_id')
     signature = request.GET.get('razorpay_signature')
 
-    # Validate required fields
     if not all([payment_id, order_id, signature]):
         return redirect('payment_failed')
 
     try:
-        # Get enrollment record
         enrollment = get_object_or_404(
             CourseEnrollment,
             razorpay_order_id=order_id,
             user=request.user
         )
 
-        # Initialize Razorpay client
         client = razorpay.Client(
             auth=(
                 settings.RAZORPAY_KEY_ID,
@@ -384,35 +380,31 @@ def razorpay_verify(request):
             )
         )
 
-        # Verify payment signature
         client.utility.verify_payment_signature({
             'razorpay_order_id': order_id,
             'razorpay_payment_id': payment_id,
             'razorpay_signature': signature
         })
 
-        # Update enrollment with payment details
         enrollment.razorpay_payment_id = payment_id
         enrollment.razorpay_signature = signature
         enrollment.payment_status = 'Paid'
         enrollment.order_status = 'Confirmed'
         enrollment.save()
 
-        # Redirect to success page
         return redirect(
             'enrollment_success',
             enrollment_id=enrollment.enrollment_id
         )
 
-    except Exception as e:
-        # Handle payment verification failure
+    except Exception:
         try:
             enrollment.payment_status = 'Failed'
             enrollment.order_status = 'Cancelled'
             enrollment.save()
-        except:
+        except Exception:
             pass
-        
+
         return redirect('payment_failed')
 
 

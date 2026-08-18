@@ -6,23 +6,24 @@
 {% block content %}
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
-            <span class="badge bg-success rounded-pill mb-3">Enrollment Successful!</span>
-            <h1 class="fw-bold mb-3">You are now enrolled</h1>
-            <p class="text-muted mb-4">Your course enrollment is confirmed and ready to start.</p>
+        <div class="card border-0 shadow-sm rounded-4 p-5">
+            <div class="text-center mb-4">
+                <span class="badge bg-success rounded-pill mb-3">Enrollment Successful!</span>
+                <h1 class="fw-bold mb-3">You are now enrolled</h1>
+                <p class="text-muted mb-0">Your payment is successful and your enrollment is confirmed.</p>
+            </div>
 
             <div class="row justify-content-center g-4 mb-4">
                 <div class="col-md-6">
-                    <div class="p-4 rounded-4 border bg-white">
+                    <div class="p-4 rounded-4 border bg-white h-100">
                         <h5 class="fw-semibold">Course</h5>
                         <p class="mb-1">{{ enrollment.course.title }}</p>
                         <p class="text-muted mb-0">Instructor: {{ enrollment.course.instructor|default:'Skill Global
-                            Team' }}
-                        </p>
+                            Team' }}</p>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="p-4 rounded-4 border bg-white">
+                    <div class="p-4 rounded-4 border bg-white h-100">
                         <h5 class="fw-semibold">Enrollment ID</h5>
                         <p class="mb-1 text-primary fw-bold">{{ enrollment.enrollment_id }}</p>
                         <p class="text-muted mb-0">{{ enrollment.created_at|date:'F j, Y' }}</p>
@@ -30,23 +31,55 @@
                 </div>
             </div>
 
-            <div class="row justify-content-center g-4 mb-5">
+            <div class="row justify-content-center g-4 mb-4">
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-white">
+                    <div class="p-4 rounded-4 border bg-white h-100">
                         <h6 class="fw-semibold">Payment Status</h6>
                         <p class="mb-0 text-success">{{ enrollment.payment_status }}</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-white">
+                    <div class="p-4 rounded-4 border bg-white h-100">
                         <h6 class="fw-semibold">Amount Paid</h6>
                         <p class="mb-0">₹{{ enrollment.amount }}</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-white">
+                    <div class="p-4 rounded-4 border bg-white h-100">
                         <h6 class="fw-semibold">Duration</h6>
                         <p class="mb-0">{{ enrollment.course.duration|default:'Self-paced' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-4 border bg-white p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h5 class="fw-bold mb-0">Invoice</h5>
+                    <button type="button" class="btn btn-outline-primary rounded-pill btn-sm"
+                        onclick="window.print()">Download / Print Invoice</button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="text-muted small">Invoice No.</div>
+                        <div class="fw-semibold">{{ enrollment.enrollment_id }}</div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="text-muted small">Date</div>
+                        <div class="fw-semibold">{{ enrollment.created_at|date:'d M Y' }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Customer</div>
+                        <div class="fw-semibold">{{ enrollment.user.get_full_name|default:enrollment.user.email }}</div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="text-muted small">Payment Method</div>
+                        <div class="fw-semibold">{{ enrollment.payment_method }}</div>
+                    </div>
+                    <div class="col-12 border-top pt-3 mt-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Course Fee</span>
+                            <span class="fw-bold">₹{{ enrollment.amount }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
