@@ -1,4 +1,4 @@
-﻿import math
+import math
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
@@ -95,6 +95,8 @@ def course_detail(request, id):
 
 def course_enroll(request, slug):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
+            return JsonResponse({'success': False, 'error': 'Please sign in to proceed with enrollment.'}, status=401)
         return redirect(f"{reverse('login')}?next={request.path}")
 
     course = get_object_or_404(
@@ -118,6 +120,12 @@ def course_enroll(request, slug):
         enrollment.payment_status == 'Paid'
         and enrollment.order_status == 'Confirmed'
     ):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
+            return JsonResponse({
+                'success': True,
+                'already_paid': True,
+                'redirect_url': reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
+            })
         return redirect(
             'enrollment_success',
             enrollment_id=enrollment.enrollment_id
@@ -136,17 +144,23 @@ def course_enroll(request, slug):
     # POST - START PAYMENT
     # =========================
     if request.method == 'POST':
+        is_ajax = (
+            request.headers.get('x-requested-with') == 'XMLHttpRequest'
+            or 'application/json' in request.headers.get('Accept', '')
+        )
 
         payment_method = request.POST.get(
             'payment_method',
             'UPI'
         )
-        phone = request.POST.get('phone', user_phone)
-
-        agree_terms = request.POST.get('agree_terms') == 'on'
+        phone = request.POST.get('phone') or request.POST.get('detail_mobile') or user_phone
+        agree_terms = request.POST.get('agree_terms') in ('on', 'true', True, 1, '1')
 
         # Terms validation
         if not agree_terms:
+            err_msg = 'You must agree to the Terms & Conditions and Refund Policy to continue.'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=400)
             context = {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
@@ -158,10 +172,7 @@ def course_enroll(request, slug):
                 ),
                 'user_email': request.user.email,
                 'user_phone': user_phone,
-                'error': (
-                    'You must agree to the Terms & Conditions '
-                    'and Refund Policy to continue.'
-                ),
+                'error': err_msg,
             }
 
             return render(
@@ -172,6 +183,9 @@ def course_enroll(request, slug):
 
         # Phone validation
         if not phone:
+            err_msg = 'Please enter a valid phone number.'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=400)
             context = {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
@@ -183,7 +197,7 @@ def course_enroll(request, slug):
                 ),
                 'user_email': request.user.email,
                 'user_phone': user_phone,
-                'error': 'Please enter a valid phone number.',
+                'error': err_msg,
             }
 
             return render(
@@ -204,8 +218,16 @@ def course_enroll(request, slug):
             try:
                 from datetime import datetime
                 date_of_birth = datetime.strptime(dob_str, '%Y-%m-%d').date()
-            except:
+            except Exception:
                 pass
+
+        if phone:
+            if hasattr(request.user, 'phone') and not request.user.phone:
+                request.user.phone = phone
+                request.user.save(update_fields=['phone'])
+            if hasattr(request.user, 'profile') and not request.user.profile.phone:
+                request.user.profile.phone = phone
+                request.user.profile.save(update_fields=['phone'])
 
         # =========================
         # FREE COURSE
@@ -221,6 +243,14 @@ def course_enroll(request, slug):
             enrollment.date_of_birth = date_of_birth
             enrollment.address = address
             enrollment.save()
+
+            success_url = reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
+            if is_ajax:
+                return JsonResponse({
+                    'success': True,
+                    'is_free': True,
+                    'redirect_url': success_url
+                })
 
             return redirect(
                 'enrollment_success',
@@ -263,6 +293,20 @@ def course_enroll(request, slug):
             enrollment.razorpay_order_id = razorpay_order['id']
             enrollment.save()
 
+            if is_ajax:
+                return JsonResponse({
+                    'success': True,
+                    'is_free': False,
+                    'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                    'razorpay_order_id': razorpay_order['id'],
+                    'razorpay_amount': amount_paise,
+                    'razorpay_currency': 'INR',
+                    'user_full_name': request.user.get_full_name() or request.user.email,
+                    'user_email': request.user.email,
+                    'user_phone': phone,
+                    'course_title': course.title,
+                })
+
             context = {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
@@ -294,6 +338,10 @@ def course_enroll(request, slug):
             enrollment.order_status = 'Cancelled'
             enrollment.save()
 
+            err_msg = 'Unable to process payment. Please try again later.'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=500)
+
             context = {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
@@ -304,8 +352,8 @@ def course_enroll(request, slug):
                     or request.user.email
                 ),
                 'user_email': request.user.email,
-                'user_phone': user_phone,
-                'error': 'Unable to process payment. Please try again later.',
+                'user_phone': phone,
+                'error': err_msg,
             }
 
             return render(
@@ -348,6 +396,19 @@ def enrollment_success(request, enrollment_id):
         'enrollment': enrollment,
     }
     return render(request, 'skill_global/enrollment_success.html', context)
+
+
+def enrollment_invoice(request, enrollment_id):
+    enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
+    if enrollment.payment_status != 'Paid' or enrollment.order_status != 'Confirmed':
+        return redirect('course_enrollment', slug=enrollment.course.slug)
+
+    context = {
+        'page_title': f'Tax Invoice #{enrollment.enrollment_id}',
+        'page_description': 'Official Course Fee Tax Invoice & Receipt',
+        'enrollment': enrollment,
+    }
+    return render(request, 'skill_global/enrollment_invoice.html', context)
 
 
 def payment_failed(request):

@@ -54,39 +54,59 @@
 
             <div class="rounded-4 border bg-white p-4 mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                    <h5 class="fw-bold mb-0">Invoice</h5>
-                    <button type="button" class="btn btn-outline-primary rounded-pill btn-sm"
-                        onclick="window.print()">Download / Print Invoice</button>
+                    <h5 class="fw-bold mb-0"><i class="bi bi-file-earmark-receipt text-primary me-2"></i>Official Tax Invoice</h5>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'enrollment_invoice' enrollment.enrollment_id %}" class="btn btn-outline-primary rounded-pill btn-sm">
+                            <i class="bi bi-eye me-1"></i> View Full Invoice
+                        </a>
+                        <button type="button" class="btn btn-primary rounded-pill btn-sm"
+                            onclick="window.print()"><i class="bi bi-printer me-1"></i> Print / Save PDF</button>
+                    </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="text-muted small">Invoice No.</div>
-                        <div class="fw-semibold">{{ enrollment.enrollment_id }}</div>
+                        <div class="fw-semibold text-primary font-monospace">{{ enrollment.enrollment_id }}</div>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <div class="text-muted small">Date</div>
-                        <div class="fw-semibold">{{ enrollment.created_at|date:'d M Y' }}</div>
+                        <div class="text-muted small">Date & Time</div>
+                        <div class="fw-semibold">{{ enrollment.updated_at|date:'d M Y, h:i A' }}</div>
                     </div>
                     <div class="col-md-6">
-                        <div class="text-muted small">Customer</div>
+                        <div class="text-muted small">Customer Name</div>
                         <div class="fw-semibold">{{ enrollment.user.get_full_name|default:enrollment.user.email }}</div>
                     </div>
                     <div class="col-md-6 text-md-end">
                         <div class="text-muted small">Payment Method</div>
-                        <div class="fw-semibold">{{ enrollment.payment_method }}</div>
+                        <div class="fw-semibold">{{ enrollment.payment_method|default:"Razorpay Online" }}</div>
                     </div>
+                    {% if enrollment.branch %}
+                    <div class="col-md-6">
+                        <div class="text-muted small">Branch & Specialization</div>
+                        <div class="fw-semibold">{{ enrollment.branch }} ({{ enrollment.specialization }})</div>
+                    </div>
+                    {% endif %}
+                    {% if enrollment.address %}
+                    <div class="col-md-6 text-md-end">
+                        <div class="text-muted small">Address</div>
+                        <div class="fw-semibold small">{{ enrollment.address }}</div>
+                    </div>
+                    {% endif %}
                     <div class="col-12 border-top pt-3 mt-2">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Course Fee</span>
-                            <span class="fw-bold">₹{{ enrollment.amount }}</span>
+                            <span class="fw-semibold fs-6">Total Amount Paid</span>
+                            <span class="fw-bold fs-5 text-success">₹{{ enrollment.amount }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'enrollment_invoice' enrollment.enrollment_id %}" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="bi bi-download me-1"></i> Download Invoice
+                </a>
                 <a href="{% url 'my_courses' %}" class="btn btn-primary rounded-pill px-5">Go to My Courses</a>
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-5">Back to Home</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-4">Back to Home</a>
             </div>
         </div>
     </div>

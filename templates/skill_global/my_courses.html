@@ -33,9 +33,13 @@
                         </p>
                         <p class="text-muted mb-0">Enrolled on {{ enrollment.created_at|date:'M d, Y' }}</p>
                         <span class="badge bg-success rounded-pill">Enrolled</span>
-                        <div class="mt-auto">
+                        <div class="mt-auto d-flex flex-column gap-2">
                             <a href="{% url 'course_detail' enrollment.course.id %}"
                                 class="btn btn-primary rounded-pill w-100">View Course</a>
+                            <a href="{% url 'enrollment_invoice' enrollment.enrollment_id %}"
+                                class="btn btn-outline-secondary rounded-pill w-100 btn-sm">
+                                <i class="bi bi-file-earmark-text me-1"></i> Tax Invoice
+                            </a>
                         </div>
                     </div>
                 </div>

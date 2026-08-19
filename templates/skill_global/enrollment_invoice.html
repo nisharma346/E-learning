@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tax Invoice #{{ enrollment.enrollment_id }} | Skill Global{% endblock %}
+
+{% block content %}
+<style>
+    @media print {
+        header, footer, navbar, .no-print, .btn, .navbar {
+            display: none !important;
+        }
+        body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .invoice-card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+        }
+    }
+</style>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 no-print">
+            <a href="{% url 'enrollment_success' enrollment.enrollment_id %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i> Back to Confirmation
+            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print / Download PDF
+                </button>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white invoice-card">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4 flex-wrap gap-3">
+                <div>
+                    <h3 class="fw-bold text-primary mb-1">SKILL GLOBAL</h3>
+                    <p class="text-muted mb-0 small">Integrating talent, thought and action.</p>
+                    <p class="text-muted mb-0 small">Hyderabad, Telangana, India</p>
+                    <p class="text-muted mb-0 small">Email: support@skillglobal.com | Phone: +91 98765 43210</p>
+                </div>
+                <div class="text-md-end">
+                    <span class="badge bg-success bg-opacity-10 text-success fs-6 rounded-pill px-3 py-2 fw-semibold mb-2">
+                        <i class="bi bi-check-circle-fill me-1"></i> PAYMENT CONFIRMED
+                    </span>
+                    <h4 class="fw-bold text-dark mb-1">TAX INVOICE</h4>
+                    <div class="text-muted small"><strong>Invoice No:</strong> {{ enrollment.enrollment_id }}</div>
+                    <div class="text-muted small"><strong>Date:</strong> {{ enrollment.updated_at|date:"d M Y, h:i A" }}</div>
+                </div>
+            </div>
+
+            <!-- Billed To & Order Details -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded-4 h-100">
+                        <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Student Details (Billed To)</h6>
+                        <table class="table table-borderless table-sm mb-0">
+                            <tr>
+                                <td class="text-muted small ps-0" style="width: 35%;">Name:</td>
+                                <td class="fw-semibold small">{{ enrollment.user.get_full_name|default:enrollment.user.email }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted small ps-0">Email:</td>
+                                <td class="fw-semibold small">{{ enrollment.user.email }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted small ps-0">Mobile:</td>
+                                <td class="fw-semibold small">{{ enrollment.user.phone|default:enrollment.user.profile.phone|default:"N/A" }}</td>
+                            </tr>
+                            {% if enrollment.branch %}
+                            <tr>
+                                <td class="text-muted small ps-0">Branch:</td>
+                                <td class="fw-semibold small">{{ enrollment.branch }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if enrollment.specialization %}
+                            <tr>
+                                <td class="text-muted small ps-0">Specialization:</td>
+                                <td class="fw-semibold small">{{ enrollment.specialization }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if enrollment.address %}
+                            <tr>
+                                <td class="text-muted small ps-0">Address:</td>
+                                <td class="fw-semibold small">{{ enrollment.address }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded-4 h-100">
+                        <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Payment Transaction Details</h6>
+                        <table class="table table-borderless table-sm mb-0">
+                            <tr>
+                                <td class="text-muted small ps-0" style="width: 40%;">Enrollment ID:</td>
+                                <td class="fw-semibold small text-primary">{{ enrollment.enrollment_id }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted small ps-0">Payment Method:</td>
+                                <td class="fw-semibold small">{{ enrollment.payment_method|default:"Online (Razorpay)" }}</td>
+                            </tr>
+                            {% if enrollment.razorpay_payment_id %}
+                            <tr>
+                                <td class="text-muted small ps-0">Razorpay Payment ID:</td>
+                                <td class="fw-semibold small font-monospace">{{ enrollment.razorpay_payment_id }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if enrollment.razorpay_order_id %}
+                            <tr>
+                                <td class="text-muted small ps-0">Razorpay Order ID:</td>
+                                <td class="fw-semibold small font-monospace">{{ enrollment.razorpay_order_id }}</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td class="text-muted small ps-0">Payment Status:</td>
+                                <td class="fw-bold small text-success">{{ enrollment.payment_status }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted small ps-0">Order Status:</td>
+                                <td class="fw-bold small text-success">{{ enrollment.order_status }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Table -->
+            <div class="table-responsive mb-4">
+                <table class="table align-middle border-top border-bottom">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="py-3">#</th>
+                            <th class="py-3">Course Description</th>
+                            <th class="py-3 text-center">Category</th>
+                            <th class="py-3 text-center">Duration</th>
+                            <th class="py-3 text-end">Amount (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-3">1</td>
+                            <td class="py-3">
+                                <div class="fw-bold text-dark">{{ enrollment.course.title }}</div>
+                                <div class="text-muted small">Instructor: {{ enrollment.course.instructor|default:"Skill Global Team" }}</div>
+                            </td>
+                            <td class="py-3 text-center small">{{ enrollment.course.category|default:"Skill Training" }}</td>
+                            <td class="py-3 text-center small">{{ enrollment.course.duration|default:"Self-paced" }}</td>
+                            <td class="py-3 text-end fw-bold">₹{{ enrollment.amount }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Total -->
+            <div class="row justify-content-end mb-4">
+                <div class="col-md-5">
+                    <div class="card border-0 bg-light rounded-4 p-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Course Subtotal:</span>
+                            <span class="fw-semibold">₹{{ enrollment.amount }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Taxes & Fees (Included):</span>
+                            <span class="fw-semibold">₹0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                            <span class="fw-bold fs-6">Total Amount Paid:</span>
+                            <span class="fw-bold fs-5 text-primary">₹{{ enrollment.amount }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer note -->
+            <div class="border-top pt-4 mt-2 text-center text-muted small">
+                <p class="mb-1">This is a computer-generated tax invoice and official receipt for enrollment at Skill Global.</p>
+                <p class="mb-0">Thank you for choosing Skill Global for your learning path!</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
