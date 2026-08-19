@@ -9,6 +9,8 @@ urlpatterns = [
     path('courses/my-courses/', views.my_courses, name='my_courses'),
     path('enrollment/success/<str:enrollment_id>/', views.enrollment_success, name='enrollment_success'),
     path('enrollment/invoice/<str:enrollment_id>/', views.enrollment_invoice, name='enrollment_invoice'),
+    path('enrollment/test-confirm/<str:enrollment_id>/', views.test_confirm_payment, name='test_confirm_payment'),
+    path('payment/status/<str:order_id>/', views.check_payment_status, name='check_payment_status'),
     path(
     'payment/razorpay/verify/',
     views.razorpay_verify,
