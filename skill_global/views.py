@@ -421,7 +421,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def razorpay_verify(request):
-    """Verify Razorpay payment signature and confirm enrollment"""
+    """Verify Razorpay payment signature, amount, and status, then confirm enrollment"""
 
     payment_id = request.POST.get('razorpay_payment_id') or request.GET.get('razorpay_payment_id')
     order_id = request.POST.get('razorpay_order_id') or request.GET.get('razorpay_order_id')
@@ -440,28 +440,54 @@ def razorpay_verify(request):
         return redirect('courses')
 
     try:
-        if signature and order_id and payment_id:
-            try:
-                client = razorpay.Client(
-                    auth=(
-                        settings.RAZORPAY_KEY_ID,
-                        settings.RAZORPAY_KEY_SECRET
-                    )
+        if payment_id and order_id and signature:
+            client = razorpay.Client(
+                auth=(
+                    settings.RAZORPAY_KEY_ID,
+                    settings.RAZORPAY_KEY_SECRET
                 )
-                client.utility.verify_payment_signature({
-                    'razorpay_order_id': order_id,
-                    'razorpay_payment_id': payment_id,
-                    'razorpay_signature': signature
-                })
-            except Exception as sig_err:
-                print("Signature verification note:", sig_err)
+            )
 
-        if payment_id:
-            enrollment.razorpay_payment_id = payment_id
-        else:
-            import uuid
-            enrollment.razorpay_payment_id = f"pay_test_{uuid.uuid4().hex[:12].upper()}"
+            # 1. Signature Verification
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            })
 
+            # 2. Payment Amount & Captured Verification
+            try:
+                payment_info = client.payment.fetch(payment_id)
+                expected_amount_paise = int(enrollment.amount * 100)
+
+                # Amount check
+                if payment_info and 'amount' in payment_info:
+                    paid_amount = int(payment_info['amount'])
+                    if paid_amount != expected_amount_paise:
+                        print(f"Payment amount mismatch: expected {expected_amount_paise}, got {paid_amount}")
+                        enrollment.payment_status = 'Failed'
+                        enrollment.order_status = 'Cancelled'
+                        enrollment.save()
+                        return redirect('payment_failed')
+
+                # Captured status check
+                if payment_info and 'status' in payment_info:
+                    pay_status = payment_info['status']
+                    if pay_status != 'captured':
+                        if pay_status == 'authorized':
+                            client.payment.capture(payment_id, expected_amount_paise)
+                        else:
+                            print(f"Payment not captured: status is {pay_status}")
+                            enrollment.payment_status = 'Failed'
+                            enrollment.order_status = 'Cancelled'
+                            enrollment.save()
+                            return redirect('payment_failed')
+
+            except Exception as fetch_err:
+                print("Payment details fetch note:", fetch_err)
+
+        import uuid
+        enrollment.razorpay_payment_id = payment_id or f"pay_test_{uuid.uuid4().hex[:12].upper()}"
         if signature:
             enrollment.razorpay_signature = signature
 
@@ -480,10 +506,10 @@ def razorpay_verify(request):
 
     except Exception as e:
         print("Razorpay Verification Exception:", e)
-        enrollment.payment_status = 'Paid'
-        enrollment.order_status = 'Confirmed'
+        enrollment.payment_status = 'Failed'
+        enrollment.order_status = 'Cancelled'
         enrollment.save()
-        return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
+        return redirect('payment_failed')
 
 
 @csrf_exempt
