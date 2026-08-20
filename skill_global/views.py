@@ -13,8 +13,38 @@ from django.shortcuts import get_object_or_404
 import razorpay
 from django.conf import settings
 from django.http import JsonResponse
+from django.core.mail import send_mail
 
 User = get_user_model()
+
+def send_enrollment_confirmation_email(enrollment):
+    """Sends confirmation email with invoice details to student upon successful enrollment."""
+    try:
+        if not enrollment or not enrollment.user or not enrollment.user.email:
+            return
+        subject = f"Enrollment Confirmed: {enrollment.course.title} | Skill Global"
+        message = (
+            f"Dear {enrollment.user.get_full_name() or enrollment.user.email},\n\n"
+            f"Thank you for enrolling in '{enrollment.course.title}' at Skill Global!\n\n"
+            f"--- ENROLLMENT DETAILS ---\n"
+            f"Enrollment ID: {enrollment.enrollment_id}\n"
+            f"Course: {enrollment.course.title}\n"
+            f"Amount Paid: ₹{enrollment.amount}\n"
+            f"Payment Status: {enrollment.payment_status}\n\n"
+            f"You can view your course materials and download your official tax invoice anytime from your account dashboard.\n\n"
+            f"Happy Learning!\n"
+            f"Skill Global Team"
+        )
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'Skill Global <noreply@skillglobal.com>'),
+            recipient_list=[enrollment.user.email],
+            fail_silently=True
+        )
+    except Exception as e:
+        print("Email notification warning:", e)
+
 
 # Create your views here.
 
@@ -243,6 +273,7 @@ def course_enroll(request, slug):
             enrollment.date_of_birth = date_of_birth
             enrollment.address = address
             enrollment.save()
+            send_enrollment_confirmation_email(enrollment)
 
             success_url = reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
             if is_ajax:
@@ -494,6 +525,7 @@ def razorpay_verify(request):
         enrollment.payment_status = 'Paid'
         enrollment.order_status = 'Confirmed'
         enrollment.save()
+        send_enrollment_confirmation_email(enrollment)
 
         if not request.user.is_authenticated and enrollment.user:
             from django.contrib.auth import login as auth_login
@@ -549,6 +581,7 @@ def test_confirm_payment(request, enrollment_id):
     if not enrollment.payment_method:
         enrollment.payment_method = 'Test Payment'
     enrollment.save()
+    send_enrollment_confirmation_email(enrollment)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
         return JsonResponse({

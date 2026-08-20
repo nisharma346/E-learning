@@ -1,7 +1,7 @@
 Django==6.0.1
-Pillow==10.0.0
+Pillow>=12.0.0
 python-decouple==3.8
-razorpay==1.4.0
+razorpay==2.0.1
 django-cors-headers==4.2.0
 requests==2.31.0
 Werkzeug==2.3.0

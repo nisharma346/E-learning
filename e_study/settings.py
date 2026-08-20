@@ -126,9 +126,25 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # ===================================
+# EMAIL CONFIGURATION
+# ===================================
+# In Development: Console Email Backend (Logs sent emails to terminal/console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Skill Global <noreply@skillglobal.com>'
+
+# For Production (Gmail / SMTP):
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'
+
+# ===================================
 # RAZORPAY PAYMENT GATEWAY
 # ===================================
 # Use environment variables for credentials (recommended for production)
 # Set these in your .env file or system environment variables
 RAZORPAY_KEY_ID = "rzp_test_TQWNr7ZQ0tUolf"
 RAZORPAY_KEY_SECRET = "96CmXqkBWLIK81SAaU76cHeB"
+
