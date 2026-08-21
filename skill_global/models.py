@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 # Create your models here.
 
@@ -130,6 +131,63 @@ class Course(models.Model):
         return self.title
 
 
+class Coupon(models.Model):
+    DISCOUNT_PERCENTAGE = 'Percentage'
+    DISCOUNT_FIXED = 'Fixed'
+
+    DISCOUNT_TYPE_CHOICES = [
+        (DISCOUNT_PERCENTAGE, 'Percentage Off (%)'),
+        (DISCOUNT_FIXED, 'Fixed Amount Off (₹)'),
+    ]
+
+    code = models.CharField(max_length=50, unique=True)
+    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE_CHOICES, default=DISCOUNT_PERCENTAGE)
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    min_purchase_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    valid_from = models.DateTimeField(blank=True, null=True)
+    valid_to = models.DateTimeField(blank=True, null=True)
+    active = models.BooleanField(default=True)
+    max_uses = models.PositiveIntegerField(default=100)
+    used_count = models.PositiveIntegerField(default=0, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Coupon'
+        verbose_name_plural = 'Coupons'
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if self.code:
+            self.code = self.code.strip().upper()
+        super().save(*args, **kwargs)
+
+    def is_valid(self, amount=0):
+        now = timezone.now()
+        if not self.active:
+            return False, "This coupon code is inactive."
+        if self.valid_from and now < self.valid_from:
+            return False, "This coupon is not active yet."
+        if self.valid_to and now > self.valid_to:
+            return False, "This coupon code has expired."
+        if self.max_uses and self.used_count >= self.max_uses:
+            return False, "This coupon usage limit has been reached."
+        if amount > 0 and amount < self.min_purchase_amount:
+            return False, f"Minimum purchase amount of ₹{self.min_purchase_amount} required to apply this coupon."
+        return True, "Coupon is valid."
+
+    def calculate_discount(self, original_amount):
+        original = float(original_amount or 0)
+        if self.discount_type == self.DISCOUNT_PERCENTAGE:
+            discount = (original * float(self.discount_value)) / 100.0
+        else:
+            discount = float(self.discount_value)
+        discount = min(discount, original)
+        return round(discount, 2)
+
+    def __str__(self):
+        return f"{self.code} ({self.get_discount_type_display()}: {self.discount_value})"
+
+
 class CourseEnrollment(models.Model):
     PAYMENT_METHOD_CHOICES = [
         ('UPI', 'UPI'),
@@ -152,7 +210,10 @@ class CourseEnrollment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_enrollments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     enrollment_id = models.CharField(max_length=36, unique=True, editable=False)
+    original_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, blank=True, null=True, related_name='enrollments')
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, blank=True)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='Pending')

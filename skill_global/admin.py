@@ -1,9 +1,16 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import About, Course, CourseEnrollment, LiveClass, Article, Profile, Testimonial, CustomUser
+from .models import About, Course, CourseEnrollment, LiveClass, Article, Profile, Testimonial, CustomUser, Coupon
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 # Register your models here.
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ('code', 'discount_type', 'discount_value', 'min_purchase_amount', 'valid_to', 'active', 'used_count', 'max_uses')
+    list_filter = ('discount_type', 'active', 'created_at')
+    search_fields = ('code',)
+    readonly_fields = ('used_count', 'created_at')
 
 @admin.register(About)
 class AboutAdmin(admin.ModelAdmin):

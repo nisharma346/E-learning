@@ -11,6 +11,7 @@ urlpatterns = [
     path('enrollment/invoice/<str:enrollment_id>/', views.enrollment_invoice, name='enrollment_invoice'),
     path('enrollment/test-confirm/<str:enrollment_id>/', views.test_confirm_payment, name='test_confirm_payment'),
     path('payment/status/<str:order_id>/', views.check_payment_status, name='check_payment_status'),
+    path('coupon/apply/', views.apply_coupon, name='apply_coupon'),
     path(
     'payment/razorpay/verify/',
     views.razorpay_verify,

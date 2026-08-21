@@ -70,12 +70,16 @@
 
                     <div class="border-top pt-4">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Course Price</span>
+                            <span class="text-muted">Original Price</span>
                             <span class="fw-semibold text-dark">{% if course.price %}₹{{ course.price }}{% else %}FREE{% endif %}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-success d-none" id="discountRow">
+                            <span class="fw-semibold"><i class="bi bi-tag-fill me-1"></i> Coupon Discount</span>
+                            <span class="fw-bold" id="discountAmountText">- ₹0.00</span>
                         </div>
                         <div class="d-flex justify-content-between pt-2 border-top">
                             <span class="fw-semibold fs-5">Total Amount</span>
-                            <span class="fw-bold fs-4 text-primary">{% if course.price %}₹{{ course.price }}{% else %}FREE{% endif %}</span>
+                            <span class="fw-bold fs-4 text-primary" id="totalAmountText">{% if course.price %}₹{{ course.price }}{% else %}FREE{% endif %}</span>
                         </div>
                     </div>
                 </div>
@@ -221,7 +225,17 @@
                             <label class="form-label fw-semibold small">Complete Address <span class="text-danger">*</span></label>
                             <textarea class="form-control rounded-4 px-3" id="detailAddress" name="detail_address" rows="2"
                                 placeholder="Enter house no, street, city, state and pincode" required></textarea>
+                        <!-- Promo / Coupon Code Input -->
+                        {% if course.price and course.price > 0 %}
+                        <div class="col-12 mt-2">
+                            <label class="form-label fw-semibold small"><i class="bi bi-ticket-perforated-fill text-warning me-1"></i> Apply Promo / Coupon Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-pill ps-3 text-uppercase fw-semibold" id="modalCouponCode" name="coupon_code" placeholder="e.g. WELCOME10, SAVE500, ERUDITION50">
+                                <button class="btn btn-dark rounded-end-pill px-4 fw-semibold" type="button" id="modalApplyCouponBtn">Apply Code</button>
+                            </div>
+                            <div id="modalCouponMsg" class="form-text small mt-1"></div>
                         </div>
+                        {% endif %}
 
                         <!-- Payment Method Selection -->
                         {% if course.price and course.price > 0 %}
@@ -412,6 +426,74 @@
             course_title: "{{ course.title }}"
         });
         {% endif %}
+
+        const applyBtn = document.getElementById('modalApplyCouponBtn');
+        const couponInput = document.getElementById('modalCouponCode');
+        const couponMsg = document.getElementById('modalCouponMsg');
+        const discountRow = document.getElementById('discountRow');
+        const discountAmountText = document.getElementById('discountAmountText');
+        const totalAmountText = document.getElementById('totalAmountText');
+
+        if (applyBtn && couponInput) {
+            applyBtn.addEventListener('click', function() {
+                const code = couponInput.value.trim().toUpperCase();
+                if (!code) {
+                    couponMsg.className = 'form-text small mt-1 text-danger';
+                    couponMsg.textContent = 'Please enter a promo code first.';
+                    return;
+                }
+
+                applyBtn.disabled = true;
+                applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                const formData = new FormData();
+                formData.append('coupon_code', code);
+                formData.append('course_id', "{{ course.id }}");
+
+                fetch("{% url 'apply_coupon' %}", {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    applyBtn.disabled = false;
+                    applyBtn.textContent = 'Apply Code';
+
+                    if (data.success) {
+                        couponMsg.className = 'form-text small mt-1 text-success fw-bold';
+                        couponMsg.textContent = '✓ ' + data.message;
+                        couponInput.classList.add('is-valid');
+                        couponInput.classList.remove('is-invalid');
+
+                        if (discountRow && discountAmountText && totalAmountText) {
+                            discountRow.classList.remove('d-none');
+                            discountAmountText.textContent = '- ₹' + data.discount_amount.toFixed(2);
+                            totalAmountText.textContent = '₹' + data.final_amount.toFixed(2);
+                        }
+
+                        if (paymentBtnText) {
+                            if (data.final_amount <= 0) {
+                                paymentBtnText.innerHTML = '<i class="bi bi-check-circle me-1"></i> Enroll Free (100% Off)';
+                            } else {
+                                paymentBtnText.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay ₹' + data.final_amount.toFixed(2) + ' via Razorpay';
+                            }
+                        }
+                    } else {
+                        couponMsg.className = 'form-text small mt-1 text-danger';
+                        couponMsg.textContent = '✗ ' + (data.error || 'Invalid promo code.');
+                        couponInput.classList.add('is-invalid');
+                        couponInput.classList.remove('is-valid');
+                    }
+                })
+                .catch(err => {
+                    applyBtn.disabled = false;
+                    applyBtn.textContent = 'Apply Code';
+                    couponMsg.className = 'form-text small mt-1 text-danger';
+                    couponMsg.textContent = 'Connection error. Please try again.';
+                });
+            });
+        }
 
         const instantTestPayBtn = document.getElementById('instantTestPayBtn');
 

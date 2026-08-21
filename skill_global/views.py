@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import Profile, LiveClass, Article, Course, About, Testimonial, CourseEnrollment
+from .models import Profile, LiveClass, Article, Course, About, Testimonial, CourseEnrollment, Coupon
 from django.shortcuts import get_object_or_404
 import razorpay
 from django.conf import settings
@@ -44,6 +44,49 @@ def send_enrollment_confirmation_email(enrollment):
         )
     except Exception as e:
         print("Email notification warning:", e)
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def apply_coupon(request):
+    """AJAX endpoint to validate and calculate coupon discount for checkout"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+    code = request.POST.get('coupon_code', '').strip().upper()
+    course_id = request.POST.get('course_id')
+
+    if not code:
+        return JsonResponse({'success': False, 'error': 'Please enter a promo code.'}, status=400)
+
+    course = None
+    if course_id:
+        course = Course.objects.filter(id=course_id).first()
+
+    original_amount = float(course.price) if (course and course.price) else 0.0
+
+    coupon = Coupon.objects.filter(code=code).first()
+    if not coupon:
+        return JsonResponse({'success': False, 'error': 'Invalid promo code. Please check and try again.'}, status=404)
+
+    is_valid, msg = coupon.is_valid(original_amount)
+    if not is_valid:
+        return JsonResponse({'success': False, 'error': msg}, status=400)
+
+    discount_amount = coupon.calculate_discount(original_amount)
+    final_amount = max(0.0, round(original_amount - discount_amount, 2))
+
+    return JsonResponse({
+        'success': True,
+        'coupon_code': coupon.code,
+        'discount_type': coupon.discount_type,
+        'discount_value': float(coupon.discount_value),
+        'original_amount': original_amount,
+        'discount_amount': discount_amount,
+        'final_amount': final_amount,
+        'message': f"Coupon '{coupon.code}' applied! You save ₹{discount_amount:,.2f}"
+    })
 
 
 # Create your views here.
@@ -259,13 +302,31 @@ def course_enroll(request, slug):
                 request.user.profile.phone = phone
                 request.user.profile.save(update_fields=['phone'])
 
-        # =========================
-        # FREE COURSE
-        # =========================
-        if not course.price or course.price <= 0:
+        # Check coupon code
+        coupon_code = request.POST.get('coupon_code', '').strip().upper()
+        applied_coupon = None
+        orig_amount = float(course.price or 0)
+        disc_amount = 0.0
+        final_amount = orig_amount
 
-            enrollment.payment_method = payment_method
+        if coupon_code:
+            applied_coupon = Coupon.objects.filter(code=coupon_code).first()
+            if applied_coupon:
+                is_valid, _ = applied_coupon.is_valid(orig_amount)
+                if is_valid:
+                    disc_amount = applied_coupon.calculate_discount(orig_amount)
+                    final_amount = max(0.0, round(orig_amount - disc_amount, 2))
+
+        # =========================
+        # FREE / 100% DISCOUNTED COURSE
+        # =========================
+        if not course.price or course.price <= 0 or final_amount <= 0:
+
+            enrollment.payment_method = payment_method or 'Free'
+            enrollment.original_amount = orig_amount
+            enrollment.discount_amount = disc_amount
             enrollment.amount = 0
+            enrollment.coupon = applied_coupon
             enrollment.payment_status = 'Paid'
             enrollment.order_status = 'Confirmed'
             enrollment.branch = branch
@@ -273,6 +334,9 @@ def course_enroll(request, slug):
             enrollment.date_of_birth = date_of_birth
             enrollment.address = address
             enrollment.save()
+            if applied_coupon:
+                applied_coupon.used_count += 1
+                applied_coupon.save(update_fields=['used_count'])
             send_enrollment_confirmation_email(enrollment)
 
             success_url = reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
@@ -293,7 +357,10 @@ def course_enroll(request, slug):
         # =========================
 
         enrollment.payment_method = payment_method
-        enrollment.amount = course.price
+        enrollment.original_amount = orig_amount
+        enrollment.discount_amount = disc_amount
+        enrollment.amount = final_amount
+        enrollment.coupon = applied_coupon
         enrollment.payment_status = 'Pending'
         enrollment.order_status = 'Pending'
         enrollment.branch = branch
@@ -525,6 +592,9 @@ def razorpay_verify(request):
         enrollment.payment_status = 'Paid'
         enrollment.order_status = 'Confirmed'
         enrollment.save()
+        if enrollment.coupon:
+            enrollment.coupon.used_count += 1
+            enrollment.coupon.save(update_fields=['used_count'])
         send_enrollment_confirmation_email(enrollment)
 
         if not request.user.is_authenticated and enrollment.user:
@@ -581,6 +651,9 @@ def test_confirm_payment(request, enrollment_id):
     if not enrollment.payment_method:
         enrollment.payment_method = 'Test Payment'
     enrollment.save()
+    if enrollment.coupon:
+        enrollment.coupon.used_count += 1
+        enrollment.coupon.save(update_fields=['used_count'])
     send_enrollment_confirmation_email(enrollment)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):

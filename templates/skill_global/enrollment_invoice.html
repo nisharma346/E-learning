@@ -167,8 +167,14 @@
                     <div class="card border-0 bg-light rounded-4 p-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">Course Subtotal:</span>
-                            <span class="fw-semibold">₹{{ enrollment.amount }}</span>
+                            <span class="fw-semibold">₹{% if enrollment.original_amount %}{{ enrollment.original_amount }}{% else %}{{ enrollment.amount }}{% endif %}</span>
                         </div>
+                        {% if enrollment.discount_amount and enrollment.discount_amount > 0 %}
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span class="small fw-semibold"><i class="bi bi-tag-fill me-1"></i> Coupon Discount ({% if enrollment.coupon %}{{ enrollment.coupon.code }}{% else %}PROMO{% endif %}):</span>
+                            <span class="fw-bold">- ₹{{ enrollment.discount_amount }}</span>
+                        </div>
+                        {% endif %}
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">Taxes & Fees (Included):</span>
                             <span class="fw-semibold">₹0.00</span>

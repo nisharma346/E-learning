@@ -41,7 +41,10 @@
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 border bg-white h-100">
                         <h6 class="fw-semibold">Amount Paid</h6>
-                        <p class="mb-0">₹{{ enrollment.amount }}</p>
+                        <p class="mb-0 fw-bold text-success">₹{{ enrollment.amount }}</p>
+                        {% if enrollment.discount_amount and enrollment.discount_amount > 0 %}
+                        <div class="small text-muted mt-1"><i class="bi bi-tag-fill text-success"></i> Saved ₹{{ enrollment.discount_amount }} ({% if enrollment.coupon %}{{ enrollment.coupon.code }}{% else %}Promo Code{% endif %})</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-md-4">
