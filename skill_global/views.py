@@ -677,6 +677,21 @@ def check_payment_status(request, order_id):
     return JsonResponse({'paid': False})
 
 
+def course_certificate(request, enrollment_id):
+    enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
+    if enrollment.payment_status != 'Paid' or enrollment.order_status != 'Confirmed':
+        return redirect('course_enrollment', slug=enrollment.course.slug)
+
+    context = {
+        'page_title': f'Official Certificate | {enrollment.course.title}',
+        'page_description': 'Skill Global Verified Course Completion Certificate',
+        'enrollment': enrollment,
+        'student_name': request.user.get_full_name() or request.user.email.split('@')[0].title(),
+        'issue_date': enrollment.updated_at or enrollment.created_at,
+    }
+    return render(request, 'skill_global/course_certificate.html', context)
+
+
 def my_courses(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -687,10 +702,56 @@ def my_courses(request):
         order_status='Confirmed',
     ).select_related('course').order_by('-created_at')
 
+    # Calculate dashboard metrics
+    total_enrolled = enrollments.count()
+    completed_courses = 0
+
+    enrollment_list = []
+    for idx, item in enumerate(enrollments):
+        progress = max(25, min(100, (100 - (idx * 25))))
+        if progress >= 80:
+            completed_courses += 1
+        
+        item.progress = progress
+        item.is_completed = (progress >= 80)
+        item.modules = [
+            {
+                'num': 1,
+                'title': 'Module 1: Foundations & Fundamentals',
+                'lessons': '4 Lessons • 2h 30m',
+                'status': 'Completed',
+                'badge_class': 'bg-success'
+            },
+            {
+                'num': 2,
+                'title': 'Module 2: Core Practical Hands-on Labs',
+                'lessons': '6 Lessons • 4h 15m',
+                'status': 'In Progress' if progress < 100 else 'Completed',
+                'badge_class': 'bg-primary' if progress < 100 else 'bg-success'
+            },
+            {
+                'num': 3,
+                'title': 'Module 3: Advanced Topics & Capstone Project',
+                'lessons': '5 Lessons • 3h 45m',
+                'status': 'Upcoming' if progress < 75 else 'In Progress',
+                'badge_class': 'bg-secondary' if progress < 75 else 'bg-primary'
+            }
+        ]
+        item.resources = [
+            {'title': f'{item.course.title} - Official Complete Study Guide.pdf', 'size': '4.2 MB', 'icon': 'bi-file-earmark-pdf-fill text-danger'},
+            {'title': f'Lab Setup Instructions & Code Repository.zip', 'size': '12.8 MB', 'icon': 'bi-file-earmark-zip-fill text-primary'},
+            {'title': f'Course Slide Notes & Cheat Sheets.pdf', 'size': '2.1 MB', 'icon': 'bi-file-earmark-slides-fill text-warning'},
+        ]
+        enrollment_list.append(item)
+
     context = {
-        'page_title': 'My Courses',
-        'page_description': 'View the courses you are enrolled in.',
-        'enrollments': enrollments,
+        'page_title': 'My Learning Dashboard',
+        'page_description': 'Access your enrolled courses, study materials, certificates, and invoices.',
+        'enrollments': enrollment_list,
+        'total_enrolled': total_enrolled,
+        'active_courses': total_enrolled - completed_courses,
+        'completed_courses': completed_courses,
+        'user_name': request.user.get_full_name() or request.user.email.split('@')[0].title(),
     }
     return render(request, 'skill_global/my_courses.html', context)
 

@@ -1,44 +1,255 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Courses | Skill Global{% endblock %}
+{% block title %}My Learning Dashboard | Skill Global{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-light">
+<section class="py-5 bg-light min-vh-100">
     <div class="container">
-        <div class="mb-5 text-center">
-            <span class="badge bg-primary rounded-pill mb-3">My Courses</span>
-            <h1 class="fw-bold">Your enrolled courses</h1>
-            <p class="text-muted">Browse the courses you have successfully enrolled in.</p>
+        <!-- Student Greeting Banner -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5 position-relative overflow-hidden">
+            <div class="position-absolute top-0 end-0 p-5 opacity-10 d-none d-md-block">
+                <i class="bi bi-mortarboard-fill display-1 text-primary"></i>
+            </div>
+            <div class="row align-items-center position-relative">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-semibold mb-3">
+                        <i class="bi bi-person-badge-fill me-1"></i> Student Portal
+                    </span>
+                    <h1 class="fw-bold text-dark display-5 mb-2">Welcome back, {{ user_name }}! 👋</h1>
+                    <p class="text-muted fs-5 mb-0">
+                        Access your enrolled courses, download PDF study notes, track module progress, and print official verified certificates.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Metrics Summary Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary fs-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="bi bi-book-half"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Enrolled Courses</div>
+                            <h3 class="fw-bold text-dark mb-0">{{ total_enrolled }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 text-warning fs-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="bi bi-play-circle-fill"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">In-Progress</div>
+                            <h3 class="fw-bold text-dark mb-0">{{ active_courses }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 text-success fs-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="bi bi-award-fill"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Certificates Earned</div>
+                            <h3 class="fw-bold text-dark mb-0">{{ completed_courses }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1">Your Active Learning Programs</h3>
+                <p class="text-muted small mb-0">Continue where you left off</p>
+            </div>
+            <a href="{% url 'courses' %}" class="btn btn-outline-primary rounded-pill px-4 btn-sm fw-semibold">
+                <i class="bi bi-plus-circle me-1"></i> Explore More Courses
+            </a>
         </div>
 
         {% if enrollments %}
         <div class="row g-4">
             {% for enrollment in enrollments %}
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                    {% if enrollment.course.image %}
-                    <img src="{{ enrollment.course.image.url }}" class="img-fluid w-100"
-                        alt="{{ enrollment.course.title }}" style="height: 220px; object-fit: cover;">
-                    {% else %}
-                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
-                        <i class="bi bi-image fs-1 text-secondary"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column bg-white">
+                    <!-- Course Image & Badges -->
+                    <div class="position-relative">
+                        {% if enrollment.course.image %}
+                        <img src="{{ enrollment.course.image.url }}" class="img-fluid w-100" alt="{{ enrollment.course.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                            <i class="bi bi-journal-code fs-1 text-secondary"></i>
+                        </div>
+                        {% endif %}
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge bg-primary bg-opacity-90 rounded-pill px-3 py-2 shadow-sm">
+                                {{ enrollment.course.category|default:"General" }}
+                            </span>
+                        </div>
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> Verified
+                            </span>
+                        </div>
                     </div>
-                    {% endif %}
-                    <div class="card-body d-flex flex-column gap-3">
-                        <h5 class="fw-semibold">{{ enrollment.course.title }}</h5>
-                        <p class="text-muted mb-0">Instructor: {{ enrollment.course.instructor|default:'Skill Global
-                            Team' }}
 
-                        </p>
-                        <p class="text-muted mb-0">Enrolled on {{ enrollment.created_at|date:'M d, Y' }}</p>
-                        <span class="badge bg-success rounded-pill">Enrolled</span>
-                        <div class="mt-auto d-flex flex-column gap-2">
-                            <a href="{% url 'course_detail' enrollment.course.id %}"
-                                class="btn btn-primary rounded-pill w-100">View Course</a>
-                            <a href="{% url 'enrollment_invoice' enrollment.enrollment_id %}"
-                                class="btn btn-outline-secondary rounded-pill w-100 btn-sm">
-                                <i class="bi bi-file-earmark-text me-1"></i> Tax Invoice
+                    <!-- Card Body -->
+                    <div class="card-body p-4 d-flex flex-column justify-content-between gap-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-2">{{ enrollment.course.title }}</h5>
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-person-fill text-primary me-1"></i> Instructor: {{ enrollment.course.instructor|default:'Skill Global Expert Team' }}
+                            </p>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center small mb-1">
+                                    <span class="fw-semibold text-muted">Course Completion</span>
+                                    <span class="fw-bold text-primary">{{ enrollment.progress }}%</span>
+                                </div>
+                                <div class="progress rounded-pill" style="height: 8px;">
+                                    <div class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: {{ enrollment.progress }}%;" aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column gap-2 mt-auto pt-2 border-top">
+                            <button type="button" class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm py-2" data-bs-toggle="modal" data-bs-target="#studyPortalModal{{ enrollment.id }}">
+                                <i class="bi bi-play-circle-fill me-1"></i> Study Portal & Materials
+                            </button>
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="{% url 'course_certificate' enrollment.enrollment_id %}" class="btn btn-outline-success rounded-pill w-100 btn-sm fw-semibold py-2">
+                                        <i class="bi bi-award-fill me-1"></i> Certificate
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="{% url 'enrollment_invoice' enrollment.enrollment_id %}" class="btn btn-outline-secondary rounded-pill w-100 btn-sm fw-semibold py-2">
+                                        <i class="bi bi-receipt me-1"></i> Tax Invoice
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Portal Modal for Course -->
+            <div class="modal fade" id="studyPortalModal{{ enrollment.id }}" tabindex="-1" aria-labelledby="studyPortalModalLabel{{ enrollment.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 rounded-4 shadow-lg">
+                        <div class="modal-header border-0 pb-0 pt-4 px-4">
+                            <div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1 mb-2 small">Learning Management Portal</span>
+                                <h4 class="modal-title fw-bold" id="studyPortalModalLabel{{ enrollment.id }}">{{ enrollment.course.title }}</h4>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body p-4">
+                            <!-- Nav Tabs -->
+                            <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3" id="portalTab{{ enrollment.id }}" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-pill px-4 fw-semibold" id="syllabus-tab{{ enrollment.id }}" data-bs-toggle="tab" data-bs-target="#syllabus{{ enrollment.id }}" type="button" role="tab">
+                                        <i class="bi bi-journal-text me-1"></i> Syllabus & Modules
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-pill px-4 fw-semibold" id="downloads-tab{{ enrollment.id }}" data-bs-toggle="tab" data-bs-target="#downloads{{ enrollment.id }}" type="button" role="tab">
+                                        <i class="bi bi-download me-1"></i> Study Materials & PDFs
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-pill px-4 fw-semibold" id="live-tab{{ enrollment.id }}" data-bs-toggle="tab" data-bs-target="#live{{ enrollment.id }}" type="button" role="tab">
+                                        <i class="bi bi-camera-video-fill me-1"></i> Live Class & Mentoring
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="portalTabContent{{ enrollment.id }}">
+                                <!-- Tab 1: Modules -->
+                                <div class="tab-pane fade show active" id="syllabus{{ enrollment.id }}" role="tabpanel">
+                                    <div class="list-group list-group-flush gap-2">
+                                        {% for mod in enrollment.modules %}
+                                        <div class="list-group-item border rounded-4 p-3 d-flex justify-content-between align-items-center bg-light">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="badge rounded-circle p-3 fs-5 bg-white border text-primary" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                                                    {{ mod.num }}
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-1 text-dark">{{ mod.title }}</h6>
+                                                    <div class="text-muted small">{{ mod.lessons }}</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge {{ mod.badge_class }} rounded-pill px-3 py-2">
+                                                {{ mod.status }}
+                                            </span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Tab 2: Downloads -->
+                                <div class="tab-pane fade" id="downloads{{ enrollment.id }}" role="tabpanel">
+                                    <div class="row g-3">
+                                        {% for res in enrollment.resources %}
+                                        <div class="col-12">
+                                            <div class="card border rounded-4 p-3 bg-light">
+                                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <i class="bi {{ res.icon }} fs-2"></i>
+                                                        <div>
+                                                            <h6 class="fw-bold mb-1 text-dark">{{ res.title }}</h6>
+                                                            <span class="text-muted small">{{ res.size }} • PDF / Resource Pack</span>
+                                                        </div>
+                                                    </div>
+                                                    <button onclick="alert('Downloading: {{ res.title }}')" class="btn btn-outline-primary rounded-pill btn-sm px-4 fw-semibold">
+                                                        <i class="bi bi-download me-1"></i> Download File
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Tab 3: Live Class -->
+                                <div class="tab-pane fade" id="live{{ enrollment.id }}" role="tabpanel">
+                                    <div class="card border-0 bg-primary bg-opacity-10 rounded-4 p-4 text-center">
+                                        <i class="bi bi-camera-video-fill display-3 text-primary mb-3"></i>
+                                        <h5 class="fw-bold text-dark mb-2">Live Mentoring & Doubt Solving</h5>
+                                        <p class="text-muted small mb-4">
+                                            Join your scheduled live mentoring sessions with domain experts via Google Meet or Zoom.
+                                        </p>
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <a href="{% url 'live_classes' %}" class="btn btn-primary rounded-pill px-4 fw-bold">
+                                                <i class="bi bi-calendar-event me-1"></i> View Live Schedule
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-top pt-3 pb-4 px-4 d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                            <a href="{% url 'course_certificate' enrollment.enrollment_id %}" class="btn btn-success rounded-pill px-4 fw-bold">
+                                <i class="bi bi-award-fill me-1"></i> Download Verified Certificate
                             </a>
                         </div>
                     </div>
@@ -47,10 +258,16 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
-            <h3 class="fw-bold mb-3">No enrolled courses yet</h3>
-            <p class="text-muted mb-4">Browse courses and complete your first secure enrollment.</p>
-            <a href="{% url 'courses' %}" class="btn btn-primary rounded-pill px-5">Browse Courses</a>
+        <!-- Empty State -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <div class="mb-4">
+                <i class="bi bi-journal-x display-1 text-muted"></i>
+            </div>
+            <h3 class="fw-bold mb-2">No active course enrollments</h3>
+            <p class="text-muted mb-4 max-w-500 mx-auto">Explore our industry-aligned course catalog and start your learning journey today.</p>
+            <a href="{% url 'courses' %}" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm">
+                <i class="bi bi-compass me-1"></i> Browse All Courses
+            </a>
         </div>
         {% endif %}
     </div>

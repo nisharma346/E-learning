@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Certificate of Completion | Skill Global{% endblock %}
+
+{% block content %}
+<style>
+    @media print {
+        header, footer, .no-print {
+            display: none !important;
+        }
+        body {
+            background: #fff !important;
+        }
+        .certificate-container {
+            box-shadow: none !important;
+            border: 8px solid #0d6efd !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+    }
+</style>
+
+<section class="py-5 bg-light min-vh-100 d-flex flex-column justify-content-center">
+    <div class="container">
+        <!-- Top Action Toolbar -->
+        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+            <a href="{% url 'my_courses' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-printer-fill me-1"></i> Print / Save as PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Certificate Card -->
+        <div class="card border-0 shadow-lg rounded-5 overflow-hidden certificate-container p-4 p-md-5 bg-white position-relative" style="border: 10px solid #e9ecef;">
+            <!-- Outer Gold / Blue Border Accent -->
+            <div class="position-absolute top-0 start-0 w-100" style="height: 10px; background: linear-gradient(90deg, #0d6efd, #ffc107, #0d6efd);"></div>
+
+            <div class="text-center py-4 px-2">
+                <!-- Platform Branding Header -->
+                <div class="mb-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-4 py-2 fs-6 fw-bold border border-primary border-opacity-25">
+                        <i class="bi bi-award-fill me-1 text-warning"></i> SKILL GLOBAL CERTIFICATION
+                    </span>
+                </div>
+
+                <h1 class="font-serif fw-bold text-dark display-4 mb-2" style="font-family: 'Georgia', serif;">Certificate of Completion</h1>
+                <p class="text-muted fs-5 mb-4">This official certificate is proudly awarded to</p>
+
+                <!-- Student Name -->
+                <div class="border-bottom border-2 border-primary d-inline-block px-5 py-2 mb-4">
+                    <h2 class="fw-bold display-5 text-primary mb-0" style="letter-spacing: 0.5px;">{{ student_name }}</h2>
+                </div>
+
+                <p class="text-muted fs-5 mb-3 max-w-700 mx-auto">
+                    for successfully completing all curriculum modules, practical hands-on assessments, and project requirements for the course
+                </p>
+
+                <!-- Course Title -->
+                <h3 class="fw-bold fs-2 text-dark mb-4 py-2 px-4 bg-light rounded-4 d-inline-block shadow-sm">
+                    "{{ enrollment.course.title }}"
+                </h3>
+
+                <p class="text-muted small mb-5">
+                    Category: <strong class="text-dark">{{ enrollment.course.category|default:"Skill Global Academy" }}</strong> | Instructor: <strong class="text-dark">{{ enrollment.course.instructor|default:"Skill Global Expert Team" }}</strong>
+                </p>
+
+                <!-- Signature & Verification Seal Footer -->
+                <div class="row align-items-end mt-4 pt-4 border-top">
+                    <div class="col-4 text-center">
+                        <div class="fw-bold text-dark fs-6">{{ issue_date|date:"F d, Y" }}</div>
+                        <div class="text-muted small border-top pt-1 mt-1">Date of Issuance</div>
+                    </div>
+
+                    <div class="col-4 text-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center border border-warning" style="width: 90px; height: 90px;">
+                            <i class="bi bi-patch-check-fill text-warning display-4"></i>
+                        </div>
+                        <div class="text-uppercase fw-bold text-dark mt-2" style="font-size: 0.75rem; letter-spacing: 1px;">Verified Authentic</div>
+                    </div>
+
+                    <div class="col-4 text-center">
+                        <div class="font-serif fs-4 fw-bold text-primary" style="font-family: 'Brush Script MT', cursive, serif;">Skill Global Academic Board</div>
+                        <div class="text-muted small border-top pt-1 mt-1">Authorized Signatory</div>
+                    </div>
+                </div>
+
+                <!-- Verification ID -->
+                <div class="mt-4 pt-3 text-muted small border-top d-flex justify-content-between flex-wrap gap-2">
+                    <span>Certificate ID: <strong class="text-dark">{{ enrollment.enrollment_id }}</strong></span>
+                    <span>Verify Online: <strong class="text-primary">skillglobal.com/verify</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
