@@ -7,15 +7,13 @@
 <section class="py-5 bg-light">
     <div class="container">
         <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
-            <span class="badge bg-danger rounded-pill mb-3">Payment Failed</span>
-            <h1 class="fw-bold mb-3">Your payment could not be completed.</h1>
+            <span class="badge bg-danger rounded-pill mb-3">{% if payment_cancelled %}Payment Cancelled{% else %}Payment
+                Failed{% endif %}</span>
+            <h1 class="fw-bold mb-3">{{ payment_message }}</h1>
             <p class="text-muted mb-4">Please try again or return to the course page to review your enrollment details.
             </p>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="{% url 'test_confirm_payment' enrollment.enrollment_id %}" class="btn btn-success rounded-pill px-4 fw-bold">
-                    <i class="bi bi-file-earmark-text me-1"></i> Confirm Test Payment & Get Invoice
-                </a>
                 <a href="javascript:history.back()" class="btn btn-primary rounded-pill px-4">Try Again</a>
                 <a href="{% url 'courses' %}" class="btn btn-outline-secondary rounded-pill px-4">Back to Courses</a>
             </div>

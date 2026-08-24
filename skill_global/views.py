@@ -1,4 +1,5 @@
 import math
+import logging
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
@@ -14,8 +15,10 @@ import razorpay
 from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import send_mail
+from django.db import transaction
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 def send_enrollment_confirmation_email(enrollment):
     """Sends confirmation email with invoice details to student upon successful enrollment."""
@@ -178,31 +181,13 @@ def course_enroll(request, slug):
         is_active=True
     )
 
-    enrollment, created = CourseEnrollment.objects.get_or_create(
+    enrollment = CourseEnrollment.objects.filter(
         user=request.user,
-        course=course,
-        defaults={
-            'amount': course.price or 0,
-            'payment_status': 'Pending',
-            'order_status': 'Pending',
-        }
-    )
+        course=course
+    ).first()
 
-    # Already paid enrollment
-    if (
-        enrollment.payment_status == 'Paid'
-        and enrollment.order_status == 'Confirmed'
-    ):
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
-            return JsonResponse({
-                'success': True,
-                'already_paid': True,
-                'redirect_url': reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
-            })
-        return redirect(
-            'enrollment_success',
-            enrollment_id=enrollment.enrollment_id
-        )
+    if enrollment and enrollment.payment_status == 'Paid' and enrollment.order_status == 'Confirmed':
+        return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
 
     user_phone = (
         request.user.phone
@@ -213,86 +198,63 @@ def course_enroll(request, slug):
         )
     )
 
-    # =========================
-    # POST - START PAYMENT
-    # =========================
     if request.method == 'POST':
         is_ajax = (
             request.headers.get('x-requested-with') == 'XMLHttpRequest'
             or 'application/json' in request.headers.get('Accept', '')
         )
 
-        payment_method = request.POST.get(
-            'payment_method',
-            'UPI'
+        enrollment, _ = CourseEnrollment.objects.get_or_create(
+            user=request.user,
+            course=course,
         )
+
+        payment_method = request.POST.get('payment_method', 'UPI')
         phone = request.POST.get('phone') or request.POST.get('detail_mobile') or user_phone
         agree_terms = request.POST.get('agree_terms') in ('on', 'true', True, 1, '1')
 
-        # Terms validation
         if not agree_terms:
             err_msg = 'You must agree to the Terms & Conditions and Refund Policy to continue.'
             if is_ajax:
                 return JsonResponse({'success': False, 'error': err_msg}, status=400)
-            context = {
+            return render(request, 'skill_global/course_enrollment.html', {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
                 'course': course,
                 'enrollment': enrollment,
-                'user_full_name': (
-                    request.user.get_full_name()
-                    or request.user.email
-                ),
+                'user_full_name': request.user.get_full_name() or request.user.email,
                 'user_email': request.user.email,
                 'user_phone': user_phone,
                 'error': err_msg,
-            }
+            })
 
-            return render(
-                request,
-                'skill_global/course_enrollment.html',
-                context
-            )
-
-        # Phone validation
         if not phone:
             err_msg = 'Please enter a valid phone number.'
             if is_ajax:
                 return JsonResponse({'success': False, 'error': err_msg}, status=400)
-            context = {
+            return render(request, 'skill_global/course_enrollment.html', {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
                 'course': course,
                 'enrollment': enrollment,
-                'user_full_name': (
-                    request.user.get_full_name()
-                    or request.user.email
-                ),
+                'user_full_name': request.user.get_full_name() or request.user.email,
                 'user_email': request.user.email,
                 'user_phone': user_phone,
                 'error': err_msg,
-            }
+            })
 
-            return render(
-                request,
-                'skill_global/course_enrollment.html',
-                context
-            )
-
-        # Extract additional user details from modal
         branch = request.POST.get('detail_branch', '')
         specialization = request.POST.get('detail_specialization', '')
         dob_str = request.POST.get('detail_dob', '')
         address = request.POST.get('detail_address', '')
-        
-        # Parse date of birth
+
         date_of_birth = None
         if dob_str:
             try:
                 from datetime import datetime
                 date_of_birth = datetime.strptime(dob_str, '%Y-%m-%d').date()
             except Exception:
-                pass
+                date_of_birth = None
 
         if phone:
             if hasattr(request.user, 'phone') and not request.user.phone:
@@ -302,7 +264,6 @@ def course_enroll(request, slug):
                 request.user.profile.phone = phone
                 request.user.profile.save(update_fields=['phone'])
 
-        # Check coupon code
         coupon_code = request.POST.get('coupon_code', '').strip().upper()
         applied_coupon = None
         orig_amount = float(course.price or 0)
@@ -317,11 +278,7 @@ def course_enroll(request, slug):
                     disc_amount = applied_coupon.calculate_discount(orig_amount)
                     final_amount = max(0.0, round(orig_amount - disc_amount, 2))
 
-        # =========================
-        # FREE / 100% DISCOUNTED COURSE
-        # =========================
         if not course.price or course.price <= 0 or final_amount <= 0:
-
             enrollment.payment_method = payment_method or 'Free'
             enrollment.original_amount = orig_amount
             enrollment.discount_amount = disc_amount
@@ -341,20 +298,8 @@ def course_enroll(request, slug):
 
             success_url = reverse('enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id})
             if is_ajax:
-                return JsonResponse({
-                    'success': True,
-                    'is_free': True,
-                    'redirect_url': success_url
-                })
-
-            return redirect(
-                'enrollment_success',
-                enrollment_id=enrollment.enrollment_id
-            )
-
-        # =========================
-        # PAID COURSE - RAZORPAY
-        # =========================
+                return JsonResponse({'success': True, 'is_free': True, 'redirect_url': success_url})
+            return redirect('enrollment_success', enrollment_id=enrollment.enrollment_id)
 
         enrollment.payment_method = payment_method
         enrollment.original_amount = orig_amount
@@ -369,27 +314,32 @@ def course_enroll(request, slug):
         enrollment.address = address
         enrollment.save()
 
-        # Razorpay client
         try:
-            client = razorpay.Client(
-                auth=(
-                    settings.RAZORPAY_KEY_ID,
-                    settings.RAZORPAY_KEY_SECRET
-                )
-            )
-
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             amount_paise = int(enrollment.amount * 100)
-
-            # Create Razorpay order
             razorpay_order = client.order.create({
                 'amount': amount_paise,
                 'currency': 'INR',
                 'receipt': enrollment.enrollment_id,
                 'payment_capture': 1,
             })
-
             enrollment.razorpay_order_id = razorpay_order['id']
-            enrollment.save()
+            enrollment.save(update_fields=['razorpay_order_id', 'updated_at'])
+
+            context = {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': request.user.get_full_name() or request.user.email,
+                'user_email': request.user.email,
+                'user_phone': phone,
+                'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                'razorpay_order_id': razorpay_order['id'],
+                'razorpay_amount': amount_paise,
+                'razorpay_currency': 'INR',
+                'open_razorpay': True,
+            }
 
             if is_ajax:
                 return JsonResponse({
@@ -405,83 +355,37 @@ def course_enroll(request, slug):
                     'course_title': course.title,
                 })
 
-            context = {
-                'page_title': 'Course Enrollment',
-                'page_description': 'Complete your enrollment securely.',
-                'course': course,
-                'enrollment': enrollment,
-                'user_full_name': (
-                    request.user.get_full_name()
-                    or request.user.email
-                ),
-                'user_email': request.user.email,
-                'user_phone': phone,
+            return render(request, 'skill_global/course_enrollment.html', context)
 
-                # Razorpay data
-                'razorpay_key_id': settings.RAZORPAY_KEY_ID,
-                'razorpay_order_id': razorpay_order['id'],
-                'razorpay_amount': amount_paise,
-                'razorpay_currency': 'INR',
-                'open_razorpay': True,
-            }
-
-            return render(
-                request,
-                'skill_global/course_enrollment.html',
-                context
-            )
-
-        except Exception as e:
+        except Exception:
             enrollment.payment_status = 'Failed'
             enrollment.order_status = 'Cancelled'
-            enrollment.save()
-
+            enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
             err_msg = 'Unable to process payment. Please try again later.'
             if is_ajax:
                 return JsonResponse({'success': False, 'error': err_msg}, status=500)
-
-            context = {
+            return render(request, 'skill_global/course_enrollment.html', {
                 'page_title': 'Course Enrollment',
                 'page_description': 'Complete your enrollment securely.',
                 'course': course,
                 'enrollment': enrollment,
-                'user_full_name': (
-                    request.user.get_full_name()
-                    or request.user.email
-                ),
+                'user_full_name': request.user.get_full_name() or request.user.email,
                 'user_email': request.user.email,
                 'user_phone': phone,
                 'error': err_msg,
-            }
-
-            return render(
-                request,
-                'skill_global/course_enrollment.html',
-                context
-            )
-
-    # =========================
-    # GET - SHOW ENROLLMENT PAGE
-    # =========================
+            })
 
     context = {
         'page_title': 'Course Enrollment',
         'page_description': 'Complete your enrollment securely.',
         'course': course,
         'enrollment': enrollment,
-        'user_full_name': (
-            request.user.get_full_name()
-            or request.user.email
-        ),
+        'user_full_name': request.user.get_full_name() or request.user.email,
         'user_email': request.user.email,
         'user_phone': user_phone,
     }
 
-    return render(
-        request,
-        'skill_global/course_enrollment.html',
-        context
-    )
+    return render(request, 'skill_global/course_enrollment.html', context)
 
 def enrollment_success(request, enrollment_id):
     enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
@@ -510,108 +414,76 @@ def enrollment_invoice(request, enrollment_id):
 
 
 def payment_failed(request):
+    reason = request.GET.get('reason')
     context = {
         'page_title': 'Payment Failed',
         'page_description': 'Your payment could not be completed.',
+        'payment_cancelled': reason == 'cancelled',
+        'payment_message': (
+            'Payment Cancelled' if reason == 'cancelled'
+            else 'Payment verification failed. Please try again.'
+        ),
     }
     return render(request, 'skill_global/payment_failed.html', context)
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
 def razorpay_verify(request):
-    """Verify Razorpay payment signature, amount, and status, then confirm enrollment"""
+    """Verify a successful Razorpay response before confirming enrollment."""
 
-    payment_id = request.POST.get('razorpay_payment_id') or request.GET.get('razorpay_payment_id')
-    order_id = request.POST.get('razorpay_order_id') or request.GET.get('razorpay_order_id')
-    signature = request.POST.get('razorpay_signature') or request.GET.get('razorpay_signature') or ''
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid payment verification request.'}, status=405)
 
-    enrollment = None
-    if order_id:
-        enrollment = CourseEnrollment.objects.filter(razorpay_order_id=order_id).first()
-    
-    if not enrollment and request.user.is_authenticated:
-        enrollment = CourseEnrollment.objects.filter(user=request.user, payment_status='Pending').first()
-        if not enrollment:
-            enrollment = CourseEnrollment.objects.filter(user=request.user).order_by('-created_at').first()
+    payment_id = request.POST.get('razorpay_payment_id')
+    order_id = request.POST.get('razorpay_order_id')
+    signature = request.POST.get('razorpay_signature')
+
+    enrollment = CourseEnrollment.objects.filter(razorpay_order_id=order_id).first()
 
     if not enrollment:
-        return redirect('courses')
+        return JsonResponse({'success': False, 'error': 'Enrollment not found.'}, status=404)
+
+    def verification_failure(message):
+        enrollment.payment_status = 'Failed'
+        enrollment.order_status = 'Cancelled'
+        enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
+        return JsonResponse({'success': False, 'error': message}, status=400)
 
     try:
-        if payment_id and order_id and signature:
-            client = razorpay.Client(
-                auth=(
-                    settings.RAZORPAY_KEY_ID,
-                    settings.RAZORPAY_KEY_SECRET
-                )
-            )
+        if not payment_id or not order_id or not signature:
+            return verification_failure('Payment verification failed. Missing Razorpay response.')
 
-            # 1. Signature Verification
-            client.utility.verify_payment_signature({
-                'razorpay_order_id': order_id,
-                'razorpay_payment_id': payment_id,
-                'razorpay_signature': signature
-            })
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        client.utility.verify_payment_signature({
+            'razorpay_order_id': order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': signature,
+        })
 
-            # 2. Payment Amount & Captured Verification
-            try:
-                payment_info = client.payment.fetch(payment_id)
-                expected_amount_paise = int(enrollment.amount * 100)
+        payment_info = client.payment.fetch(payment_id)
+        expected_amount_paise = int(enrollment.amount * 100)
+        if int(payment_info.get('amount', 0)) != expected_amount_paise:
+            logger.error('Razorpay amount mismatch for enrollment %s', enrollment.enrollment_id)
+            return verification_failure('Payment verification failed. Amount mismatch.')
+        if payment_info.get('status') != 'captured':
+            logger.error('Razorpay payment %s has status %s', payment_id, payment_info.get('status'))
+            return verification_failure('Payment verification failed. Payment was not successful.')
 
-                # Amount check
-                if payment_info and 'amount' in payment_info:
-                    paid_amount = int(payment_info['amount'])
-                    if paid_amount != expected_amount_paise:
-                        print(f"Payment amount mismatch: expected {expected_amount_paise}, got {paid_amount}")
-                        enrollment.payment_status = 'Failed'
-                        enrollment.order_status = 'Cancelled'
-                        enrollment.save()
-                        return redirect('payment_failed')
-
-                # Captured status check
-                if payment_info and 'status' in payment_info:
-                    pay_status = payment_info['status']
-                    if pay_status != 'captured':
-                        if pay_status == 'authorized':
-                            client.payment.capture(payment_id, expected_amount_paise)
-                        else:
-                            print(f"Payment not captured: status is {pay_status}")
-                            enrollment.payment_status = 'Failed'
-                            enrollment.order_status = 'Cancelled'
-                            enrollment.save()
-                            return redirect('payment_failed')
-
-            except Exception as fetch_err:
-                print("Payment details fetch note:", fetch_err)
-
-        import uuid
-        enrollment.razorpay_payment_id = payment_id or f"pay_test_{uuid.uuid4().hex[:12].upper()}"
-        if signature:
+        with transaction.atomic():
+            enrollment.razorpay_payment_id = payment_id
             enrollment.razorpay_signature = signature
-
-        enrollment.payment_status = 'Paid'
-        enrollment.order_status = 'Confirmed'
-        enrollment.save()
+            enrollment.payment_status = 'Paid'
+            enrollment.order_status = 'Confirmed'
+            enrollment.save()
         if enrollment.coupon:
             enrollment.coupon.used_count += 1
             enrollment.coupon.save(update_fields=['used_count'])
         send_enrollment_confirmation_email(enrollment)
 
-        if not request.user.is_authenticated and enrollment.user:
-            from django.contrib.auth import login as auth_login
-            auth_login(request, enrollment.user, backend='django.contrib.auth.backends.ModelBackend')
-
-        return redirect(
-            'enrollment_success',
-            enrollment_id=enrollment.enrollment_id
-        )
+        return JsonResponse({'success': True, 'redirect_url': reverse(
+            'enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id}
+        )})
 
     except Exception as e:
-        print("Razorpay Verification Exception:", e)
-        enrollment.payment_status = 'Failed'
-        enrollment.order_status = 'Cancelled'
-        enrollment.save()
-        return redirect('payment_failed')
+        logger.exception('Razorpay verification exception for enrollment %s', enrollment.enrollment_id)
+        return verification_failure('Payment verification failed. Please try again.')
 
 
 @csrf_exempt

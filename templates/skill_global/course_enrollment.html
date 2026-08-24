@@ -71,7 +71,13 @@
                     <div class="border-top pt-4">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Original Price</span>
-                            <span class="fw-semibold text-dark">{% if course.price %}₹{{ course.price }}{% else %}FREE{% endif %}</span>
+                            <span class="fw-semibold text-dark">
+                                {% if course.price %}
+                                ₹{{ course.price }}
+                                {% else %}
+                                FREE
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="d-flex justify-content-between mb-2 text-success d-none" id="discountRow">
                             <span class="fw-semibold"><i class="bi bi-tag-fill me-1"></i> Coupon Discount</span>
@@ -79,185 +85,144 @@
                         </div>
                         <div class="d-flex justify-content-between pt-2 border-top">
                             <span class="fw-semibold fs-5">Total Amount</span>
-                            <span class="fw-bold fs-4 text-primary" id="totalAmountText">{% if course.price %}₹{{ course.price }}{% else %}FREE{% endif %}</span>
+                            <span class="fw-bold fs-4 text-primary" id="totalAmountText">
+                                {% if course.price %}
+                                ₹{{ course.price }}
+                                {% else %}
+                                FREE
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Direct Enrollment Card & Trigger -->
+            <!-- Right Column: Enrollment Form -->
             <div class="col-lg-7">
-                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100 d-flex flex-column justify-content-between">
-                    <div>
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">Secure Enrollment</span>
-                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Razorpay Verified</span>
-                        </div>
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">Secure
+                            Enrollment</span>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Razorpay
+                            Verified</span>
+                    </div>
 
-                        <h3 class="fw-bold mb-3">Enroll in {{ course.title }}</h3>
-                        <p class="text-muted mb-4">
-                            Complete your student details below to initiate instant payment via Razorpay UPI, Cards, or Net Banking.
-                        </p>
+                    <h3 class="fw-bold mb-3">Enroll in {{ course.title }}</h3>
+                    <p class="text-muted mb-4">
+                        Complete your student details below and proceed to secure payment.
+                    </p>
 
-                        {% if error %}
-                        <div class="alert alert-danger rounded-4 alert-dismissible fade show mb-4" role="alert">
-                            <strong>Error!</strong> {{ error }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        {% endif %}
+                    {% if error %}
+                    <div class="alert alert-danger rounded-4 alert-dismissible fade show mb-4" role="alert">
+                        <strong>Error!</strong> {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" id="enrollmentForm">
+                        {% csrf_token %}
 
                         <div class="card border-1 bg-light rounded-4 p-4 mb-4">
-                            <h6 class="fw-semibold mb-3"><i class="bi bi-person-check text-primary me-2"></i>Account Details</h6>
+                            <h6 class="fw-semibold mb-3"><i class="bi bi-person-check text-primary me-2"></i>Student
+                                Details</h6>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="text-muted small">Student Name</div>
-                                    <div class="fw-semibold">{{ user_full_name }}</div>
+                                    <label class="form-label fw-semibold small">Full Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control rounded-pill px-3" name="detail_name"
+                                        value="{{ user_full_name }}" readonly>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="text-muted small">Student Email</div>
-                                    <div class="fw-semibold">{{ user_email }}</div>
+                                    <label class="form-label fw-semibold small">Email Address <span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" class="form-control rounded-pill px-3 bg-light"
+                                        name="detail_email" value="{{ user_email }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">Mobile Number <span
+                                            class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control rounded-pill px-3" name="detail_mobile"
+                                        value="{{ user_phone }}" pattern="[0-9]{10}" maxlength="10" required>
+                                    <input type="hidden" name="phone" value="{{ user_phone }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">Date of Birth <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control rounded-pill px-3" name="detail_dob"
+                                        required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">Branch <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select rounded-pill px-3" name="detail_branch" required>
+                                        <option value="">Select Branch</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Mechanical">Mechanical</option>
+                                        <option value="Civil">Civil</option>
+                                        <option value="Electrical">Electrical</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">Specialization <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control rounded-pill px-3"
+                                        name="detail_specialization" placeholder="e.g. AI / Web Dev / Data Science"
+                                        required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small">Complete Address <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control rounded-4 px-3" name="detail_address" rows="2"
+                                        placeholder="Enter house no, street, city, state and pincode"
+                                        required></textarea>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <h6 class="fw-semibold mb-3"><i class="bi bi-shield-check text-success me-2"></i>Included Features</h6>
-                            <ul class="list-unstyled text-muted small row g-2">
-                                <li class="col-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Full Lifetime Access</li>
-                                <li class="col-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Verified Certificate</li>
-                                <li class="col-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Instant Tax Invoice</li>
-                                <li class="col-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Live Mentoring</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div>
-                        <button type="button" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm"
-                            id="submitBtn" data-bs-toggle="modal" data-bs-target="#userDetailsModal">
-                            {% if course.price and course.price > 0 %}
-                            <i class="bi bi-credit-card-fill me-2"></i> Proceed to Payment (₹{{ course.price }})
-                            {% else %}
-                            <i class="bi bi-check-circle me-2"></i> Enroll Now (Free)
-                            {% endif %}
-                        </button>
-                        <p class="text-center text-muted small mt-3 mb-0">
-                            <i class="bi bi-lock-fill me-1"></i> 256-bit Encrypted Secure Payment Gateway
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Unified User Details & Payment Modal -->
-<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 shadow-lg">
-            <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <div>
-                    <h5 class="modal-title fw-bold fs-4" id="userDetailsModalLabel">Complete Student Registration</h5>
-                    <p class="text-muted small mb-0">Please fill all details to open Razorpay payment popup.</p>
-                </div>
-                <button type="button" class="btn-close" id="modalCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <!-- Alert Box for Modal Errors -->
-                <div id="modalAlert" class="alert alert-danger rounded-4 d-none mb-3" role="alert">
-                    <span id="modalAlertText">Please check your details and try again.</span>
-                </div>
-
-                <form id="unifiedEnrollmentForm">
-                    {% csrf_token %}
-
-                    <div class="row g-3">
-                        <!-- Full Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control rounded-pill px-3" id="detailName" name="detail_name"
-                                value="{{ user_full_name }}" placeholder="Enter your full name" required>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control rounded-pill px-3 bg-light" id="detailEmail" name="detail_email"
-                                value="{{ user_email }}" placeholder="Enter your email" required readonly>
-                        </div>
-
-                        <!-- Mobile Number -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Mobile Number (10 digits) <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control rounded-pill px-3" id="detailMobile" name="detail_mobile"
-                                value="{{ user_phone }}" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required>
-                            <input type="hidden" name="phone" id="hiddenPhone" value="{{ user_phone }}">
-                        </div>
-
-                        <!-- Date of Birth -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Date of Birth <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control rounded-pill px-3" id="detailDOB" name="detail_dob" required>
-                        </div>
-
-                        <!-- Branch -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Branch <span class="text-danger">*</span></label>
-                            <select class="form-select rounded-pill px-3" id="detailBranch" name="detail_branch" required>
-                                <option value="">Select Branch</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Mechanical">Mechanical</option>
-                                <option value="Civil">Civil</option>
-                                <option value="Electrical">Electrical</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-
-                        <!-- Specialization -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Specialization <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control rounded-pill px-3" id="detailSpecialization"
-                                name="detail_specialization" placeholder="e.g. AI / Web Dev / Data Science" required>
-                        </div>
-
-                        <!-- Address -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold small">Complete Address <span class="text-danger">*</span></label>
-                            <textarea class="form-control rounded-4 px-3" id="detailAddress" name="detail_address" rows="2"
-                                placeholder="Enter house no, street, city, state and pincode" required></textarea>
-                        <!-- Promo / Coupon Code Input -->
                         {% if course.price and course.price > 0 %}
-                        <div class="col-12 mt-2">
-                            <label class="form-label fw-semibold small"><i class="bi bi-ticket-perforated-fill text-warning me-1"></i> Apply Promo / Coupon Code</label>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Apply Promo / Coupon Code</label>
                             <div class="input-group">
-                                <input type="text" class="form-control rounded-start-pill ps-3 text-uppercase fw-semibold" id="modalCouponCode" name="coupon_code" placeholder="e.g. WELCOME10, SAVE500, ERUDITION50">
-                                <button class="btn btn-dark rounded-end-pill px-4 fw-semibold" type="button" id="modalApplyCouponBtn">Apply Code</button>
+                                <input type="text"
+                                    class="form-control rounded-start-pill ps-3 text-uppercase fw-semibold"
+                                    id="couponCode" name="coupon_code" placeholder="e.g. WELCOME10, SAVE500">
+                                <button class="btn btn-dark rounded-end-pill px-4 fw-semibold" type="button"
+                                    id="applyCouponBtn">Apply Code</button>
                             </div>
-                            <div id="modalCouponMsg" class="form-text small mt-1"></div>
+                            <div id="couponMessage" class="form-text small mt-1"></div>
                         </div>
                         {% endif %}
 
-                        <!-- Payment Method Selection -->
                         {% if course.price and course.price > 0 %}
-                        <div class="col-12 mt-3">
-                            <label class="form-label fw-semibold small">Select Payment Gateway Option</label>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small">Select Payment Option</label>
                             <div class="row g-2">
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 cursor-pointer w-100" style="cursor: pointer;">
-                                        <input type="radio" name="payment_method" value="UPI" checked class="form-check-input">
-                                        <span class="small fw-semibold"><i class="bi bi-qr-code text-primary me-1"></i> UPI / GPay / PhonePe</span>
+                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 w-100"
+                                        style="cursor: pointer;">
+                                        <input type="radio" name="payment_method" value="UPI" checked
+                                            class="form-check-input">
+                                        <span class="small fw-semibold"><i class="bi bi-qr-code text-primary me-1"></i>
+                                            UPI / GPay / PhonePe</span>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 cursor-pointer w-100" style="cursor: pointer;">
+                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 w-100"
+                                        style="cursor: pointer;">
                                         <input type="radio" name="payment_method" value="Card" class="form-check-input">
-                                        <span class="small fw-semibold"><i class="bi bi-credit-card text-success me-1"></i> Credit / Debit Card</span>
+                                        <span class="small fw-semibold"><i
+                                                class="bi bi-credit-card text-success me-1"></i> Card</span>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 cursor-pointer w-100" style="cursor: pointer;">
-                                        <input type="radio" name="payment_method" value="Net Banking" class="form-check-input">
-                                        <span class="small fw-semibold"><i class="bi bi-bank text-info me-1"></i> Net Banking</span>
+                                    <label class="border rounded-4 p-2 px-3 d-flex align-items-center gap-2 w-100"
+                                        style="cursor: pointer;">
+                                        <input type="radio" name="payment_method" value="Net Banking"
+                                            class="form-check-input">
+                                        <span class="small fw-semibold"><i class="bi bi-bank text-info me-1"></i> Net
+                                            Banking</span>
                                     </label>
                                 </div>
                             </div>
@@ -266,152 +231,151 @@
                         <input type="hidden" name="payment_method" value="UPI">
                         {% endif %}
 
-                        <!-- Terms and Conditions Checkbox -->
-                        <div class="col-12 mt-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="agree_terms" id="modalAgreeTerms" value="on" checked required>
-                                <label class="form-check-label small text-muted" for="modalAgreeTerms">
-                                    I agree to the <a href="#" class="text-decoration-none">Terms & Conditions</a> and <a href="#" class="text-decoration-none">Refund Policy</a>.
-                                </label>
-                            </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="agree_terms" id="agree_terms"
+                                value="on" required>
+                            <label class="form-check-label small text-muted" for="agree_terms">
+                                I agree to the <a href="#" class="text-decoration-none">Terms & Conditions</a> and <a
+                                    href="#" class="text-decoration-none">Refund Policy</a>.
+                            </label>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer border-top pt-3 pb-4 px-4 d-flex justify-content-between flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">
-                    Cancel
-                </button>
-                <div class="d-flex gap-2 flex-wrap">
-                    <button type="button" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold" id="instantTestPayBtn">
-                        <i class="bi bi-lightning-charge-fill me-1"></i> Instant Confirm & Get Invoice
-                    </button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" id="paymentBtn">
-                        {% if course.price and course.price > 0 %}
-                        <span id="paymentBtnText"><i class="bi bi-lock-fill me-1"></i> Pay via Razorpay</span>
-                        {% else %}
-                        <span id="paymentBtnText"><i class="bi bi-check-circle me-1"></i> Complete Enrollment</span>
-                        {% endif %}
-                    </button>
+
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm">
+                            {% if course.price and course.price > 0 %}
+                            <i class="bi bi-lock-fill me-2"></i> Proceed to Payment (₹{{ course.price }})
+                            {% else %}
+                            <i class="bi bi-check-circle me-2"></i> Enroll Now (Free)
+                            {% endif %}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const paymentBtn = document.getElementById('paymentBtn');
-        const paymentBtnText = document.getElementById('paymentBtnText');
-        const unifiedForm = document.getElementById('unifiedEnrollmentForm');
-        const modalAlert = document.getElementById('modalAlert');
-        const modalAlertText = document.getElementById('modalAlertText');
-        const detailMobile = document.getElementById('detailMobile');
-        const hiddenPhone = document.getElementById('hiddenPhone');
+        const applyCouponBtn = document.getElementById('applyCouponBtn');
+        const couponCodeInput = document.getElementById('couponCode');
+        const couponMessage = document.getElementById('couponMessage');
 
-        function showModalError(msg) {
-            if (modalAlert && modalAlertText) {
-                modalAlertText.textContent = msg;
-                modalAlert.classList.remove('d-none');
-                modalAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
-                alert(msg);
-            }
-        }
+        if (applyCouponBtn && couponCodeInput) {
+            applyCouponBtn.addEventListener('click', function () {
+                const code = couponCodeInput.value.trim().toUpperCase();
+                if (!code) {
+                    couponMessage.className = 'form-text small mt-1 text-danger';
+                    couponMessage.textContent = 'Please enter a promo code first.';
+                    return;
+                }
 
-        function hideModalError() {
-            if (modalAlert) {
-                modalAlert.classList.add('d-none');
-            }
-        }
+                const formData = new FormData();
+                formData.append('coupon_code', code);
+                formData.append('course_id', "{{ course.id }}");
 
-        function closeRegistrationModal() {
-            const modalEl = document.getElementById('userDetailsModal');
-            const closeBtn = document.getElementById('modalCloseBtn');
-            if (closeBtn) {
-                closeBtn.click();
-            } else if (window.bootstrap && bootstrap.Modal) {
-                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-                if (modalInstance) modalInstance.hide();
-            }
-        }
-
-        let pollTimer = null;
-
-        function startPaymentStatusPolling(orderId) {
-            if (pollTimer) clearInterval(pollTimer);
-            pollTimer = setInterval(function() {
-                fetch("/payment/status/" + orderId + "/")
+                fetch("{% url 'apply_coupon' %}", {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.paid && data.redirect_url) {
-                            clearInterval(pollTimer);
-                            if (window.top) {
-                                window.top.location.href = data.redirect_url;
-                            } else {
-                                window.location.href = data.redirect_url;
-                            }
+                        if (data.success) {
+                            couponMessage.className = 'form-text small mt-1 text-success fw-bold';
+                            couponMessage.textContent = '✓ ' + data.message;
+                        } else {
+                            couponMessage.className = 'form-text small mt-1 text-danger';
+                            couponMessage.textContent = '✗ ' + (data.error || 'Invalid promo code.');
                         }
                     })
-                    .catch(err => console.log("Poll error:", err));
-            }, 2500);
+                    .catch(() => {
+                        couponMessage.className = 'form-text small mt-1 text-danger';
+                        couponMessage.textContent = 'Connection error. Please try again.';
+                    });
+            });
         }
 
         function openRazorpayCheckout(data) {
-            const callbackUrl = window.location.origin + "{% url 'razorpay_verify' %}";
-            const verifyUrl = callbackUrl + "?razorpay_order_id=" + data.razorpay_order_id;
+            const verifyUrl = "{% url 'razorpay_verify' %}";
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+            let pollTimer = null;
 
-            const options = {
+            function startPolling(orderId) {
+                if (pollTimer) clearInterval(pollTimer);
+                pollTimer = setInterval(function () {
+                    fetch("/payment/status/" + orderId + "/")
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.paid && data.redirect_url) {
+                                clearInterval(pollTimer);
+                                window.location.href = data.redirect_url;
+                            }
+                        })
+                        .catch(() => { });
+                }, 2500);
+            }
+
+            const rzp = new Razorpay({
                 key: data.razorpay_key_id,
                 amount: data.razorpay_amount,
                 currency: data.razorpay_currency,
                 order_id: data.razorpay_order_id,
-                name: "Skill Global",
-                description: data.course_title || "Course Enrollment Payment",
-                callback_url: verifyUrl,
-                redirect: true,
+                name: 'Skill Global',
+                description: data.course_title || 'Course Enrollment Payment',
                 prefill: {
                     name: data.user_full_name,
                     email: data.user_email,
-                    contact: data.user_phone
+                    contact: data.user_phone,
                 },
                 handler: function (response) {
-                    if (pollTimer) clearInterval(pollTimer);
-                    const pid = (response && response.razorpay_payment_id) ? response.razorpay_payment_id : "pay_test";
-                    const sig = (response && response.razorpay_signature) ? response.razorpay_signature : "";
-                    const target = verifyUrl + "&razorpay_payment_id=" + pid + "&razorpay_signature=" + sig;
-                    if (window.top) {
-                        window.top.location.href = target;
-                    } else {
-                        window.location.href = target;
+                    if (!response || !response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
+                        window.location.href = "{% url 'payment_failed' %}?reason=verification";
+                        return;
                     }
+
+                    const verificationData = new FormData();
+                    verificationData.append('razorpay_payment_id', response.razorpay_payment_id);
+                    verificationData.append('razorpay_order_id', response.razorpay_order_id);
+                    verificationData.append('razorpay_signature', response.razorpay_signature);
+
+                    fetch(verifyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: verificationData
+                    })
+                        .then(function (verificationResponse) {
+                            if (!verificationResponse.ok) {
+                                throw new Error('Payment verification failed');
+                            }
+                            return verificationResponse.json();
+                        })
+                        .then(function (result) {
+                            window.location.href = result.redirect_url || "{% url 'payment_failed' %}?reason=verification";
+                        })
+                        .catch(function () {
+                            window.location.href = "{% url 'payment_failed' %}?reason=verification";
+                        });
                 },
                 theme: {
-                    color: "#0d6efd"
+                    color: '#0d6efd'
                 },
                 modal: {
                     ondismiss: function () {
-                        console.log("Razorpay payment popup closed.");
-                        if (pollTimer) clearInterval(pollTimer);
+                        window.location.href = "{% url 'payment_failed' %}?cancelled=1";
                     }
                 }
-            };
+            });
 
-            try {
-                const rzp = new Razorpay(options);
-                rzp.on('payment.failed', function (response) {
-                    console.log('Payment status note:', response);
-                    if (pollTimer) clearInterval(pollTimer);
-                    const pid = (response && response.error && response.error.metadata && response.error.metadata.payment_id) ? response.error.metadata.payment_id : "pay_test_" + Date.now();
-                    window.location.href = verifyUrl + "&razorpay_payment_id=" + pid;
-                });
-                rzp.open();
-                startPaymentStatusPolling(data.razorpay_order_id);
-            } catch (e) {
-                console.error("Razorpay SDK Error:", e);
-                window.location.href = verifyUrl + "&razorpay_payment_id=pay_test_" + Date.now();
-            }
+            rzp.on('payment.failed', function () {
+                window.location.href = "{% url 'payment_failed' %}?reason=verification";
+            });
+
+            rzp.open();
+            startPolling(data.razorpay_order_id);
         }
 
         {% if open_razorpay %}
@@ -426,258 +390,6 @@
             course_title: "{{ course.title }}"
         });
         {% endif %}
-
-        const applyBtn = document.getElementById('modalApplyCouponBtn');
-        const couponInput = document.getElementById('modalCouponCode');
-        const couponMsg = document.getElementById('modalCouponMsg');
-        const discountRow = document.getElementById('discountRow');
-        const discountAmountText = document.getElementById('discountAmountText');
-        const totalAmountText = document.getElementById('totalAmountText');
-
-        if (applyBtn && couponInput) {
-            applyBtn.addEventListener('click', function() {
-                const code = couponInput.value.trim().toUpperCase();
-                if (!code) {
-                    couponMsg.className = 'form-text small mt-1 text-danger';
-                    couponMsg.textContent = 'Please enter a promo code first.';
-                    return;
-                }
-
-                applyBtn.disabled = true;
-                applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-                const formData = new FormData();
-                formData.append('coupon_code', code);
-                formData.append('course_id', "{{ course.id }}");
-
-                fetch("{% url 'apply_coupon' %}", {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    applyBtn.disabled = false;
-                    applyBtn.textContent = 'Apply Code';
-
-                    if (data.success) {
-                        couponMsg.className = 'form-text small mt-1 text-success fw-bold';
-                        couponMsg.textContent = '✓ ' + data.message;
-                        couponInput.classList.add('is-valid');
-                        couponInput.classList.remove('is-invalid');
-
-                        if (discountRow && discountAmountText && totalAmountText) {
-                            discountRow.classList.remove('d-none');
-                            discountAmountText.textContent = '- ₹' + data.discount_amount.toFixed(2);
-                            totalAmountText.textContent = '₹' + data.final_amount.toFixed(2);
-                        }
-
-                        if (paymentBtnText) {
-                            if (data.final_amount <= 0) {
-                                paymentBtnText.innerHTML = '<i class="bi bi-check-circle me-1"></i> Enroll Free (100% Off)';
-                            } else {
-                                paymentBtnText.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay ₹' + data.final_amount.toFixed(2) + ' via Razorpay';
-                            }
-                        }
-                    } else {
-                        couponMsg.className = 'form-text small mt-1 text-danger';
-                        couponMsg.textContent = '✗ ' + (data.error || 'Invalid promo code.');
-                        couponInput.classList.add('is-invalid');
-                        couponInput.classList.remove('is-valid');
-                    }
-                })
-                .catch(err => {
-                    applyBtn.disabled = false;
-                    applyBtn.textContent = 'Apply Code';
-                    couponMsg.className = 'form-text small mt-1 text-danger';
-                    couponMsg.textContent = 'Connection error. Please try again.';
-                });
-            });
-        }
-
-        const instantTestPayBtn = document.getElementById('instantTestPayBtn');
-
-        if (instantTestPayBtn && unifiedForm) {
-            instantTestPayBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                hideModalError();
-
-                if (detailMobile && hiddenPhone) {
-                    hiddenPhone.value = detailMobile.value.trim();
-                }
-
-                const mobileVal = detailMobile ? detailMobile.value.trim().replace(/\D/g, '') : '';
-                if (!mobileVal || mobileVal.length !== 10) {
-                    showModalError('Please enter a valid 10-digit mobile number.');
-                    if (detailMobile) detailMobile.focus();
-                    return;
-                }
-
-                const dobVal = document.getElementById('detailDOB')?.value;
-                if (!dobVal) {
-                    showModalError('Please select your Date of Birth.');
-                    document.getElementById('detailDOB')?.focus();
-                    return;
-                }
-
-                const branchVal = document.getElementById('detailBranch')?.value;
-                if (!branchVal) {
-                    showModalError('Please select your Branch.');
-                    document.getElementById('detailBranch')?.focus();
-                    return;
-                }
-
-                const specVal = document.getElementById('detailSpecialization')?.value?.trim();
-                if (!specVal) {
-                    showModalError('Please enter your Specialization.');
-                    document.getElementById('detailSpecialization')?.focus();
-                    return;
-                }
-
-                const addressVal = document.getElementById('detailAddress')?.value?.trim();
-                if (!addressVal) {
-                    showModalError('Please enter your complete address.');
-                    document.getElementById('detailAddress')?.focus();
-                    return;
-                }
-
-                instantTestPayBtn.disabled = true;
-                instantTestPayBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Confirming...';
-
-                const formData = new FormData(unifiedForm);
-                const csrfToken = unifiedForm.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
-
-                fetch("{% url 'test_confirm_payment' enrollment.enrollment_id %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                    } else {
-                        window.location.href = "{% url 'enrollment_success' enrollment.enrollment_id %}";
-                    }
-                })
-                .catch(err => {
-                    console.error("Test Pay Error:", err);
-                    window.location.href = "{% url 'test_confirm_payment' enrollment.enrollment_id %}";
-                });
-            });
-        }
-
-        if (paymentBtn && unifiedForm) {
-            paymentBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                hideModalError();
-
-                // Keep hidden phone in sync with detailMobile
-                if (detailMobile && hiddenPhone) {
-                    hiddenPhone.value = detailMobile.value.trim();
-                }
-
-                const mobileVal = detailMobile ? detailMobile.value.trim().replace(/\D/g, '') : '';
-                if (!mobileVal || mobileVal.length !== 10) {
-                    showModalError('Please enter a valid 10-digit mobile number.');
-                    if (detailMobile) detailMobile.focus();
-                    return;
-                }
-
-                const dobVal = document.getElementById('detailDOB')?.value;
-                if (!dobVal) {
-                    showModalError('Please select your Date of Birth.');
-                    document.getElementById('detailDOB')?.focus();
-                    return;
-                }
-
-                const branchVal = document.getElementById('detailBranch')?.value;
-                if (!branchVal) {
-                    showModalError('Please select your Branch.');
-                    document.getElementById('detailBranch')?.focus();
-                    return;
-                }
-
-                const specVal = document.getElementById('detailSpecialization')?.value?.trim();
-                if (!specVal) {
-                    showModalError('Please enter your Specialization.');
-                    document.getElementById('detailSpecialization')?.focus();
-                    return;
-                }
-
-                const addressVal = document.getElementById('detailAddress')?.value?.trim();
-                if (!addressVal) {
-                    showModalError('Please enter your complete address.');
-                    document.getElementById('detailAddress')?.focus();
-                    return;
-                }
-
-                const agreeTerms = document.getElementById('modalAgreeTerms');
-                if (agreeTerms && !agreeTerms.checked) {
-                    showModalError('Please check the Terms & Conditions box to continue.');
-                    return;
-                }
-
-                // Show processing state
-                paymentBtn.disabled = true;
-                if (paymentBtnText) {
-                    paymentBtnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Opening Razorpay Checkout...';
-                }
-
-                const formData = new FormData(unifiedForm);
-                const csrfToken = unifiedForm.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
-
-                fetch(window.location.href, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.already_paid && data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                        return;
-                    }
-
-                    if (data.is_free && data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                        return;
-                    }
-
-                    if (data.success && data.razorpay_order_id) {
-                        closeRegistrationModal();
-
-                        paymentBtn.disabled = false;
-                        if (paymentBtnText) {
-                            paymentBtnText.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Proceed to Payment';
-                        }
-
-                        // Trigger Razorpay popup directly
-                        openRazorpayCheckout(data);
-                    } else {
-                        showModalError(data.error || 'Unable to process request. Please try again.');
-                        paymentBtn.disabled = false;
-                        if (paymentBtnText) {
-                            paymentBtnText.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Proceed to Payment';
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error("AJAX Enrollment Submission Error:", err);
-                    showModalError('Server connection error. Please refresh and try again.');
-                    paymentBtn.disabled = false;
-                    if (paymentBtnText) {
-                        paymentBtnText.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Proceed to Payment';
-                    }
-                });
-            });
-        }
     });
 </script>
 {% endblock %}

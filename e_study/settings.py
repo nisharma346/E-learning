@@ -145,6 +145,6 @@ DEFAULT_FROM_EMAIL = 'Skill Global <noreply@skillglobal.com>'
 # ===================================
 # Use environment variables for credentials (recommended for production)
 # Set these in your .env file or system environment variables
-RAZORPAY_KEY_ID = "rzp_test_TQWNr7ZQ0tUolf"
-RAZORPAY_KEY_SECRET = "96CmXqkBWLIK81SAaU76cHeB"
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 
