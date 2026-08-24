@@ -315,8 +315,11 @@ def course_enroll(request, slug):
         enrollment.save()
 
         try:
+            if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
+                raise ValueError('Razorpay credentials are not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment or .env file.')
+
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            amount_paise = int(enrollment.amount * 100)
+            amount_paise = int(float(enrollment.amount) * 100)
             razorpay_order = client.order.create({
                 'amount': amount_paise,
                 'currency': 'INR',
@@ -357,11 +360,12 @@ def course_enroll(request, slug):
 
             return render(request, 'skill_global/course_enrollment.html', context)
 
-        except Exception:
+        except Exception as exc:
+            logger.exception('Razorpay order creation failed for enrollment %s', enrollment.enrollment_id)
             enrollment.payment_status = 'Failed'
             enrollment.order_status = 'Cancelled'
             enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
-            err_msg = 'Unable to process payment. Please try again later.'
+            err_msg = str(exc) if settings.DEBUG else 'Unable to process payment. Please try again later.'
             if is_ajax:
                 return JsonResponse({'success': False, 'error': err_msg}, status=500)
             return render(request, 'skill_global/course_enrollment.html', {
