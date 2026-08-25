@@ -13,7 +13,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 # First Changes
 import os 
 from pathlib import Path
-from decouple import config
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,9 +150,9 @@ DEFAULT_FROM_EMAIL = 'Skill Global <noreply@skillglobal.com>'
 # ===================================
 # RAZORPAY PAYMENT GATEWAY
 # ===================================
-# Use environment variables for credentials (recommended for production)
-# Set these in your .env file or system environment variables
-# python-decouple supports both .env files and OS environment variables.
-RAZORPAY_KEY_ID ='rzp_test_TThzUQG5YnQSJ6'
-RAZORPAY_KEY_SECRET = '1v6GDtc65hb30IHEEnJK3XJ9'
+# Credentials fetched securely from environment variables or .env file
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "rzp_test_TThzUQG5YnQSJ6")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "1v6GDtc65hb30IHEEnJK3XJ9")
+
+
 

@@ -65,3 +65,37 @@ class CourseEnrollmentFlowTests(TestCase):
         self.assertEqual(enrollment.order_status, 'Pending')
         self.assertEqual(enrollment.razorpay_order_id, 'order_test_123')
         self.assertTrue(response.context.get('open_razorpay'))
+
+    @patch('skill_global.views.send_enrollment_confirmation_email')
+    @patch('skill_global.views.razorpay.Client')
+    def test_successful_razorpay_callback_confirms_existing_enrollment(self, mock_client, mock_email):
+        self.client.login(email='student@example.com', password='TestPass123')
+        enrollment = CourseEnrollment.objects.create(
+            user=self.user,
+            course=self.course,
+            amount=self.course.price,
+            razorpay_order_id='order_test_123',
+        )
+        response = self.client.post(
+            reverse('razorpay_verify'),
+            {
+                'razorpay_payment_id': 'pay_test_123',
+                'razorpay_order_id': 'order_test_123',
+                'razorpay_signature': 'signature_test_123',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['success'])
+        enrollment.refresh_from_db()
+        self.assertEqual(enrollment.payment_status, 'Paid')
+        self.assertEqual(enrollment.order_status, 'Confirmed')
+        self.assertEqual(enrollment.razorpay_payment_id, 'pay_test_123')
+        self.assertEqual(enrollment.razorpay_signature, 'signature_test_123')
+        self.assertIn(enrollment.enrollment_id, response.json()['redirect_url'])
+        mock_client.return_value.utility.verify_payment_signature.assert_called_once_with({
+            'razorpay_order_id': 'order_test_123',
+            'razorpay_payment_id': 'pay_test_123',
+            'razorpay_signature': 'signature_test_123',
+        })
+        mock_email.assert_called_once_with(enrollment)

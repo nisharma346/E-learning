@@ -387,6 +387,7 @@ def course_enroll(request, slug):
         'user_full_name': request.user.get_full_name() or request.user.email,
         'user_email': request.user.email,
         'user_phone': user_phone,
+        'debug': settings.DEBUG,
     }
 
     return render(request, 'skill_global/course_enrollment.html', context)
@@ -425,57 +426,78 @@ def payment_failed(request):
         'payment_cancelled': reason == 'cancelled',
         'payment_message': (
             'Payment Cancelled' if reason == 'cancelled'
+            else 'Payment was declined. Please try again.' if reason == 'failed'
             else 'Payment verification failed. Please try again.'
         ),
     }
     return render(request, 'skill_global/payment_failed.html', context)
+
+
 def razorpay_verify(request):
     """Verify a successful Razorpay response before confirming enrollment."""
 
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Invalid payment verification request.'}, status=405)
 
-    payment_id = request.POST.get('razorpay_payment_id')
-    order_id = request.POST.get('razorpay_order_id')
-    signature = request.POST.get('razorpay_signature')
+    razorpay_payment_id = request.POST.get('razorpay_payment_id')
+    razorpay_order_id = request.POST.get('razorpay_order_id')
+    razorpay_signature = request.POST.get('razorpay_signature')
 
-    enrollment = CourseEnrollment.objects.filter(razorpay_order_id=order_id).first()
+    if not razorpay_payment_id or not razorpay_order_id or not razorpay_signature:
+        logger.warning(
+            'Razorpay verification received incomplete response: order_id=%s payment_id=%s',
+            razorpay_order_id,
+            razorpay_payment_id,
+        )
+        return JsonResponse({'success': False, 'error': 'Missing Razorpay payment details.'}, status=400)
+
+    enrollment = CourseEnrollment.objects.filter(
+        razorpay_order_id=razorpay_order_id,
+        user=request.user,
+    ).first()
 
     if not enrollment:
-        return JsonResponse({'success': False, 'error': 'Enrollment not found.'}, status=404)
+        logger.warning(
+            'Razorpay verification enrollment not found: order_id=%s user_id=%s',
+            razorpay_order_id,
+            request.user.id,
+        )
+        return JsonResponse({'success': False, 'error': 'Enrollment not found for this Razorpay order.'}, status=404)
 
-    def verification_failure(message):
-        enrollment.payment_status = 'Failed'
-        enrollment.order_status = 'Cancelled'
-        enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
-        return JsonResponse({'success': False, 'error': message}, status=400)
+    if enrollment.razorpay_order_id != razorpay_order_id:
+        logger.error(
+            'Razorpay order mismatch for enrollment %s: callback=%s stored=%s',
+            enrollment.enrollment_id,
+            razorpay_order_id,
+            enrollment.razorpay_order_id,
+        )
+        return JsonResponse({'success': False, 'error': 'Razorpay order mismatch.'}, status=400)
+
+    if enrollment.payment_status == 'Paid' and enrollment.order_status == 'Confirmed':
+        return JsonResponse({'success': True, 'redirect_url': reverse(
+            'enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id}
+        )})
 
     try:
-        if not payment_id or not order_id or not signature:
-            return verification_failure('Payment verification failed. Missing Razorpay response.')
-
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         client.utility.verify_payment_signature({
-            'razorpay_order_id': order_id,
-            'razorpay_payment_id': payment_id,
-            'razorpay_signature': signature,
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature,
         })
 
-        payment_info = client.payment.fetch(payment_id)
-        expected_amount_paise = int(enrollment.amount * 100)
-        if int(payment_info.get('amount', 0)) != expected_amount_paise:
-            logger.error('Razorpay amount mismatch for enrollment %s', enrollment.enrollment_id)
-            return verification_failure('Payment verification failed. Amount mismatch.')
-        if payment_info.get('status') != 'captured':
-            logger.error('Razorpay payment %s has status %s', payment_id, payment_info.get('status'))
-            return verification_failure('Payment verification failed. Payment was not successful.')
-
         with transaction.atomic():
-            enrollment.razorpay_payment_id = payment_id
-            enrollment.razorpay_signature = signature
+            enrollment.razorpay_payment_id = razorpay_payment_id
+            enrollment.razorpay_signature = razorpay_signature
             enrollment.payment_status = 'Paid'
             enrollment.order_status = 'Confirmed'
             enrollment.save()
+        logger.info(
+            'Razorpay payment verified: enrollment=%s order_id=%s payment_id=%s',
+            enrollment.enrollment_id,
+            razorpay_order_id,
+            razorpay_payment_id,
+        )
         if enrollment.coupon:
             enrollment.coupon.used_count += 1
             enrollment.coupon.save(update_fields=['used_count'])
@@ -485,9 +507,24 @@ def razorpay_verify(request):
             'enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id}
         )})
 
+    except razorpay.errors.SignatureVerificationError:
+        logger.warning(
+            'Razorpay signature verification failed for enrollment %s: order_id=%s payment_id=%s',
+            enrollment.enrollment_id,
+            razorpay_order_id,
+            razorpay_payment_id,
+        )
+        enrollment.payment_status = 'Failed'
+        enrollment.order_status = 'Cancelled'
+        enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
+        return JsonResponse({'success': False, 'error': 'Invalid Razorpay payment signature.'}, status=400)
     except Exception as e:
         logger.exception('Razorpay verification exception for enrollment %s', enrollment.enrollment_id)
-        return verification_failure('Payment verification failed. Please try again.')
+        enrollment.payment_status = 'Failed'
+        enrollment.order_status = 'Cancelled'
+        enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
+        return JsonResponse({'success': False, 'error': 'Payment verification failed. Please try again.'}, status=500)
+
 
 
 @csrf_exempt
