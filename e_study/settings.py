@@ -36,6 +36,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
 
+# CSRF Trusted Origins for browser preview and development
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:59540',
+    'http://localhost:8000',
+    'http://localhost:59540',
+]
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -251,7 +251,7 @@
                         {% if debug and course.price and course.price > 0 %}
                         <div class="alert alert-info rounded-4 p-3 small mb-0 mt-3 border-0 bg-primary bg-opacity-10 text-primary">
                             <div class="fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i> Razorpay Test Mode Instructions:</div>
-                            <div class="mb-1">• <strong>Card Number:</strong> <code>4111 1111 1111 1111</code></div>
+                            <div class="mb-1">• <strong>Card Number:</strong> <code>4242 4242 4242 4242</code> (Visa) or <code>5555 5555 5555 4444</code> (Mastercard)</div>
                             <div class="mb-1">• <strong>Expiry & CVV:</strong> Any future date (e.g. <code>12/28</code>), CVV <code>123</code></div>
                             <div class="mb-2">• <strong>OTP Screen:</strong> Enter <code>123456</code> & click <strong>Submit/Success</strong></div>
                             {% if enrollment.enrollment_id %}
@@ -330,6 +330,49 @@
                     email: data.user_email,
                     contact: data.user_phone,
                 },
+                method: {
+                    upi: true,
+                    card: true,
+                    netbanking: true,
+                    wallet: false,
+                    emi: false,
+                    paylater: false
+                },
+                config: {
+                    display: {
+                        blocks: {
+                            upi: {
+                                name: 'Pay via UPI',
+                                instruments: [
+                                    {
+                                        method: 'upi',
+                                        flows: ['qr', 'collect']
+                                    }
+                                ]
+                            },
+                            netbanking: {
+                                name: 'Pay via Netbanking',
+                                instruments: [
+                                    {
+                                        method: 'netbanking'
+                                    }
+                                ]
+                            },
+                            card: {
+                                name: 'Pay via Card',
+                                instruments: [
+                                    {
+                                        method: 'card'
+                                    }
+                                ]
+                            }
+                        },
+                        sequence: ['block.upi', 'block.netbanking', 'block.card'],
+                        preferences: {
+                            show_default_blocks: false
+                        }
+                    }
+                },
                 handler: function (response) {
                     paymentCompleted = true;
                     console.log("Razorpay payment response received:", response);
@@ -390,8 +433,20 @@
 
             rzp.on('payment.failed', function (response) {
                 paymentCompleted = true;
-                console.error('Razorpay payment failed:', response);
-                window.location.href = "{% url 'payment_failed' %}?reason=failed";
+                console.error("RAZORPAY PAYMENT FAILED:", response);
+                console.error("Error code:", response.error.code);
+                console.error("Description:", response.error.description);
+                console.error("Source:", response.error.source);
+                console.error("Step:", response.error.step);
+                console.error("Reason:", response.error.reason);
+                console.error("Metadata:", response.error.metadata);
+
+                alert(
+                    "Payment Failed\n\n" +
+                    "Code: " + response.error.code + "\n" +
+                    "Description: " + response.error.description + "\n" +
+                    "Reason: " + response.error.reason
+                );
             });
 
             rzp.open();
@@ -434,19 +489,6 @@
                     });
             });
         }
-
-        {% if open_razorpay %}
-        openRazorpayCheckout({
-            razorpay_key_id: "{{ razorpay_key_id }}",
-            razorpay_amount: "{{ razorpay_amount }}",
-            razorpay_currency: "{{ razorpay_currency }}",
-            razorpay_order_id: "{{ razorpay_order_id }}",
-            user_full_name: "{{ user_full_name }}",
-            user_email: "{{ user_email }}",
-            user_phone: "{{ user_phone }}",
-            course_title: "{{ course.title }}"
-        });
-        {% endif %}
     });
 </script>
 
