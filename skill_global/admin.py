@@ -105,6 +105,7 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
     )
     list_filter = ('payment_method', 'payment_status', 'order_status', 'created_at')
     search_fields = ('enrollment_id', 'user__email', 'user__full_name', 'course__title')
+    raw_id_fields = ('user', 'course', 'coupon')
     readonly_fields = (
         'enrollment_id',
         'razorpay_payment_id',
@@ -112,6 +113,23 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
         'razorpay_signature',
         'created_at',
         'updated_at',
+    )
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'enrollment_id')
+        }),
+        ('Payment Details', {
+            'fields': ('original_amount', 'discount_amount', 'amount', 'coupon', 'payment_method', 'payment_status', 'order_status')
+        }),
+        ('Razorpay Details', {
+            'fields': ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature')
+        }),
+        ('Additional Information', {
+            'fields': ('branch', 'specialization', 'date_of_birth', 'address')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
     )
 
 @admin.register(LiveClass)
