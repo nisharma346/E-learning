@@ -64,7 +64,24 @@ class CourseEnrollmentFlowTests(TestCase):
         self.assertEqual(enrollment.payment_status, 'Pending')
         self.assertEqual(enrollment.order_status, 'Pending')
         self.assertEqual(enrollment.razorpay_order_id, 'order_test_123')
-        self.assertTrue(response.context.get('open_razorpay'))
+        self.assertEqual(response.json()['payment_method'], 'UPI')
+
+    def test_paid_enrollment_rejects_unsupported_payment_method(self):
+        self.client.login(email='student@example.com', password='TestPass123')
+
+        response = self.client.post(
+            reverse('course_enrollment', args=[self.course.slug]),
+            {
+                'agree_terms': 'on',
+                'detail_mobile': '9876543210',
+                'payment_method': 'International Card',
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()['success'])
+        self.assertIn('supported payment method', response.json()['error'])
 
     @patch('skill_global.views.send_enrollment_confirmation_email')
     @patch('skill_global.views.razorpay.Client')

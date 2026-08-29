@@ -240,7 +240,8 @@
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm mb-2">
+                        <button type="submit"
+                            class="btn btn-primary btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm mb-2">
                             {% if course.price and course.price > 0 %}
                             <i class="bi bi-lock-fill me-2"></i> Proceed to Payment (₹{{ course.price }})
                             {% else %}
@@ -249,15 +250,22 @@
                         </button>
 
                         {% if debug and course.price and course.price > 0 %}
-                        <div class="alert alert-info rounded-4 p-3 small mb-0 mt-3 border-0 bg-primary bg-opacity-10 text-primary">
-                            <div class="fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i> Razorpay Test Mode Instructions:</div>
-                            <div class="mb-1">• <strong>Card Number:</strong> <code>4242 4242 4242 4242</code> (Visa) or <code>5555 5555 5555 4444</code> (Mastercard)</div>
-                            <div class="mb-1">• <strong>Expiry & CVV:</strong> Any future date (e.g. <code>12/28</code>), CVV <code>123</code></div>
-                            <div class="mb-2">• <strong>OTP Screen:</strong> Enter <code>123456</code> & click <strong>Submit/Success</strong></div>
+                        <div
+                            class="alert alert-info rounded-4 p-3 small mb-0 mt-3 border-0 bg-primary bg-opacity-10 text-primary">
+                            <div class="fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i> Razorpay Test Mode
+                                Instructions:</div>
+                            <div class="mb-1">• <strong>Card Number:</strong> <code>4242 4242 4242 4242</code> (Visa) or
+                                <code>5555 5555 5555 4444</code> (Mastercard)</div>
+                            <div class="mb-1">• <strong>Expiry & CVV:</strong> Any future date (e.g.
+                                <code>12/28</code>), CVV <code>123</code></div>
+                            <div class="mb-2">• <strong>OTP Screen:</strong> Enter <code>123456</code> & click
+                                <strong>Submit/Success</strong></div>
                             {% if enrollment.enrollment_id %}
                             <div class="pt-2 border-top border-primary border-opacity-25 text-center">
-                                <a href="{% url 'test_confirm_payment' enrollment.enrollment_id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
-                                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Payment (Instant Confirm)
+                                <a href="{% url 'test_confirm_payment' enrollment.enrollment_id %}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Payment
+                                    (Instant Confirm)
                                 </a>
                             </div>
                             {% endif %}
@@ -332,6 +340,24 @@
                     email: data.user_email,
                     contact: data.user_phone,
                 },
+                config: {
+                    display: {
+                        blocks: {
+                            preferred: {
+                                name: 'Preferred payment method',
+                                instruments: [{
+                                    method: ({
+                                        'UPI': 'upi',
+                                        'Card': 'card',
+                                        'Net Banking': 'netbanking'
+                                    })[data.payment_method] || 'upi'
+                                }]
+                            }
+                        },
+                        sequence: ['block.preferred'],
+                        preferences: { show_default_blocks: true }
+                    }
+                },
                 handler: function (response) {
                     paymentCompleted = true;
                     console.log("Razorpay payment response received:", response);
@@ -393,19 +419,8 @@
             rzp.on('payment.failed', function (response) {
                 paymentCompleted = true;
                 console.error("RAZORPAY PAYMENT FAILED:", response);
-                console.error("Error code:", response.error.code);
-                console.error("Description:", response.error.description);
-                console.error("Source:", response.error.source);
-                console.error("Step:", response.error.step);
-                console.error("Reason:", response.error.reason);
-                console.error("Metadata:", response.error.metadata);
-
-                alert(
-                    "Payment Failed\n\n" +
-                    "Code: " + response.error.code + "\n" +
-                    "Description: " + response.error.description + "\n" +
-                    "Reason: " + response.error.reason
-                );
+                const reason = response?.error?.reason || 'failed';
+                window.location.href = "{% url 'payment_failed' %}?reason=failed&detail=" + encodeURIComponent(reason);
             });
 
             rzp.open();

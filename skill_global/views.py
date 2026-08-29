@@ -1,5 +1,6 @@
 import math
 import logging
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
@@ -16,6 +17,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -210,6 +212,23 @@ def course_enroll(request, slug):
         )
 
         payment_method = request.POST.get('payment_method', 'UPI')
+        valid_payment_methods = {
+            choice[0] for choice in CourseEnrollment.PAYMENT_METHOD_CHOICES
+        }
+        if payment_method not in valid_payment_methods:
+            err_msg = 'Please select a supported payment method.'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=400)
+            return render(request, 'skill_global/course_enrollment.html', {
+                'page_title': 'Course Enrollment',
+                'page_description': 'Complete your enrollment securely.',
+                'course': course,
+                'enrollment': enrollment,
+                'user_full_name': request.user.get_full_name() or request.user.email,
+                'user_email': request.user.email,
+                'user_phone': user_phone,
+                'error': err_msg,
+            })
         phone = request.POST.get('phone') or request.POST.get('detail_mobile') or user_phone
         agree_terms = request.POST.get('agree_terms') in ('on', 'true', True, 1, '1')
 
@@ -319,7 +338,11 @@ def course_enroll(request, slug):
                 raise ValueError('Razorpay credentials are not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment or .env file.')
 
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            amount_paise = int(float(enrollment.amount) * 100)
+            amount_paise = int(
+                (Decimal(enrollment.amount) * 100).quantize(
+                    Decimal('1'), rounding=ROUND_HALF_UP
+                )
+            )
             razorpay_order = client.order.create({
                 'amount': amount_paise,
                 'currency': 'INR',
@@ -336,6 +359,7 @@ def course_enroll(request, slug):
                 'razorpay_order_id': razorpay_order['id'],
                 'razorpay_amount': amount_paise,
                 'razorpay_currency': 'INR',
+                'payment_method': payment_method,
                 'user_full_name': request.user.get_full_name() or request.user.email,
                 'user_email': request.user.email,
                 'user_phone': phone,
@@ -414,11 +438,6 @@ def razorpay_verify(request):
     razorpay_order_id = request.POST.get('razorpay_order_id')
     razorpay_signature = request.POST.get('razorpay_signature')
 
-    print("=== RAZORPAY VERIFICATION DEBUG ===")
-    print("Razorpay Order ID from request:", razorpay_order_id)
-    print("Razorpay Payment ID from request:", razorpay_payment_id)
-    print("Razorpay Signature from request:", razorpay_signature[:20] + "..." if razorpay_signature else None)
-
     if not razorpay_payment_id or not razorpay_order_id or not razorpay_signature:
         logger.warning(
             'Razorpay verification received incomplete response: order_id=%s payment_id=%s',
@@ -441,10 +460,6 @@ def razorpay_verify(request):
         print("ERROR: Enrollment not found for Razorpay order ID:", razorpay_order_id)
         return JsonResponse({'success': False, 'error': 'Enrollment not found for this Razorpay order.'}, status=404)
 
-    print("Enrollment found:", enrollment.enrollment_id)
-    print("Enrollment's stored Razorpay Order ID:", enrollment.razorpay_order_id)
-    print("Order ID match:", enrollment.razorpay_order_id == razorpay_order_id)
-
     if enrollment.razorpay_order_id != razorpay_order_id:
         logger.error(
             'Razorpay order mismatch for enrollment %s: callback=%s stored=%s',
@@ -455,21 +470,17 @@ def razorpay_verify(request):
         return JsonResponse({'success': False, 'error': 'Razorpay order mismatch.'}, status=400)
 
     if enrollment.payment_status == 'Paid' and enrollment.order_status == 'Confirmed':
-        print("Enrollment already paid and confirmed - redirecting to success")
         return JsonResponse({'success': True, 'redirect_url': reverse(
             'enrollment_success', kwargs={'enrollment_id': enrollment.enrollment_id}
         )})
 
     try:
-        print("Attempting Razorpay signature verification...")
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         client.utility.verify_payment_signature({
             'razorpay_order_id': razorpay_order_id,
             'razorpay_payment_id': razorpay_payment_id,
             'razorpay_signature': razorpay_signature,
         })
-        print("Razorpay signature verification SUCCESSFUL")
-
         with transaction.atomic():
             enrollment.razorpay_payment_id = razorpay_payment_id
             enrollment.razorpay_signature = razorpay_signature
@@ -482,7 +493,6 @@ def razorpay_verify(request):
             razorpay_order_id,
             razorpay_payment_id,
         )
-        print("Enrollment updated successfully - payment_status=Paid, order_status=Confirmed")
         if enrollment.coupon:
             enrollment.coupon.used_count += 1
             enrollment.coupon.save(update_fields=['used_count'])
@@ -493,7 +503,6 @@ def razorpay_verify(request):
         )})
 
     except razorpay.errors.SignatureVerificationError as e:
-        print("RAZORPAY SIGNATURE VERIFICATION FAILED:", str(e))
         logger.warning(
             'Razorpay signature verification failed for enrollment %s: order_id=%s payment_id=%s',
             enrollment.enrollment_id,
@@ -505,7 +514,6 @@ def razorpay_verify(request):
         enrollment.save(update_fields=['payment_status', 'order_status', 'updated_at'])
         return JsonResponse({'success': False, 'error': 'Invalid Razorpay payment signature.'}, status=400)
     except Exception as e:
-        print("EXCEPTION during Razorpay verification:", str(e))
         logger.exception('Razorpay verification exception for enrollment %s', enrollment.enrollment_id)
         enrollment.payment_status = 'Failed'
         enrollment.order_status = 'Cancelled'
@@ -514,10 +522,14 @@ def razorpay_verify(request):
 
 
 
+@login_required
 @csrf_exempt
 def test_confirm_payment(request, enrollment_id):
     """Direct Instant Test Payment Confirmation Endpoint"""
-    enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id)
+    if not settings.DEBUG:
+        return JsonResponse({'success': False, 'error': 'Test payments are disabled.'}, status=404)
+
+    enrollment = get_object_or_404(CourseEnrollment, enrollment_id=enrollment_id, user=request.user)
     
     if request.method == 'POST':
         branch = request.POST.get('detail_branch')
