@@ -255,11 +255,14 @@
                             <div class="fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i> Razorpay Test Mode
                                 Instructions:</div>
                             <div class="mb-1">• <strong>Card Number:</strong> <code>4242 4242 4242 4242</code> (Visa) or
-                                <code>5555 5555 5555 4444</code> (Mastercard)</div>
+                                <code>5555 5555 5555 4444</code> (Mastercard)
+                            </div>
                             <div class="mb-1">• <strong>Expiry & CVV:</strong> Any future date (e.g.
-                                <code>12/28</code>), CVV <code>123</code></div>
+                                <code>12/28</code>), CVV <code>123</code>
+                            </div>
                             <div class="mb-2">• <strong>OTP Screen:</strong> Enter <code>123456</code> & click
-                                <strong>Submit/Success</strong></div>
+                                <strong>Submit/Success</strong>
+                            </div>
                             {% if enrollment.enrollment_id %}
                             <div class="pt-2 border-top border-primary border-opacity-25 text-center">
                                 <a href="{% url 'test_confirm_payment' enrollment.enrollment_id %}"
@@ -415,6 +418,7 @@
             };
 
             const rzp = new Razorpay(options);
+            console.log("STEP 6: Creating Razorpay instance");
 
             rzp.on('payment.failed', function (response) {
                 paymentCompleted = true;
@@ -423,18 +427,22 @@
                 window.location.href = "{% url 'payment_failed' %}?reason=failed&detail=" + encodeURIComponent(reason);
             });
 
+            console.log("STEP 7: Calling rzp.open()");
             rzp.open();
         }
 
         if (enrollmentForm) {
             enrollmentForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                console.log("STEP 1: Proceed button clicked");
+                console.log("STEP 2: Enrollment form submit fired");
 
                 const submitBtn = enrollmentForm.querySelector('button[type="submit"]');
                 if (submitBtn) submitBtn.disabled = true;
 
                 const formData = new FormData(enrollmentForm);
 
+                console.log("STEP 3: Sending enrollment POST");
                 fetch(window.location.href, {
                     method: 'POST',
                     headers: {
@@ -445,10 +453,15 @@
                 })
                     .then(res => res.json())
                     .then(data => {
+                        console.log("STEP 4: Enrollment response received");
+                        console.log("Complete JSON response:", data);
+
                         if (data.success) {
                             if (data.is_free && data.redirect_url) {
                                 window.location.href = data.redirect_url;
                             } else if (data.razorpay_order_id) {
+                                console.log("STEP 5: Razorpay order ID received");
+                                console.log("razorpay_order_id:", data.razorpay_order_id);
                                 openRazorpayCheckout(data);
                             }
                         } else {

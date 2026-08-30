@@ -201,6 +201,11 @@ def course_enroll(request, slug):
     )
 
     if request.method == 'POST':
+        print("\n" + "="*60)
+        print("BACKEND STEP 1: POST received")
+        print(f"Course title: {course.title}")
+        print("="*60 + "\n")
+        
         is_ajax = (
             request.headers.get('x-requested-with') == 'XMLHttpRequest'
             or 'application/json' in request.headers.get('Accept', '')
@@ -210,6 +215,7 @@ def course_enroll(request, slug):
             user=request.user,
             course=course,
         )
+        print(f"Enrollment ID: {enrollment.enrollment_id}")
 
         payment_method = request.POST.get('payment_method', 'UPI')
         valid_payment_methods = {
@@ -332,11 +338,18 @@ def course_enroll(request, slug):
         enrollment.date_of_birth = date_of_birth
         enrollment.address = address
         enrollment.save()
+        
+        print(f"Amount: ₹{final_amount}")
+        print("="*60 + "\n")
 
         try:
             if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
                 raise ValueError('Razorpay credentials are not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment or .env file.')
 
+            print("\n" + "="*60)
+            print("BACKEND STEP 2: Creating Razorpay order")
+            print("="*60 + "\n")
+            
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             amount_paise = int(
                 (Decimal(enrollment.amount) * 100).quantize(
@@ -351,6 +364,11 @@ def course_enroll(request, slug):
             })
             enrollment.razorpay_order_id = razorpay_order['id']
             enrollment.save(update_fields=['razorpay_order_id', 'updated_at'])
+            
+            print(f"Razorpay order ID: {razorpay_order['id']}")
+            print("\n" + "="*60)
+            print("BACKEND STEP 3: Returning JSON")
+            print("="*60 + "\n")
 
             return JsonResponse({
                 'success': True,

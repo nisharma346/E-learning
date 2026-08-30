@@ -159,8 +159,8 @@ DEFAULT_FROM_EMAIL = 'Skill Global <noreply@skillglobal.com>'
 # RAZORPAY PAYMENT GATEWAY
 # ===================================
 # Credentials fetched securely from environment variables or .env file
-RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "rzp_test_TThzUQG5YnQSJ6")
-RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "1v6GDtc65hb30IHEEnJK3XJ9")
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "rzp_test_TW4L223HkPwYri")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "iFwCvMxfxSZdJ3HBjFeMrAX4")
 
 
 
