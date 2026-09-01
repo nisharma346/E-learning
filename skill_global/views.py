@@ -357,11 +357,10 @@ def course_enroll(request, slug):
                 )
             )
             razorpay_order = client.order.create({
-                'amount': amount_paise,
-                'currency': 'INR',
-                'receipt': enrollment.enrollment_id,
-                'payment_capture': 1,
-            })
+    'amount': amount_paise,
+    'currency': 'INR',
+    'receipt': enrollment.enrollment_id,
+})
             enrollment.razorpay_order_id = razorpay_order['id']
             enrollment.save(update_fields=['razorpay_order_id', 'updated_at'])
             
@@ -499,21 +498,44 @@ def razorpay_verify(request):
             'razorpay_payment_id': razorpay_payment_id,
             'razorpay_signature': razorpay_signature,
         })
+        payment = client.payment.fetch(razorpay_payment_id)
+
+        expected_amount = int(
+            (Decimal(str(enrollment.amount)) * 100).quantize(
+                Decimal('1'),
+                rounding=ROUND_HALF_UP
+            )
+        )
+
+        if payment.get('order_id') != enrollment.razorpay_order_id:
+            raise ValueError('Razorpay order ID mismatch.')
+
+        if int(payment.get('amount', 0)) != expected_amount:
+            raise ValueError('Razorpay payment amount mismatch.')
+
+        if payment.get('status') not in ['captured', 'authorized']:
+            raise ValueError(
+                f"Unexpected Razorpay payment status: {payment.get('status')}"
+            )
+
         with transaction.atomic():
             enrollment.razorpay_payment_id = razorpay_payment_id
             enrollment.razorpay_signature = razorpay_signature
             enrollment.payment_status = 'Paid'
             enrollment.order_status = 'Confirmed'
             enrollment.save()
+        
         logger.info(
             'Razorpay payment verified: enrollment=%s order_id=%s payment_id=%s',
             enrollment.enrollment_id,
             razorpay_order_id,
             razorpay_payment_id,
         )
+        
         if enrollment.coupon:
             enrollment.coupon.used_count += 1
             enrollment.coupon.save(update_fields=['used_count'])
+        
         send_enrollment_confirmation_email(enrollment)
 
         return JsonResponse({'success': True, 'redirect_url': reverse(

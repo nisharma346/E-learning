@@ -333,48 +333,52 @@
 
             const options = {
                 key: data.razorpay_key_id,
-                amount: data.razorpay_amount,
-                currency: data.razorpay_currency,
-                order_id: data.razorpay_order_id,
+                amount: Number(data.razorpay_amount),
+                currency: 'INR',
                 name: 'Skill Global',
                 description: data.course_title || 'Course Enrollment Payment',
-                prefill: {
-                    name: data.user_full_name,
-                    email: data.user_email,
-                    contact: data.user_phone,
-                },
-                config: {
-                    display: {
-                        blocks: {
-                            preferred: {
-                                name: 'Preferred payment method',
-                                instruments: [{
-                                    method: ({
-                                        'UPI': 'upi',
-                                        'Card': 'card',
-                                        'Net Banking': 'netbanking'
-                                    })[data.payment_method] || 'upi'
-                                }]
-                            }
-                        },
-                        sequence: ['block.preferred'],
-                        preferences: { show_default_blocks: true }
-                    }
-                },
-                handler: function (response) {
-                    paymentCompleted = true;
-                    console.log("Razorpay payment response received:", response);
+                order_id: data.razorpay_order_id,
 
-                    if (!response || !response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
-                        console.error("Incomplete Razorpay response details.");
-                        window.location.href = "{% url 'payment_failed' %}?reason=verification";
+                prefill: {
+                    name: data.user_full_name || '',
+                    email: data.user_email || '',
+                    contact: data.user_phone || ''
+                },
+
+                theme: {
+                    color: '#0d6efd'
+                },
+
+                handler: function (response) {
+                    console.log('SUCCESS - Razorpay response:', response);
+
+                    if (
+                        !response ||
+                        !response.razorpay_payment_id ||
+                        !response.razorpay_order_id ||
+                        !response.razorpay_signature
+                    ) {
+                        console.error('Incomplete Razorpay response:', response);
+                        alert('Payment response incomplete. Please try again.');
                         return;
                     }
 
                     const verificationData = new FormData();
-                    verificationData.append('razorpay_payment_id', response.razorpay_payment_id);
-                    verificationData.append('razorpay_order_id', response.razorpay_order_id);
-                    verificationData.append('razorpay_signature', response.razorpay_signature);
+
+                    verificationData.append(
+                        'razorpay_payment_id',
+                        response.razorpay_payment_id
+                    );
+
+                    verificationData.append(
+                        'razorpay_order_id',
+                        response.razorpay_order_id
+                    );
+
+                    verificationData.append(
+                        'razorpay_signature',
+                        response.razorpay_signature
+                    );
 
                     fetch(verifyUrl, {
                         method: 'POST',
@@ -384,47 +388,72 @@
                         },
                         body: verificationData
                     })
-                        .then(function (verificationResponse) {
-                            return verificationResponse.json().then(function (result) {
-                                if (!verificationResponse.ok) {
-                                    throw new Error(result.error || 'Payment verification failed');
-                                }
-                                return result;
-                            });
-                        })
-                        .then(function (result) {
-                            if (result.success && result.redirect_url) {
-                                window.location.href = result.redirect_url;
-                                return;
+                        .then(async function (res) {
+
+                            const result = await res.json();
+
+                            console.log('Verification response:', result);
+
+                            if (!res.ok || !result.success) {
+                                throw new Error(
+                                    result.error || 'Payment verification failed'
+                                );
                             }
-                            throw new Error(result.error || 'Payment verification failed');
+
+                            if (result.redirect_url) {
+                                window.location.href = result.redirect_url;
+                            }
                         })
                         .catch(function (error) {
-                            console.error('Razorpay server verification failed:', error);
-                            window.location.href = "{% url 'payment_failed' %}?reason=verification";
+                            console.error('SERVER VERIFICATION ERROR:', error);
+                            alert(
+                                'Payment received but verification failed. ' +
+                                error.message
+                            );
                         });
                 },
-                theme: {
-                    color: '#0d6efd'
-                },
+
                 modal: {
                     ondismiss: function () {
-                        if (!paymentCompleted) {
-                            console.log("Razorpay checkout modal closed by user.");
-                            window.location.href = "{% url 'payment_failed' %}?reason=cancelled";
-                        }
+                        console.log('Razorpay checkout closed.');
                     }
                 }
             };
+            console.log('========== RAZORPAY CHECK ==========');
+            console.log('KEY ID:', data.razorpay_key_id);
+            console.log('ORDER ID:', data.razorpay_order_id);
+            console.log('AMOUNT:', data.razorpay_amount);
+            console.log('CURRENCY:', data.razorpay_currency);
+            console.log('PAYMENT METHOD:', data.payment_method);
+            console.log('====================================');
 
             const rzp = new Razorpay(options);
             console.log("STEP 6: Creating Razorpay instance");
 
             rzp.on('payment.failed', function (response) {
-                paymentCompleted = true;
-                console.error("RAZORPAY PAYMENT FAILED:", response);
-                const reason = response?.error?.reason || 'failed';
-                window.location.href = "{% url 'payment_failed' %}?reason=failed&detail=" + encodeURIComponent(reason);
+
+                console.error('========== RAZORPAY PAYMENT FAILED ==========');
+                console.error(response);
+
+                const error = response && response.error
+                    ? response.error
+                    : {};
+
+                console.error('CODE:', error.code);
+                console.error('DESCRIPTION:', error.description);
+                console.error('SOURCE:', error.source);
+                console.error('STEP:', error.step);
+                console.error('REASON:', error.reason);
+                console.error('METADATA:', error.metadata);
+                console.error('==============================================');
+
+                alert(
+                    'Razorpay Payment Failed\n\n' +
+                    'Reason: ' +
+                    (error.reason || 'Unknown') +
+                    '\n\nDescription: ' +
+                    (error.description || 'Unknown')
+                );
             });
 
             console.log("STEP 7: Calling rzp.open()");
